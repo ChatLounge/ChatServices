@@ -1,9 +1,9 @@
 [submodule "libmowgli-2"]
 	path = libmowgli-2
-	url = git://MrBenC@bitbucket.org/chatlounge/libmowgli-2.git
+	url = git://bitbucket.org/chatlounge/libmowgli-2.git
 [submodule "libunwind"]
 	path = libunwind
 	url = git://git.savannah.gnu.org/libunwind.git
 [submodule "modules/contrib"]
 	path = modules/contrib
-	url = git://MrBenC@bitbucket.org/chatlounge/chatservices-contrib-modules.git
+	url = git://bitbucket.org/chatlounge/chatservices-contrib-modules.git
