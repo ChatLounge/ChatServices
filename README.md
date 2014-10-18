@@ -30,5 +30,7 @@ If you're still lost, read [INSTALL](INSTALL) or [GIT-Access](GIT-Access) for hi
  * [Website](http://www.chatlounge.net)
  * [IRC](irc://irc.chatlounge.net/#ChatServices)
 
+#ChatServices @ irc.chatlounge.net
+
 NOTE:
 Please don't ask the Atheme Development Group for assistance with this software.
