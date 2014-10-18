@@ -37,8 +37,8 @@ fighting with chanserv.
 
 Do not use the "services hub" server type.
 
-charybdis
----------
+charybdis/ChatIRCd
+------------------
 
 You will need a service{} block on all servers.
 
