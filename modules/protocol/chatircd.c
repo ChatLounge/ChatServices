@@ -11,7 +11,7 @@
 #include "atheme.h"
 #include "uplink.h"
 #include "pmodule.h"
-#include "protocol/charybdis.h"
+#include "protocol/chatircd.h"
 
 DECLARE_MODULE_V1("protocol/chatircd", true, _modinit, NULL, PACKAGE_STRING, "Chat Lounge IRC Network Development <http://www.chatlounge.net>");
 
@@ -44,27 +44,28 @@ ircd_t Charybdis = {
 };
 
 struct cmode_ charybdis_mode_list[] = {
-  { 'i', CMODE_INVITE },
-  { 'm', CMODE_MOD    },
-  { 'n', CMODE_NOEXT  },
-  { 'p', CMODE_PRIV   },
-  { 's', CMODE_SEC    },
-  { 't', CMODE_TOPIC  },
-  { 'r', CMODE_REGONLY},
-  { 'z', CMODE_OPMOD  },
-  { 'g', CMODE_FINVITE},
-  { 'L', CMODE_EXLIMIT},
-  { 'P', CMODE_PERM   },
-  { 'F', CMODE_FTARGET},
-  { 'Q', CMODE_DISFWD },
+  { 'i', CMODE_INVITE	},
+  { 'm', CMODE_MOD	},
+  { 'n', CMODE_NOEXT	},
+  { 'p', CMODE_PRIV	},
+  { 's', CMODE_SEC	},
+  { 't', CMODE_TOPIC	},
+  { 'r', CMODE_REGONLY	},
+  { 'z', CMODE_OPMOD	},
+  { 'g', CMODE_FINVITE	},
+  { 'L', CMODE_EXLIMIT	},
+  { 'P', CMODE_PERM	},
+  { 'F', CMODE_FTARGET	},
+  { 'Q', CMODE_DISFWD	},
+  { 'T', CMODE_NONOTICE	},
 
   /* following modes are added as extensions */
-  { 'N', CMODE_NPC       },
-  { 'S', CMODE_SSLONLY   },
-  { 'O', CMODE_OPERONLY  },
-  { 'A', CMODE_ADMINONLY },
-  { 'c', CMODE_NOCOLOR   },
-  { 'C', CMODE_NOCTCP    },
+  { 'N', CMODE_NPC	},
+  { 'S', CMODE_SSLONLY	},
+  { 'O', CMODE_OPERONLY	},
+  { 'A', CMODE_ADMINONLY},
+  { 'c', CMODE_NOCOLOR	},
+  { 'C', CMODE_NOCTCP	},
 
   { '\0', 0 }
 };
