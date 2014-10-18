@@ -51,8 +51,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* To configure/use, add a block to the proxyscan{} section of your atheme.conf
- * like this:
+/* To configure/use, add a block to the proxyscan{} section of your
+ * chatservices.conf like this:
  *
  * blacklists {
  *	"dnsbl.dronebl.org";

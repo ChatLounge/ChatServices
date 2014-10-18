@@ -1,11 +1,11 @@
 #!/bin/sh
 #
-# crontab script for atheme
+# crontab script for ChatServices
 #
 
 # Change this to the directory where you installed it
-prefix=$HOME/atheme/
-pidfile=var/atheme.pid
+prefix=$HOME/services/
+pidfile=var/chatservices.pid
 
 cd "$prefix" || {
 	echo "$0: couldn't cd to $prefix"
@@ -22,7 +22,7 @@ if [ -f "$pidfile" ] ; then
   rm -f "$pidfile"
 fi
 
-echo "$0: couldn't find atheme running, restarting..."
+echo "$0: couldn't find ChatServices running, restarting..."
 
 ./bin/atheme-services
 

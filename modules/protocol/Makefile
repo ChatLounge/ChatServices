@@ -9,26 +9,27 @@
 MODULE = protocol
 
 SRCS = \
-	asuka.c	\
-	bahamut.c	\
-	base36uid.c	\
-	charybdis.c	\
-	elemental-ircd.c\
-	hybrid.c	\
-	inspircd.c	\
-	ircd-seven.c  \
-	ircnet.c	\
+	asuka.c			\
+	bahamut.c		\
+	base36uid.c		\
+	charybdis.c		\
+	chatircd.c		\
+	elemental-ircd.c	\
+	hybrid.c		\
+	inspircd.c		\
+	ircd-seven.c		\
+	ircnet.c		\
 	mixin_nohalfops.c	\
 	mixin_noholdnick.c	\
-	mixin_noowner.c	\
+	mixin_noowner.c		\
 	mixin_noprotect.c	\
-	nefarious.c	\
-	ngircd.c	\
-	p10-generic.c	\
-	ratbox.c	\
-	shadowircd.c	\
-	ts6-generic.c	\
-	undernet.c	\
+	nefarious.c		\
+	ngircd.c		\
+	p10-generic.c		\
+	ratbox.c		\
+	shadowircd.c		\
+	ts6-generic.c		\
+	undernet.c		\
 	unreal.c
 
 include ../../extra.mk

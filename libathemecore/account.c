@@ -1970,8 +1970,8 @@ static int expire_myuser_cb(myentity_t *mt, void *unused)
 			(mu->flags & MU_WAITAUTH && CURRTIME - mu->registered >= 86400))
 	{
 		/* Don't expire accounts with privs on them in atheme.conf,
-		 * otherwise someone can reregister
-		 * them and take the privs -- jilles */
+		 * (now services.conf - Ben) otherwise someone can
+		 *  reregister them and take the privs -- jilles */
 		if (is_conf_soper(mu))
 			return 0;
 
