@@ -15,7 +15,7 @@ how to fully check out the atheme tree, as it is spread across many repositories
 ## basic build instructions for the impatient
 
 Whatever you do, make sure you do *not* install ChatServices into the same location as the source.
-Atheme will default to installing in `$HOME/services`, so make sure you plan accordingly for this.
+ChatServices will default to installing in `$HOME/services`, so make sure you plan accordingly for this.
 
     $ git submodule update --init
     $ ./configure --options-you-want-here
