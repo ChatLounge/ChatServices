@@ -9,37 +9,37 @@
 MODULE = chanserv
 
 SRCS =			\
-	main.c	\
-	access.c \
-	akick.c	\
+	main.c		\
+	access.c 	\
+	akick.c		\
 	antiflood.c	\
 	ban.c		\
-	clear.c	\
+	clear.c		\
 	clear_akicks.c  \
 	clear_bans.c	\
 	clear_flags.c	\
 	clear_users.c	\
-	clone.c	\
-	close.c	\
-	count.c	\
-	drop.c	\
+	clone.c		\
+	close.c		\
+	count.c		\
+	drop.c		\
 	fflags.c	\
-	flags.c	\
+	flags.c		\
 	ftransfer.c	\
 	getkey.c	\
 	halfop.c	\
-	help.c	\
-	hold.c	\
-	info.c	\
+	help.c		\
+	hold.c		\
+	info.c		\
 	invite.c	\
-	kick.c	\
-	list.c	\
-	mark.c	\
-	moderate.c \
+	kick.c		\
+	list.c		\
+	mark.c		\
+	moderate.c 	\
 	op.c		\
-	owner.c	\
+	owner.c		\
 	protect.c	\
-	quiet.c	\
+	quiet.c		\
 	recover.c	\
 	register.c	\
 	set.c		\
@@ -48,7 +48,7 @@ SRCS =			\
 	set_entrymsg.c	\
 	set_fantasy.c	\
 	set_founder.c	\
-	set_gameserv.c \
+	set_gameserv.c	\
 	set_guard.c	\
 	set_keeptopic.c	\
 	set_limitflags.c \
@@ -56,7 +56,8 @@ SRCS =			\
 	set_prefix.c	\
 	set_private.c	\
 	set_property.c	\
-	set_restricted.c  \
+	set_pubacl.c	\
+	set_restricted.c \
 	set_secure.c	\
 	set_topiclock.c	\
 	set_url.c	\
@@ -66,10 +67,10 @@ SRCS =			\
 	sync.c		\
 	taxonomy.c	\
 	template.c	\
-	topic.c	\
+	topic.c		\
 	unban_self.c	\
 	version.c	\
-	voice.c	\
+	voice.c		\
 	why.c		\
 	xop.c
 
