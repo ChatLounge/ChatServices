@@ -423,7 +423,7 @@ BUILDSYS_TOUCH_DEPS
 AC_OUTPUT([
 	buildsys.mk
 	extra.mk
-	atheme-services.pc
+	services.pc
 ])
 
 d=`eval echo ${MODDIR}`
@@ -447,4 +447,4 @@ Configuration:
 	CFLAGS               : ${CFLAGS}
 	Internationalization : ${USE_NLS}
 
-Type make to build ChatServices, and make install to install it."
+Type 'make' to build ChatServices, and 'make install' to install it."

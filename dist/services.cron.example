@@ -24,6 +24,6 @@ fi
 
 echo "$0: couldn't find ChatServices running, restarting..."
 
-./bin/atheme-services
+./bin/services
 
 exit 0

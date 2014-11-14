@@ -9923,7 +9923,7 @@ fi
 	done
 
 
-ac_config_files="$ac_config_files buildsys.mk extra.mk atheme-services.pc"
+ac_config_files="$ac_config_files buildsys.mk extra.mk services.pc"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -10635,7 +10635,7 @@ do
     "default-1") CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;
     "buildsys.mk") CONFIG_FILES="$CONFIG_FILES buildsys.mk" ;;
     "extra.mk") CONFIG_FILES="$CONFIG_FILES extra.mk" ;;
-    "atheme-services.pc") CONFIG_FILES="$CONFIG_FILES atheme-services.pc" ;;
+    "services.pc") CONFIG_FILES="$CONFIG_FILES services.pc" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -11497,4 +11497,4 @@ Configuration:
 	CFLAGS               : ${CFLAGS}
 	Internationalization : ${USE_NLS}
 
-Type make to build ChatServices, and make install to install it."
+Type 'make' to build ChatServices, and 'make install' to install it."

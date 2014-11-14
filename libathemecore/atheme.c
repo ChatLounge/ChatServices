@@ -470,7 +470,7 @@ int atheme_main(int argc, char *argv[])
 		slog(LG_INFO, "main(): restarting");
 
 #ifdef HAVE_EXECVE
-		execv(BINDIR "/atheme-services", argv);
+		execv(BINDIR "/services", argv);
 #endif
 	}
 
