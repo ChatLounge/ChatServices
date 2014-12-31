@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2014-2015 Chat Lounge IRC Network Development
  * Copyright (c) 2005-2010 Atheme Development Group
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -13,7 +14,7 @@ const char *revision = SERNO;
 const char *infotext[] =
 {
   "ChatServices IRC Services --",
-  "Copyright (c) 2014 Chat Lounge IRC Network Development (http://www.chatlounge.net)",
+  "Copyright (c) 2014-2015 Chat Lounge IRC Network Development (http://www.chatlounge.net)",
   "Copyright (c) 2005-2013 Atheme Development Group (http://www.atheme.org)",
   "Portions copyright (c) 2004 Shrike Developers (http://www.malkier.net)",
   " ",

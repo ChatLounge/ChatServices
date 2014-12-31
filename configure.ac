@@ -1,4 +1,4 @@
-dnl Copyright (c) 2014 Chat Lounge IRC Network Development
+dnl Copyright (c) 2014-2015 Chat Lounge IRC Network Development
 dnl Rights to this code are documented in doc/LICENSE.
 dnl
 dnl This file is the autoconf stub.

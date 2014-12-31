@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Chat Lounge IRC Network Development
+ * Copyright (C) 2014-2015 Chat Lounge IRC Network Development
  * Copyright (C) 2005 William Pitcock, et al.
  * Rights to this code are as documented in doc/LICENSE.
  *
