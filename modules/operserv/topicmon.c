@@ -1,9 +1,12 @@
 /*
- *	Author:	Ben (Ben @ irc.chatlounge.net)
+ * Copyright (c) 2014-2015 Chat Lounge IRC Network Development
  *
- *	Description:
+ * Author: Ben (Ben @ irc.chatlounge.net)
  *
- *		This module will check for topic changes in any channel, and post them to the services log channel.
+ * Description:
+ *
+ *	This module will check for topic changes in any channel,
+ * and post them to the services log channel.
  *
  */
  
