@@ -45,6 +45,15 @@ struct chansvs_
   char *deftemplates;		/* default templates          */
 
   bool hide_xop;		/* hide XOP templates	      */
+  
+  bool no_leveled_flags;	/* Do some flags have levels?  If true, old Atheme
+							 * behavior.  If false, these limitations apply:
+							 *  - To add/remove +f requires +s and/or +F.
+							 *  - To add/remove +s, requires +F.
+							 *  - To add/remove +R, requires +F.
+							 *
+							 *  Default configuration setting is false.
+							 */
 };
 
 /* authentication services */

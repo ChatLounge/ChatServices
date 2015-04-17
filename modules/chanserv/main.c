@@ -300,6 +300,7 @@ void _modinit(module_t *m)
 	add_conf_item("SOP", &chansvs.me->conf_table, c_ci_sop);
 	add_conf_item("TEMPLATES", &chansvs.me->conf_table, c_ci_templates);
 	add_bool_conf_item("CHANGETS", &chansvs.me->conf_table, 0, &chansvs.changets, false);
+	add_bool_conf_item("NO_LEVELED_FLAGS", &chansvs.me->conf_table, 0, &chansvs.no_leveled_flags, false);
 	add_bool_conf_item("HIDE_XOP", &chansvs.me->conf_table, 0, &chansvs.hide_xop, false);
 	add_dupstr_conf_item("TRIGGER", &chansvs.me->conf_table, 0, &chansvs.trigger, "!");
 	add_duration_conf_item("EXPIRE", &chansvs.me->conf_table, 0, &chansvs.expiry, "d", 0);

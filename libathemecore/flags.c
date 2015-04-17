@@ -323,6 +323,15 @@ unsigned int allow_flags(mychan_t *mc, unsigned int theirflags)
 		flags |= CA_AUTOHALFOP;
 	if (flags & CA_VOICE)
 		flags |= CA_AUTOVOICE;
+	if (!chansvs.no_leveled_flags)
+	{
+		if ((theirflags & CA_FLAGS) && !(flags & CA_SET))
+			flags &= ~CA_FLAGS;
+		if (flags & CA_RECOVER)
+			flags &= ~CA_RECOVER;
+		if ((flags & CA_SET) && (theirflags & CA_SET))
+			flags &= ~CA_SET;
+	}
 	if (use_limitflags && mc->flags & MC_LIMITFLAGS)
 	{
 		if (!(theirflags & (CA_HIGHPRIVS & ~CA_FLAGS)))

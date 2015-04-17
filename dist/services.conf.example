@@ -1173,12 +1173,13 @@ chanserv {
 	 * permissions.
 	 */
 	templates {
-		vop = "+AV";
-		hop = "+AHhitrv";
-		aop = "+AOhiortv";
-		sop = "+AOafhiorstv";
+		vop = "+V";
+		hop = "+AHehitrv";
+		aop = "+AOehiortv";
+		sop = "+AOefhiortv";
+		manager = "+AORefhiorstv";
 
-		founder = "+AFORafhiorstv";
+		founder = "+AFORefhiorstv";
 
 		/* some examples (which are commented out...) */
 		#member = "+Ai";
@@ -1209,6 +1210,19 @@ chanserv {
 	 * (That can also be used to advantage, when first enabling this.)
 	 */
 	#changets;
+	
+	/* (*) no_leveled_flags
+	 * If enabled, this will enable the default Atheme behavior, which permits
+	 * adding or removing users with equivalent flags.
+	 *
+	 * If disabled, the following restrictions apply:
+	 * - To add/remove +R, you need +F.
+	 * - To add/remove +s, you need +F.
+	 * - To add/remove +f, you need +F and/or +s.
+	 *
+	 * It is strongly recommended NOT to enable this.
+	 */
+	#no_leveled_flags;
 
 	/* (*) trigger
 	 * This setting allows you to change the trigger prefix for
@@ -1235,7 +1249,7 @@ chanserv {
 	 * Note that all founders have the exact same privileges and
 	 * the list of founders is shown in various places.
 	 */
-	maxfounders = 4;
+	maxfounders = 1;
 
 	/* (*)founder_flags
 	 * The flags a user will get when they register a new channel.
