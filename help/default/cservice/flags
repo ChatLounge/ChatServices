@@ -14,18 +14,33 @@ specified by a template name (changes the access to the
 template) or a flags change (starts with + or -). See the
 TEMPLATE help entry for more information about templates.
 
-#if !halfops
+If you don't have +f you may still remove your own access
+with -*.
+
+#if !no_leveled_flags
 If you are not a founder, you may only manipulate flags you
-have yourself, and may not edit users that have flags you
-don't have. For this purpose, +v grants the ability to grant
-+V, +o grants the ability to grant +O, and +r grants the
-ability to grant +b.
+have yourself, with the following exceptions:
+    - Only founders may add/remove +R.
+	- Only founders may add/remove +s.
+	- To add/remove +f, you must have +s and/or be a founder.
+
+These restrictions do not apply in the case of removing your
+own access.
 #else
 If you are not a founder, you may only manipulate flags you
-have yourself, and may not edit users that have flags you
-don't have. For this purpose, +v grants the ability to grant
-+V, +h grants the ability to grant +H, +o grants the ability
-to grant +O, and +r grants the ability to grant +b.
+have yourself.
+#endif
+	
+#if !halfops
+You may not edit users that have flags you don't have. For
+this purpose, +v grants the ability to grant +V, +o grants
+the ability to grant +O, and +r grants the ability to grant
++b.
+#else
+You may not edit users that have flags you don't have. For
+this purpose, +v grants the ability to grant +V, +h grants
+the ability to grant +H, +o grants the ability to grant +O,
+and +r grants the ability to grant +b.
 #endif
 
 #if module chanserv/set_limitflags
@@ -58,9 +73,6 @@ $server:server.name - Any user who is connected to the given server.
 $chanacs:#channel - Any user with channel access in the given channel
                       (including hostmasks).
 #endif
-
-If you do not have +f you may still remove your own access
-with -*.
 
 Syntax: FLAGS <#channel> [nickname|hostmask|group template]
 Syntax: FLAGS <#channel> [nickname|hostmask|group flag_changes]

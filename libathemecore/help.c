@@ -93,6 +93,8 @@ static bool evaluate_condition(sourceinfo_t *si, const char *s)
 		return ircd->uses_protect;
 	else if (!strcmp(word, "anyprivs"))
 		return has_any_privs(si);
+	else if (!strcmp(word, "no_leveled_flags"))
+		return chansvs.no_leveled_flags;
 	else if (!strcmp(word, "priv"))
 	{
 		if (p != NULL && (q = strchr(p, ' ')) != NULL)
