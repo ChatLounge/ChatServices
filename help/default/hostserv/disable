@@ -1,0 +1,13 @@
+Help for DISABLE:
+
+Permanently deactivates and removes your vhost.  After using
+this command, your real hostname will be visible in /whois.
+This action is irreversible, unless you ask network staff to
+set it again.
+
+If you only want to turn it off temporarily, use the OFF command.
+
+Syntax: DISABLE
+
+Examples:
+    /msg &nick& DISABLE

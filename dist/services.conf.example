@@ -630,6 +630,7 @@ loadmodule "modules/saslserv/authcookie";
  * vhost management of NickServ instead).
  *
  * Core components                              modules/hostserv/main
+ * DISABLE command								modules/hostserv/disable
  * HELP command                                 modules/hostserv/help
  * OFFER system                                 modules/hostserv/offer
  * ON and OFF commands                          modules/hostserv/onoff
@@ -639,6 +640,7 @@ loadmodule "modules/saslserv/authcookie";
  * GROUP command                                modules/hostserv/group
  */
 #loadmodule "modules/hostserv/main";
+#loadmodule "modules/hostserv/disable";
 #loadmodule "modules/hostserv/help";
 #loadmodule "modules/hostserv/onoff";
 #loadmodule "modules/hostserv/offer";
