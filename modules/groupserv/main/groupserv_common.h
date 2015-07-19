@@ -13,6 +13,7 @@ struct groupserv_config_ {
     unsigned int maxgroups;
     unsigned int maxgroupacs;
     bool enable_open_groups;
+	bool no_leveled_flags;
     char *join_flags;
 };
 

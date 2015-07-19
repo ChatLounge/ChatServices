@@ -52,6 +52,7 @@ void _modinit(module_t *m)
 	add_uint_conf_item("MAXGROUPS", &groupsvs->conf_table, 0, &gs_config.maxgroups, 0, 65535, 5);
 	add_uint_conf_item("MAXGROUPACS", &groupsvs->conf_table, 0, &gs_config.maxgroupacs, 0, 65535, 0);
 	add_bool_conf_item("ENABLE_OPEN_GROUPS", &groupsvs->conf_table, 0, &gs_config.enable_open_groups, false);
+	add_bool_conf_item("NO_LEVELED_FLAGS", &groupsvs->conf_table, 0, &gs_config.no_leveled_flags, false);
 	add_dupstr_conf_item("JOIN_FLAGS", &groupsvs->conf_table, 0, &gs_config.join_flags, "+");
 
 	gs_db_init();
@@ -65,6 +66,7 @@ void _moddeinit(module_unload_intent_t intent)
 	del_conf_item("MAXGROUPS", &groupsvs->conf_table);
 	del_conf_item("MAXGROUPACS", &groupsvs->conf_table);
 	del_conf_item("ENABLE_OPEN_GROUPS", &groupsvs->conf_table);
+	del_conf_item("NO_LEVELED_FLAGS", &groupsvs->conf_table);
 	del_conf_item("JOIN_FLAGS", &groupsvs->conf_table);
 
 	if (groupsvs)

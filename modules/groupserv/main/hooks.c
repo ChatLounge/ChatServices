@@ -188,6 +188,7 @@ static void osinfo_hook(sourceinfo_t *si)
 	command_success_nodata(si, "Maximum number of groups one user can own: %u", gs_config.maxgroups);
 	command_success_nodata(si, "Maximum number of ACL entries allowed for one group: %u", gs_config.maxgroupacs);
 	command_success_nodata(si, "Are open groups allowed: %s", gs_config.enable_open_groups ? "Yes" : "No");
+	command_success_nodata(si, "Leveled GroupServ flags are enabled: %s", gs_config.no_leveled_flags ? "No" : "Yes");
 	command_success_nodata(si, "Default joinflags for open groups: %s", gs_config.join_flags);
 }
 

@@ -307,6 +307,12 @@ unsigned int gs_flags_parser(char *flagstring, bool allow_minus, unsigned int fl
 			else
 				flags = GA_ALL;
 			break;
+		case 'A':
+			if (dir)
+				flags &= ~GA_ACLVIEW;
+			else
+				flags |= GA_ACLVIEW;
+			break;
 		case 'F':
 			if (dir)
 				flags &= ~GA_FOUNDER;

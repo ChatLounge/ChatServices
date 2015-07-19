@@ -142,6 +142,19 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
+	if (!gs_config->no_leveled_flags)
+	{
+		if (((oldflags & GA_FLAGS) || (flags & GA_FLAGS)) && !((groupacs_sourceinfo_flags(mg, si) & GA_SET) || (groupacs_sourceinfo_flags(mg, si) & GA_FOUNDER))) {
+			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
+			return;
+		}
+		
+		if (((oldflags & GA_SET) || (flags & GA_SET)) && !(groupacs_sourceinfo_flags(mg, si) & GA_FOUNDER)) {
+			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
+			return;
+		}
+	}
+	
 	if (!(flags & GA_FOUNDER) && groupacs_find(mg, mt, GA_FOUNDER, false))
 	{
 		if (mygroup_count_flag(mg, GA_FOUNDER) == 1)
@@ -159,7 +172,15 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 
 no_founder:
 	if (ga != NULL && flags != 0)
-		ga->flags = flags;
+	{
+		if (ga->flags != flags)
+			ga->flags = flags;
+		else
+		{
+			command_fail(si, fault_nochange, _("Group \2%s\2 access for \2%s\2 unchanged."), entity(mg)->name, mt->name);
+			return;
+		}
+	}
 	else if (ga != NULL)
 	{
 		groupacs_delete(mg, mt);
@@ -167,7 +188,7 @@ no_founder:
 		logcommand(si, CMDLOG_SET, "FLAGS:REMOVE: \2%s\2 on \2%s\2", mt->name, entity(mg)->name);
 		return;
 	}
-	else
+	else if (flags != 0)
 	{
 		if (MOWGLI_LIST_LENGTH(&mg->acs) > gs_config->maxgroupacs && (!(mg->flags & MG_ACSNOLIMIT)))
 		{
@@ -175,6 +196,11 @@ no_founder:
 			return;
 		}
 		ga = groupacs_add(mg, mt, flags);
+	}
+	else
+	{
+		command_fail(si, fault_nochange, _("Group \2%s\2 access for \2%s\2 unchanged."), entity(mg)->name, mt->name);
+		return;
 	}
 
 	MOWGLI_ITER_FOREACH(n, entity(mg)->chanacs.head)

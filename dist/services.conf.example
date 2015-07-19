@@ -1658,6 +1658,17 @@ groupserv {
 	 * their group as "anyone can join".
 	 */
 	enable_open_groups;
+	
+	/* (*)no_leveled_flags;
+	 * If enabled, this will follow old Atheme behavior.
+	 *
+	 * If disabled, the following additional reasonable flag restrictions are in place:
+	 * - To add or remove +s on a user, you must have +F.
+	 * - To add or remove +f on a user, you must have +s and/or +F.
+	 *
+	 * The default setting is for this to be disabled.
+	 */
+	#no_leveled_flags;
 
 	/* (*)join_flags
 	 * This is the GroupServ flagset that users who JOIN a open
