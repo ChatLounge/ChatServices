@@ -331,9 +331,16 @@ loadmodule "modules/nickserv/vhost";
  * VOICE/DEVOICE commands                       modules/chanserv/voice
  * WHY command                                  modules/chanserv/why
  * VOP/HOP/AOP/SOP commands                     modules/chanserv/xop
- *  This module provides emulation of the ircservices XOP scheme ONLY.
+ * VOP/HOP/AOP/SOP/MANAGER commands		modules/chanserv/xop_manager
+ * 	(load xop or xop_manager, not both)
+ *  These modules provides emulation of the ircservices XOP scheme ONLY.
  *  Do not report discrepencies when using native commands to edit channel
  *  ACLs. This is intentional.
+ *
+ *  xop_manager adds the DALnet style MANAGER command.  If you use this,
+ *  make sure to add a "manager" template under the chanserv::template
+ *  block.
+ *
  * Flood protection                             modules/chanserv/antiflood
  *  This module should be loaded after at least chanserv/quiet if you want
  *  the autoquiet feature to work.
@@ -341,8 +348,8 @@ loadmodule "modules/nickserv/vhost";
 loadmodule "modules/chanserv/main";
 loadmodule "modules/chanserv/access";
 loadmodule "modules/chanserv/akick";
-loadmodule "modules/chanserv/ban";
-#loadmodule "modules/chanserv/unban_self";
+#loadmodule "modules/chanserv/ban";
+loadmodule "modules/chanserv/unban_self";
 loadmodule "modules/chanserv/clone";
 loadmodule "modules/chanserv/close";
 loadmodule "modules/chanserv/clear";
@@ -352,7 +359,7 @@ loadmodule "modules/chanserv/clear_flags";
 loadmodule "modules/chanserv/clear_users";
 loadmodule "modules/chanserv/count";
 loadmodule "modules/chanserv/drop";
-#loadmodule "modules/chanserv/fflags";
+loadmodule "modules/chanserv/fflags";
 loadmodule "modules/chanserv/flags";
 loadmodule "modules/chanserv/ftransfer";
 loadmodule "modules/chanserv/getkey";
@@ -392,14 +399,15 @@ loadmodule "modules/chanserv/set_url";
 loadmodule "modules/chanserv/set_verbose";
 loadmodule "modules/chanserv/status";
 loadmodule "modules/chanserv/sync";
-#loadmodule "modules/chanserv/successor_acl";
+loadmodule "modules/chanserv/successor_acl";
 loadmodule "modules/chanserv/taxonomy";
 loadmodule "modules/chanserv/template";
 loadmodule "modules/chanserv/topic";
 loadmodule "modules/chanserv/voice";
 loadmodule "modules/chanserv/why";
 #loadmodule "modules/chanserv/xop";
-loadmodule "modules/chanserv/antiflood";
+loadmodule "modules/chanserv/xop_manager";
+#loadmodule "modules/chanserv/antiflood";
 
 /* CHANFIX module.
  *
@@ -1176,12 +1184,12 @@ chanserv {
 	 */
 	templates {
 		vop = "+V";
-		hop = "+AHehitrv";
+		hop = "+AHehirtv";
 		aop = "+AOehiortv";
-		sop = "+AOefhiortv";
-		manager = "+AORefhiorstv";
+		sop = "+AOaefhiortv";
+		manager = "+AORaefhioqrstv";
 
-		founder = "+AFORefhiorstv";
+		founder = "+AFORaefhioqrstv";
 
 		/* some examples (which are commented out...) */
 		#member = "+Ai";
