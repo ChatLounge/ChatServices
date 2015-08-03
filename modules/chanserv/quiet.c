@@ -130,7 +130,7 @@ devoice_user(sourceinfo_t *si, mychan_t *mc, channel_t *c, user_t *tu)
 		flag = CA_VOICE;
 	else
 		flag = 0;
-	if (flag != 0 && !chanacs_source_has_flag(mc, si, flag))
+	if (flag != 0 && !(chanacs_source_has_flag(mc, si, flag) || chanacs_source_has_flag(mc, si, CA_FOUNDER)))
 	{
 		command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 		return DEVOICE_FAILED;

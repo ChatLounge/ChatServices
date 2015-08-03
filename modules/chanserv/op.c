@@ -79,7 +79,7 @@ static void cmd_op(sourceinfo_t *si, bool opping, int parc, char *parv[])
 			continue;
 		}
 
-		if (!chanacs_source_has_flag(mc, si, CA_OP) && (tu != si->su || !chanacs_source_has_flag(mc, si, CA_AUTOOP)))
+		if (!(chanacs_source_has_flag(mc, si, CA_OP) || chanacs_source_has_flag(mc, si, CA_FOUNDER)) && (tu != si->su || !chanacs_source_has_flag(mc, si, CA_AUTOOP)))
 		{
 			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 			return;

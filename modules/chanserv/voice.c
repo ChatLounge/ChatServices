@@ -79,7 +79,7 @@ static void cmd_voice(sourceinfo_t *si, bool voicing, int parc, char *parv[])
 			continue;
 		}
 
-		if (!chanacs_source_has_flag(mc, si, CA_VOICE) && (tu != si->su || !chanacs_source_has_flag(mc, si, CA_AUTOVOICE)))
+		if (!(chanacs_source_has_flag(mc, si, CA_VOICE) || chanacs_source_has_flag(mc, si, CA_FOUNDER)) && (tu != si->su || !chanacs_source_has_flag(mc, si, CA_AUTOVOICE)))
 		{
 			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 			return;

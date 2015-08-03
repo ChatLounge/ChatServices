@@ -55,7 +55,7 @@ static void cs_cmd_getkey(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!chanacs_source_has_flag(mc, si, CA_INVITE))
+	if (!(chanacs_source_has_flag(mc, si, CA_INVITE) || chanacs_source_has_flag(mc, si, CA_FOUNDER)))
 	{
 		command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 		return;

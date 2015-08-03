@@ -69,7 +69,7 @@ static void cmd_protect(sourceinfo_t *si, bool protecting, int parc, char *parv[
 		return;
 	}
 
-	if (!chanacs_source_has_flag(mc, si, CA_USEPROTECT))
+	if (!(chanacs_source_has_flag(mc, si, CA_USEPROTECT) || chanacs_source_has_flag(mc, si, CA_FOUNDER)))
 	{
 		command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 		return;

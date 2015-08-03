@@ -73,7 +73,7 @@ static void cs_cmd_why(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!(mc->flags & MC_PUBACL) && !chanacs_source_has_flag(mc, si, CA_ACLVIEW))
+	if (!(mc->flags & MC_PUBACL) && !(chanacs_source_has_flag(mc, si, CA_ACLVIEW) || chanacs_source_has_flag(mc, si, CA_FOUNDER)))
 	{
 		if (has_priv(si, PRIV_CHAN_AUSPEX))
 			operoverride = true;
