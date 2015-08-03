@@ -280,10 +280,10 @@ loadmodule "modules/nickserv/vhost";
  * CLEAR command                                modules/chanserv/clear
  * CLEAR AKICKS command                         modules/chanserv/clear_akicks
  * CLEAR BANS command                           modules/chanserv/clear_bans
- * CLEAR EXCEPTS command						modules/chanserv/clear_excepts
+ * CLEAR EXCEPTS command                        modules/chanserv/clear_excepts
  * CLEAR FLAGS command                          modules/chanserv/clear_flags
- * CLEAR INVEX command							modules/chanserv/clear_invex
- * CLEAR QUIETS command							modules/chanserv/clear_quiets
+ * CLEAR INVEX command                          modules/chanserv/clear_invex
+ * CLEAR QUIETS command                         modules/chanserv/clear_quiets
  * CLEAR USERS command                          modules/chanserv/clear_users
  * COUNT command                                modules/chanserv/count
  * DROP command                                 modules/chanserv/drop
