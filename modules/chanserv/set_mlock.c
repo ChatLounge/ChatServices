@@ -59,7 +59,7 @@ static void cs_cmd_set_mlock(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!chanacs_source_has_flag(mc, si, CA_SET))
+	if (!(chanacs_source_has_flag(mc, si, CA_SET) || chanacs_source_has_flag(mc, si, CA_FOUNDER)))
 	{
 		if (ircd->oper_only_modes == 0 ||
 				!has_priv(si, PRIV_CHAN_CMODES) ||

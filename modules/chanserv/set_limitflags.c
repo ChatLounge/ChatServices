@@ -54,7 +54,7 @@ static void cs_cmd_set_limitflags(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if ((chanacs_source_flags(mc, si) & CA_HIGHPRIVS) != CA_HIGHPRIVS)
+	if (((chanacs_source_flags(mc, si) & CA_HIGHPRIVS) != CA_HIGHPRIVS) || chanacs_source_has_flag(mc, si, CA_FOUNDER))
 	{
 		command_fail(si, fault_noprivs, _("You are not authorized to perform this command."));
 		return;
