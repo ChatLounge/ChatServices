@@ -17,7 +17,11 @@ SRCS =					\
 	clear.c				\
 	clear_akicks.c  	\
 	clear_bans.c		\
+	clear_bans_any.c	\
+	clear_excepts.c		\
+	clear_invex.c		\
 	clear_flags.c		\
+	clear_quiets.c		\
 	clear_users.c		\
 	clone.c				\
 	close.c				\

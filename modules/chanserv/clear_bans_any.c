@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2015 Chat Lounge IRC Network Development
  * Copyright (c) 2005 William Pitcock, et al.
  * Rights to this code are as documented in doc/LICENSE.
  *
- * This file contains code for the CService CLEAR EXCEPT function.
+ * This file contains code for the CService KICK functions.
  *
- * Based off of chanserv/clear_bans.c .
+ * Renamed from clear_bans.c to clear_bans_any.c to not collide with the new module.
+ *
  */
 
 #include "atheme.h"
@@ -14,12 +14,12 @@ DECLARE_MODULE_V1
 (
 	"chanserv/clear_bans", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Chat Lounge IRC Network <http://www.chatlounge.net>"
+	"Atheme Development Group <http://www.atheme.org>"
 );
 
 static void cs_cmd_clear_bans(sourceinfo_t *si, int parc, char *parv[]);
 
-command_t cs_clear_bans = { "BANS", N_("Clears the ban list (+b) of a channel."),
+command_t cs_clear_bans = { "BANS", N_("Clears bans or other lists of a channel."),
 	AC_NONE, 2, cs_cmd_clear_bans, { .path = "cservice/clear_bans" } };
 
 mowgli_patricia_t **cs_clear_cmds;
@@ -42,7 +42,28 @@ static void cs_cmd_clear_bans(sourceinfo_t *si, int parc, char *parv[])
 	mychan_t *mc = mychan_find(parv[0]);
 	chanban_t *cb;
 	mowgli_node_t *n, *tn;
+	const char *item = parv[1], *p;
 	int hits;
+
+	if (item == NULL)
+		item = "b";
+	if (*item == '+' || *item == '-')
+		item++;
+	if (!strcmp(item, "*"))
+		item = ircd->ban_like_modes;
+	for (p = item; *p != '\0'; p++)
+	{
+		if (!strchr(ircd->ban_like_modes, *p))
+		{
+			command_fail(si, fault_badparams, _("Invalid mode; valid ones are %s."), ircd->ban_like_modes);
+			return;
+		}
+	}
+	if (*item == '\0')
+	{
+		command_fail(si, fault_badparams, _("Invalid mode; valid ones are %s."), ircd->ban_like_modes);
+		return;
+	}
 
 	if (!mc)
 	{
@@ -72,7 +93,7 @@ static void cs_cmd_clear_bans(sourceinfo_t *si, int parc, char *parv[])
 	MOWGLI_ITER_FOREACH_SAFE(n, tn, c->bans.head)
 	{
 		cb = n->data;
-		if (!strchr("b", cb->type))
+		if (!strchr(item, cb->type))
 			continue;
 		modestack_mode_param(chansvs.nick, c, MTYPE_DEL, cb->type, cb->mask);
 		chanban_delete(cb);
@@ -82,11 +103,11 @@ static void cs_cmd_clear_bans(sourceinfo_t *si, int parc, char *parv[])
 	if (hits > 4)
 		command_add_flood(si, FLOOD_MODERATE);
 
-	logcommand(si, CMDLOG_DO, "CLEAR:BANS: \2%s\2",
-			mc->name);
+	logcommand(si, CMDLOG_DO, "CLEAR:BANS: \2%s\2 on \2%s\2",
+			item, mc->name);
 
-	command_success_nodata(si, _("Cleared channel bans on \2%s\2 (%d removed)."),
-			parv[0], hits);
+	command_success_nodata(si, _("Cleared %s modes on \2%s\2 (%d removed)."),
+			item, parv[0], hits);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

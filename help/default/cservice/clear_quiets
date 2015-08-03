@@ -1,0 +1,11 @@
+Help for CLEAR QUIETS:
+
+This command removes all quiets found in a specific
+channel.
+
+Syntax: CLEAR <#channel> QUIETS
+
+Examples:
+    /msg &nick& CLEAR #support QUIETS
+
+Clears #support quiet list.

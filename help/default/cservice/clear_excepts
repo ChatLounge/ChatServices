@@ -1,0 +1,11 @@
+Help for CLEAR EXCEPTS:
+
+This command removes all ban exceptions found in 
+a specific channel.
+
+Syntax: CLEAR <#channel> EXCEPTS
+
+Examples:
+    /msg &nick& CLEAR #support EXCEPTS
+
+Clears #support ban exception list.

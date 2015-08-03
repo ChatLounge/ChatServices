@@ -1,0 +1,11 @@
+Help for CLEAR INVEX:
+
+This command removes all invite exceptions found
+in a specific channel.
+
+Syntax: CLEAR <#channel> INVEX
+
+Examples:
+    /msg &nick& CLEAR #support INVEX
+
+Clears #support invite exception list.

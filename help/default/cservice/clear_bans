@@ -1,27 +1,11 @@
 Help for CLEAR BANS:
 
-Clear bans will remove all bans found in a specific
-channel. If your ircd supports other lists associated
-with a channel (e.g. ban exceptions), you can clear
-these by specifying the mode letters. Specify an
-asterisk to clear all lists.
+This command removes all bans found in a specific
+channel.
 
-Syntax: CLEAR <#channel> BANS [types]
+Syntax: CLEAR <#channel> BANS
 
 Examples:
     /msg &nick& CLEAR #support BANS
 
 Clears #support ban list.
-
-    /msg &nick& CLEAR #support BANS eI
-
-Removes all ban and invite exceptions on #support
-(if your ircd supports them).
-
-    /msg &nick& CLEAR #support BANS *
-
-Clears all lists of #support.
-
-    /msg &nick& CLEAR #support BANS +
-
-Shows the possible letters.
