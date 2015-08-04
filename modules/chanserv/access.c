@@ -927,7 +927,13 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 	{
 		if (mychan_num_founders(mc) >= chansvs.maxfounders)
 		{
-			command_fail(si, fault_noprivs, _("Only %d founders allowed per channel."), chansvs.maxfounders);
+			/* One is not plural. */
+			if (chansvs.maxfounders == 1) {
+				command_fail(si, fault_noprivs, _("Only 1 founder allowed per channel."));
+			}
+			else {
+				command_fail(si, fault_noprivs, _("Only %d founders allowed per channel."), chansvs.maxfounders);
+			}
 			chanacs_close(ca);
 			return;
 		}
