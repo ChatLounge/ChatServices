@@ -27,5 +27,6 @@
 #define CMODE_JTHROT	0x02000000	/* unreal +j */
 #define CMODE_CENSOR    0x04000000	/* unreal +G */
 #define CMODE_PERM	0x08000000	/* unreal +P */
+#define CMODE_NONOTICE  0x10000000	/* unreal +T */
 
 #endif
