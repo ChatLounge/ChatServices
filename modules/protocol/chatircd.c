@@ -17,23 +17,23 @@ DECLARE_MODULE_V1("protocol/chatircd", true, _modinit, NULL, PACKAGE_STRING, "Ch
 
 /* *INDENT-OFF* */
 
-ircd_t Charybdis = {
+ircd_t chatircd = {
         "ChatIRCd",			/* IRCd name */
         "$$",                           /* TLD Prefix, used by Global. */
         true,                           /* Whether or not we use IRCNet/TS6 UID */
         false,                          /* Whether or not we use RCOMMAND */
-        false,                          /* Whether or not we support channel owners. */
-        false,                          /* Whether or not we support channel protection. */
-        false,                          /* Whether or not we support halfops. */
+        true,                          /* Whether or not we support channel owners. */
+        true,                          /* Whether or not we support channel protection. */
+        true,                          /* Whether or not we support halfops. */
 	false,				/* Whether or not we use P10 */
 	false,				/* Whether or not we use vHosts. */
 	CMODE_EXLIMIT | CMODE_PERM,	/* Oper-only cmodes */
-        0,                              /* Integer flag for owner channel flag. */
-        0,                              /* Integer flag for protect channel flag. */
-        0,                              /* Integer flag for halfops. */
-        "+",                            /* Mode we set for owner. */
-        "+",                            /* Mode we set for protect. */
-        "+",                            /* Mode we set for halfops. */
+        CSTATUS_OWNER,                              /* Integer flag for owner channel flag. */
+        CSTATUS_PROTECT,                              /* Integer flag for protect channel flag. */
+        CSTATUS_HALFOP,                              /* Integer flag for halfops. */
+        "+y",                            /* Mode we set for owner. */
+        "+a",                            /* Mode we set for protect. */
+        "+h",                            /* Mode we set for halfops. */
 	PROTOCOL_CHARYBDIS,		/* Protocol type */
 	CMODE_PERM,                     /* Permanent cmodes */
 	0,                              /* Oper-immune cmode */
@@ -43,7 +43,7 @@ ircd_t Charybdis = {
 	IRCD_CIDR_BANS | IRCD_HOLDNICK  /* Flags */
 };
 
-struct cmode_ charybdis_mode_list[] = {
+struct cmode_ chatircd_mode_list[] = {
   { 'i', CMODE_INVITE	},
   { 'm', CMODE_MOD	},
   { 'n', CMODE_NOEXT	},
@@ -60,7 +60,7 @@ struct cmode_ charybdis_mode_list[] = {
   { 'T', CMODE_NONOTICE	},
 
   /* following modes are added as extensions */
-  { 'N', CMODE_NPC	},
+  { 'N', CMODE_NETADMINONLY	},
   { 'S', CMODE_SSLONLY	},
   { 'O', CMODE_OPERONLY	},
   { 'A', CMODE_ADMINONLY},
@@ -73,25 +73,31 @@ struct cmode_ charybdis_mode_list[] = {
 static bool check_forward(const char *, channel_t *, mychan_t *, user_t *, myuser_t *);
 static bool check_jointhrottle(const char *, channel_t *, mychan_t *, user_t *, myuser_t *);
 
-struct extmode charybdis_ignore_mode_list[] = {
+struct extmode chatircd_ignore_mode_list[] = {
   { 'f', check_forward },
   { 'j', check_jointhrottle },
   { '\0', 0 }
 };
 
-struct cmode_ charybdis_status_mode_list[] = {
+struct cmode_ chatircd_status_mode_list[] = {
+  { 'y', CSTATUS_OWNER },
+  { 'a', CSTATUS_PROTECT },
   { 'o', CSTATUS_OP    },
+  { 'h', CSTATUS_HALFOP },
   { 'v', CSTATUS_VOICE },
   { '\0', 0 }
 };
 
-struct cmode_ charybdis_prefix_mode_list[] = {
+struct cmode_ chatircd_prefix_mode_list[] = {
+  { '~', CSTATUS_OWNER },
+  { '&', CSTATUS_PROTECT },
   { '@', CSTATUS_OP    },
+  { '%', CSTATUS_HALFOP },
   { '+', CSTATUS_VOICE },
   { '\0', 0 }
 };
 
-struct cmode_ charybdis_user_mode_list[] = {
+struct cmode_ chatircd_user_mode_list[] = {
   { 'p', UF_IMMUNE   },
   { 'a', UF_ADMIN    },
   { 'i', UF_INVIS    },
@@ -174,7 +180,7 @@ static bool extgecos_match(const char *mask, user_t *u)
 	return !match(mask, hostgbuf) || !match(mask, realgbuf);
 }
 
-static mowgli_node_t *charybdis_next_matching_ban(channel_t *c, user_t *u, int type, mowgli_node_t *first)
+static mowgli_node_t *chatircd_next_matching_ban(channel_t *c, user_t *u, int type, mowgli_node_t *first)
 {
 	chanban_t *cb;
 	mowgli_node_t *n;
@@ -266,7 +272,7 @@ static mowgli_node_t *charybdis_next_matching_ban(channel_t *c, user_t *u, int t
 	return NULL;
 }
 
-static bool charybdis_is_valid_host(const char *host)
+static bool chatircd_is_valid_host(const char *host)
 {
 	const char *p;
 
@@ -278,12 +284,12 @@ static bool charybdis_is_valid_host(const char *host)
 	return true;
 }
 
-static void charybdis_notice_channel_sts(user_t *from, channel_t *target, const char *text)
+static void chatircd_notice_channel_sts(user_t *from, channel_t *target, const char *text)
 {
 	sts(":%s NOTICE %s :%s", from ? CLIENT_NAME(from) : ME, target->name, text);
 }
 
-static bool charybdis_is_extban(const char *mask)
+static bool chatircd_is_extban(const char *mask)
 {
 	const char without_param[] = "oza";
 	const char with_param[] = "ajcxr";
@@ -309,20 +315,20 @@ void _modinit(module_t * m)
 {
 	MODULE_TRY_REQUEST_DEPENDENCY(m, "protocol/ts6-generic");
 
-	notice_channel_sts = &charybdis_notice_channel_sts;
+	notice_channel_sts = &chatircd_notice_channel_sts;
 
-	next_matching_ban = &charybdis_next_matching_ban;
-	is_valid_host = &charybdis_is_valid_host;
-	is_extban = &charybdis_is_extban;
+	next_matching_ban = &chatircd_next_matching_ban;
+	is_valid_host = &chatircd_is_valid_host;
+	is_extban = &chatircd_is_extban;
 
-	mode_list = charybdis_mode_list;
-	ignore_mode_list = charybdis_ignore_mode_list;
-	status_mode_list = charybdis_status_mode_list;
-	prefix_mode_list = charybdis_prefix_mode_list;
-	user_mode_list = charybdis_user_mode_list;
-	ignore_mode_list_size = ARRAY_SIZE(charybdis_ignore_mode_list);
+	mode_list = chatircd_mode_list;
+	ignore_mode_list = chatircd_ignore_mode_list;
+	status_mode_list = chatircd_status_mode_list;
+	prefix_mode_list = chatircd_prefix_mode_list;
+	user_mode_list = chatircd_user_mode_list;
+	ignore_mode_list_size = ARRAY_SIZE(chatircd_ignore_mode_list);
 
-	ircd = &Charybdis;
+	ircd = &chatircd;
 
 	m->mflags = MODTYPE_CORE;
 
