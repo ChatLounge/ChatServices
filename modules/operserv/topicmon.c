@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Chat Lounge IRC Network Development
+ * Copyright (c) 2014-2016 ChatLounge IRC Network Development Team
  *
  * Author: Ben (Ben @ irc.chatlounge.net)
  *
@@ -20,7 +20,7 @@ DECLARE_MODULE_V1
 (
 	"operserv/topicmon", true, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Chat Lounge IRC Network Development <http://www.chatlounge.net>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
  
 static void watch_topic_changes(channel_t *channel);

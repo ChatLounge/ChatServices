@@ -1,9 +1,10 @@
 /*
- * Copyright (c) 2015 Chat Lounge IRC Network Development
+ * Copyright (c) 2015-2016 ChatLounge IRC Network Development Team
  * Copyright (c) 2005-2007 Atheme Development Group
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService XOP and MANAGER functions.
+ * Most useful if many users are migrating from DALnet.
  *
  * Based off of chanserv/xop.c
  *

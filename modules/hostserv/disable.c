@@ -12,7 +12,7 @@
  *	and must be run at the beginning of every IRC session, prior to oper
  *	intervention.
  *
- *	Copyright (c) 2015 - Chat Lounge IRC Network Development Team
+ *	Copyright (c) 2015-2016 - ChatLounge IRC Network Development Team
  */
  
 #include "atheme.h"
@@ -22,7 +22,7 @@ DECLARE_MODULE_V1
 (
 	"hostserv/disable", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Chat Lounge IRC Network Development Team <http://www.chatlounge.net>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void hs_cmd_disable(sourceinfo_t *si, int parc, char *parv[]);

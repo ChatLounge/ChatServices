@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Chat Lounge IRC Network Development
+ * Copyright (c) 2014-2016 ChatLounge IRC Network Development Team
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2007 Atheme Development Group
  * Rights to this code are documented in doc/LICENSE.
@@ -13,7 +13,7 @@
 #include "pmodule.h"
 #include "protocol/chatircd.h"
 
-DECLARE_MODULE_V1("protocol/chatircd", true, _modinit, NULL, PACKAGE_STRING, "Chat Lounge IRC Network Development <http://www.chatlounge.net>");
+DECLARE_MODULE_V1("protocol/chatircd", true, _modinit, NULL, PACKAGE_STRING, "ChatLounge IRC Network Development Team <http://www.chatlounge.net>");
 
 /* *INDENT-OFF* */
 

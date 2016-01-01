@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Chat Lounge IRC Network Development
+ * Copyright (c) 2015-2016 ChatLounge IRC Network Development Team
  * Copyright (c) 2005 William Pitcock, et al.
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/clear_invex", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Chat Lounge IRC Network <http://www.chatlounge.net>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void cs_cmd_clear_invex(sourceinfo_t *si, int parc, char *parv[]);

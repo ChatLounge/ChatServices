@@ -2,7 +2,8 @@
  * atheme-services: A collection of minimalist IRC services
  * atheme.c: Initialization and startup of the services system
  *
- * Copyright (c) 2014-2015 Chat Lounge IRC Network Development
+ * Copyright (c) 2014-2016 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net/)
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
