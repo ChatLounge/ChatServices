@@ -7,7 +7,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
 
-AC_INIT(ChatServices, 1.0.0-beta1, ben@chatlounge.net)
+AC_INIT(ChatServices, 1.0.0-dev, ben@chatlounge.net)
 
 AC_CONFIG_AUX_DIR(autoconf)
 
