@@ -429,6 +429,7 @@ E mycertfp_t *mycertfp_find(const char *certfp);
 E mychan_t *mychan_add(char *name);
 //inline mychan_t *mychan_find(const char *name);
 E bool mychan_isused(mychan_t *mc);
+E unsigned int mychan_num_flags(mychan_t *mc, int flag);
 E unsigned int mychan_num_founders(mychan_t *mc);
 E const char *mychan_founder_names(mychan_t *mc);
 E myuser_t *mychan_pick_candidate(mychan_t *mc, unsigned int minlevel);

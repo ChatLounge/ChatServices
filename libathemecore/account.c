@@ -3,6 +3,8 @@
  * account.c: Account management
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1040,21 +1042,41 @@ bool mychan_isused(mychan_t *mc)
 	return false;
 }
 
-unsigned int mychan_num_founders(mychan_t *mc)
+/* mychan_num_flags:
+ *
+ * More generalized version of mychan_num_founders.
+ * Returns the count of how many users in the channel
+ * have the given flag.
+ *
+ * Inputs - channel pointer, flag.
+ * Output - Number of flag entries with the given flag.
+ */
+unsigned int mychan_num_flags(mychan_t *mc, int flag)
 {
 	mowgli_node_t *n;
 	chanacs_t *ca;
 	unsigned int count = 0;
 
 	return_val_if_fail(mc != NULL, 0);
-
+	
 	MOWGLI_ITER_FOREACH(n, mc->chanacs.head)
 	{
 		ca = n->data;
-		if (ca->entity != NULL && ca->level & CA_FOUNDER)
+		if (ca->entity != NULL && ca->level & flag)
 			count++;
 	}
+
 	return count;
+}
+
+/* This function is here for historical purposes.
+ * Now it just calls a more generalized version of
+ * this function; mychan_num_flags.
+ * - Ben
+ */
+unsigned int mychan_num_founders(mychan_t *mc)
+{
+	return mychan_num_flags(mc, CA_FOUNDER);
 }
 
 const char *mychan_founder_names(mychan_t *mc)
