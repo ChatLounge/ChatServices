@@ -1269,7 +1269,7 @@ chanserv {
 	 * This MUST include at least 'F' or it will be ignored.
 	 * If it is not set, ChatServices will give the user all channel flags.
 	 */
-	#founder_flags = "AFORfiorstv";
+	#founder_flags = "AFORaefhioqrstv";
 
 	/* (*)akick_time
 	 * The default expiration time (in minutes) for AKICKs.
