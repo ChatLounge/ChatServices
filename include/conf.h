@@ -21,6 +21,7 @@ E mowgli_list_t conf_gi_table; /* general{} */
 E mowgli_list_t conf_la_table; /* language{} */
 
 E struct Token uflags[];
+E struct Token cflags[];
 
 #endif
 

@@ -65,7 +65,7 @@ struct Token uflags[] = {
   { NULL, 0 }
 };
 
-static struct Token cflags[] = {
+struct Token cflags[] = {
   { "HOLD",        MC_HOLD        },
   { "SECURE",      MC_SECURE      },
   { "VERBOSE",     MC_VERBOSE     },

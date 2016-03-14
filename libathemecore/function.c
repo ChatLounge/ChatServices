@@ -902,6 +902,37 @@ char *get_default_uflags()
 	return sstrdup(buf);
 }
 
+/* get_default_uflags:
+ *
+ *     Returns a string of the current default uflags
+ * a user receives upon registration.  Used in /ns register
+ * and /os info.
+ *
+ * - Ben
+ */
+char *get_default_cflags()
+{
+	char buf[BUFSIZE];
+
+	mowgli_strlcpy(buf, "", sizeof buf);
+
+	int i = 0;
+
+	for(struct Token *it = cflags; it->value != 0; it++)
+	{
+		if(config_options.defcflags & it->value)
+		{
+			if(i > 0)
+				mowgli_strlcat(buf, ", ", sizeof buf);
+
+			mowgli_strlcat(buf, it->text, sizeof buf);
+			i++;
+		}
+	}
+
+	return sstrdup(buf);
+}
+
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
  * vim:ts=8
  * vim:sw=8
