@@ -301,15 +301,40 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 	*buf = '\0';
 
-	if (MU_HIDEMAIL & mu->flags)
-		strcat(buf, "HideMail");
+	/* Note: This is horrible, and should probably tie in
+	 * to a struct eventually.  Right now this would have
+	 * be updated manually every time another user flag is
+	 * added for any reason.
+	 *
+	 * - Ben
+	 */
+	if (MU_EMAILMEMOS & mu->flags)
+	{
+		if (*buf)
+			strcat(buf, ", ");
 
+		strcat(buf, "EMailMemos");
+	}
+	if (MU_HIDEMAIL & mu->flags)
+	{
+		if (*buf)
+			strcat(buf, ", ");
+
+		strcat(buf, "HideMail");
+	}
 	if (MU_HOLD & mu->flags)
 	{
 		if (*buf)
 			strcat(buf, ", ");
 
 		strcat(buf, "Hold");
+	}
+	if (MU_NEVERGROUP & mu->flags)
+	{
+		if (*buf)
+			strcat(buf, ", ");
+
+		strcat(buf, "NeverGroup");
 	}
 	if (MU_NEVEROP & mu->flags)
 	{
@@ -318,13 +343,13 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 		strcat(buf, "NeverOp");
 	}
-	if (MU_NOOP & mu->flags)
-	{
-		if (*buf)
-			strcat(buf, ", ");
+	if (MU_NOGREET & mu->flags)
+    {
+        if (*buf)
+            strcat(buf, ", ");
 
-		strcat(buf, "NoOp");
-	}
+        strcat(buf, "NoGreet");
+    }
 	if (MU_NOMEMO & mu->flags)
 	{
 		if (*buf)
@@ -332,19 +357,12 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 		strcat(buf, "NoMemo");
 	}
-	if (MU_EMAILMEMOS & mu->flags)
+	if (MU_NOOP & mu->flags)
 	{
 		if (*buf)
 			strcat(buf, ", ");
 
-		strcat(buf, "EMailMemos");
-	}
-	if (MU_NEVERGROUP & mu->flags)
-	{
-		if (*buf)
-			strcat(buf, ", ");
-
-		strcat(buf, "NeverGroup");
+		strcat(buf, "NoOp");
 	}
 	if (use_account_private && MU_PRIVATE & mu->flags)
 	{
@@ -360,13 +378,6 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 		strcat(buf, "RegNoLimit");
 	}
-    if (MU_NOGREET & mu->flags)
-    {
-        if (*buf)
-            strcat(buf, ", ");
-
-        strcat(buf, "NoGreet");
-    }
 
 	if (*buf)
 		command_success_nodata(si, _("Flags      : %s"), buf);
