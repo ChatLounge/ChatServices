@@ -75,6 +75,8 @@ E bool is_internal_client(user_t *user);
 E bool is_autokline_exempt(user_t *user);
 E bool is_service(user_t *user);
 
+E char *get_default_uflags();
+
 /* users.c */
 E mowgli_patricia_t *userlist;
 E mowgli_patricia_t *uidlist;

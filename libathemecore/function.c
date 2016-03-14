@@ -1,6 +1,6 @@
 /*
  * atheme-services: A collection of minimalist IRC services
- * function.c: Miscillaneous functions.
+ * function.c: Miscellaneous functions.
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
  *
@@ -22,6 +22,7 @@
  */
 
 #include "atheme.h"
+#include "conf.h"
 
 char ch[] = "abcdefghijklmnopqrstuvwxyz";
 
@@ -866,6 +867,37 @@ char *combine_path(const char *parent, const char *child)
 	mowgli_strlcpy(buf, parent, sizeof buf);
 	mowgli_strlcat(buf, "/", sizeof buf);
 	mowgli_strlcat(buf, child, sizeof buf);
+
+	return sstrdup(buf);
+}
+
+/* get_default_uflags:
+ *
+ *     Returns a string of the current default uflags
+ * a user receives upon registration.  Used in /ns register
+ * and /os info.
+ *
+ * - Ben
+ */
+char *get_default_uflags()
+{
+	char buf[BUFSIZE];
+
+	mowgli_strlcpy(buf, "", sizeof buf);
+
+	int i = 0;
+
+	for(struct Token *it = uflags; it->value != 0; it++)
+	{
+		if(config_options.defuflags & it->value)
+		{
+			if(i > 0)
+				mowgli_strlcat(buf, ", ", sizeof buf);
+
+			mowgli_strlcat(buf, it->text, sizeof buf);
+			i++;
+		}
+	}
 
 	return sstrdup(buf);
 }

@@ -49,7 +49,7 @@ static int c_gi_immune_level(mowgli_config_file_entry_t *);
 
 /* *INDENT-OFF* */
 
-static struct Token uflags[] = {
+struct Token uflags[] = {
   { "HOLD",      MU_HOLD         },
   { "NEVEROP",   MU_NEVEROP      },
   { "NOOP",      MU_NOOP         },

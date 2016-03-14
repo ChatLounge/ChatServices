@@ -20,6 +20,8 @@ E mowgli_list_t conf_si_table; /* serverinfo{} */
 E mowgli_list_t conf_gi_table; /* general{} */
 E mowgli_list_t conf_la_table; /* language{} */
 
+E struct Token uflags[];
+
 #endif
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs ts=8 sw=8 noexpandtab
