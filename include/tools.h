@@ -114,6 +114,7 @@ typedef struct {
 	mowgli_node_t node;
 } email_canonicalizer_item_t;
 
+E char *get_default_uflags();
 E char *get_default_cflags();
 
 /* misc string stuff */
