@@ -163,7 +163,7 @@ static void cs_cmd_register(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("\2%s\2 is now registered to \2%s\2."), mc->name, entity(si->smu)->name);
 	command_success_nodata(si, _("The default channel settings for new channels are: %s"),
 		get_default_cflags());
-	command_success_nodata(si, _("If you would like to change these, or for more information on what they mean, type \2/msg ChanServ HELP SET\2 for more information."));
+	command_success_nodata(si, _("If you would like to change these, or for more information on what they mean, type \2/msg %s HELP SET\2 for more information."), chansvs.nick);
 
 	hdata.si = si;
 	hdata.mc = mc;
