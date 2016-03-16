@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016 ChatLounge IRC Network Development
  * Copyright (c) 2005 William Pitcock, et al.
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -104,6 +105,13 @@ static void cmd_op(sourceinfo_t *si, bool opping, int parc, char *parv[])
 		{
 			command_fail(si, fault_nosuch_target, _("\2%s\2 is not on \2%s\2."), tu->nick, mc->name);
 			continue;
+		}
+
+		if((op && cu->modes & CSTATUS_OP) || (!op && !(cu->modes & CSTATUS_OP)))
+		{
+			command_fail(si, fault_nochange, _("\2%s\2 is already %sopped on \2%s\2."),
+				tu->nick, op ? "" : "de", mc->name);
+				continue;
 		}
 
 		modestack_mode_param(chansvs.nick, mc->chan, op ? MTYPE_ADD : MTYPE_DEL, 'o', CLIENT_NAME(tu));

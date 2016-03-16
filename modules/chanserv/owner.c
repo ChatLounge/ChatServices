@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016 ChatLounge IRC Network Development
  * Copyright (c) 2005 William Pitcock, et al.
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -114,6 +115,13 @@ static void cmd_owner(sourceinfo_t *si, bool ownering, int parc, char *parv[])
 		{
 			command_fail(si, fault_nosuch_target, _("\2%s\2 is not on \2%s\2."), tu->nick, mc->name);
 			continue;
+		}
+
+		if((owner && cu->modes & CSTATUS_OWNER) || (!owner && !(cu->modes & CSTATUS_OWNER)))
+		{
+			command_fail(si, fault_nochange, _("\2%s\2 is already %sset as owner on \2%s\2."),
+				tu->nick, owner ? "" : "un", mc->name);
+				continue;
 		}
 
 		modestack_mode_param(chansvs.nick, mc->chan, owner ? MTYPE_ADD : MTYPE_DEL, ircd->owner_mchar[1], CLIENT_NAME(tu));

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016 ChatLounge IRC Network Development
  * Copyright (c) 2005 William Pitcock, et al.
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -116,11 +117,18 @@ static void cmd_halfop(sourceinfo_t *si, bool halfopping, int parc, char *parv[]
 			continue;
 		}
 
+		if((halfop && cu->modes & CSTATUS_HALFOP) || (!halfop && !(cu->modes & CSTATUS_HALFOP)))
+		{
+			command_fail(si, fault_nochange, _("\2%s\2 is already %shalfopped on \2%s\2."),
+				tu->nick, halfop ? "" : "de", mc->name);
+				continue;
+		}
+
 		modestack_mode_param(chansvs.nick, mc->chan, halfop ? MTYPE_ADD : MTYPE_DEL, 'h', CLIENT_NAME(tu));
 		if (halfop)
-			cu->modes |= ircd->halfops_mode;
+			cu->modes |= CSTATUS_HALFOP;
 		else
-			cu->modes &= ~ircd->halfops_mode;
+			cu->modes &= ~CSTATUS_HALFOP;
 
 		if (si->c == NULL && tu != si->su)
 			change_notify(chansvs.nick, tu, "You have been %shalfopped on %s by %s", halfop ? "" : "de", mc->name, get_source_name(si));

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016 ChatLounge IRC Network Development
  * Copyright (c) 2005 William Pitcock, et al.
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -93,6 +94,13 @@ static void cmd_voice(sourceinfo_t *si, bool voicing, int parc, char *parv[])
 		{
 			command_fail(si, fault_nosuch_target, _("\2%s\2 is not on \2%s\2."), tu->nick, mc->name);
 			continue;
+		}
+
+		if((voice && cu->modes & CSTATUS_VOICE) || (!voice && !(cu->modes & CSTATUS_VOICE)))
+		{
+			command_fail(si, fault_nochange, _("\2%s\2 is already %svoiced on \2%s\2."),
+				tu->nick, voice ? "" : "de", mc->name);
+				continue;
 		}
 
 		modestack_mode_param(chansvs.nick, mc->chan, voice ? MTYPE_ADD : MTYPE_DEL, 'v', CLIENT_NAME(tu));
