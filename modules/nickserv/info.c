@@ -190,7 +190,7 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 			command_success_nodata(si, _("vHost      : unassigned%s"), buf);
 	}
 
-	if (has_user_auspex)
+	if (mu == si->smu || has_user_auspex)
 	{
 		if ((md = metadata_find(mu, "private:host:actual")))
 			command_success_nodata(si, _("Real addr  : %s"), md->value);
