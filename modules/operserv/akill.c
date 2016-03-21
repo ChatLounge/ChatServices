@@ -247,9 +247,9 @@ static void os_cmd_akill_add(sourceinfo_t *si, int parc, char *parv[])
 				i++;
 		}
 
-		if (i < 4 && (strchr(kuser, '*') || strchr(kuser, '?')) && !has_priv(si, PRIV_AKILL_ANYMASK))
+		if (i < (int) config_options.kline_non_wildcard_chars && (strchr(kuser, '*') || strchr(kuser, '?')) && !has_priv(si, PRIV_AKILL_ANYMASK))
 		{
-			command_fail(si, fault_badparams, _("Invalid user@host: \2%s@%s\2. At least four non-wildcard characters are required."), kuser, khost);
+			command_fail(si, fault_badparams, _("Invalid user@host: \2%s@%s\2. At least %u non-wildcard characters are required."), kuser, khost, config_options.kline_non_wildcard_chars);
 			return;
 		}
 	}

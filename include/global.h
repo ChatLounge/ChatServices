@@ -73,13 +73,16 @@ struct ConfOption
   char *helpchan;		/* official help channel    */
   char *helpurl;		/* official help URL	    */
 
-  unsigned int flood_msgs;          /* messages determining flood */
-  unsigned int flood_time;          /* time determining flood     */
-  unsigned int ratelimit_uses;	    /* uses of a ratelimited command */
-  unsigned int ratelimit_period;    /* period in which ratelimit_uses are done */
-  unsigned int kline_time;          /* default expire for klines  */
-  unsigned int clone_time;          /* default expire for clone exemptions */
-  unsigned int commit_interval;     /* interval between commits   */
+  unsigned int flood_msgs;               /* messages determining flood */
+  unsigned int flood_time;               /* time determining flood     */
+  unsigned int ratelimit_uses;           /* uses of a ratelimited command */
+  unsigned int ratelimit_period;         /* period in which ratelimit_uses are done */
+  unsigned int kline_time;               /* default expire for klines  */
+  unsigned int kline_non_wildcard_chars; /* Minimum number of non-wildcard characters needed
+                                          * in a k-line, before operserv:akill-anymask is
+                                          * needed. */
+  unsigned int clone_time;               /* default expire for clone exemptions */
+  unsigned int commit_interval;          /* interval between commits   */
 
   bool silent;               /* stop sending WALLOPS?      */
   bool join_chans;           /* join registered channels?  */

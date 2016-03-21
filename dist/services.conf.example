@@ -2087,6 +2087,13 @@ general {
 	 */
 	kline_time = 7;
 
+	/* (*)kline_non_wildcard_chars
+	 * The minimum number of non-wildcard characters needed
+	 * in order to set a k-line without operserv:akill-anymask .
+	 * The default is 4.
+	 */
+	kline_non_wildcard_chars = 4;
+
 	/* (*)kline_with_ident
 	 * KLINE user@host instead of *@host.
 	 * Applies to all automatic KLINE's set by services.
