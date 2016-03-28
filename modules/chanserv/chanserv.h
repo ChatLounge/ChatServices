@@ -10,7 +10,7 @@ static inline unsigned int custom_founder_check(void)
 	if (chansvs.founder_flags != NULL && (p = strchr(chansvs.founder_flags, 'F')) != NULL)
 		return flags_to_bitmask(chansvs.founder_flags, 0);
 	else
-		return CA_INITIAL & ca_all;
+		return CA_ALLPRIVS & ca_all;
 }
 
 struct prefix_action
