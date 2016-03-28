@@ -549,6 +549,48 @@ char *pretty_mask(char *mask)
 	return mask_buf;
 }
 
+/* check_not_enough_non_wildcard_chars:
+ *
+ *    Generalized function to count the number of non wildcard characters
+ * in either a n!u@h or u@h mask.
+ *
+ * Inputs:
+ * - char *: mask
+ * - bool usenick; - Whether a nick is in the mask.
+ *   (Used by ChanServ for ACLs.  No nick for OperServ AKILL or NickServ ACCESS.)
+ * Side Effects:
+ *   None
+ * Returns:
+ *   Whether the number of non-wildcard characters.
+ */
+bool check_not_enough_non_wildcard_chars(const char* mask, int min_non_wildcard_chars, bool usenick)
+{
+	int count = 0;
+	const char *p;
+
+	if(usenick) /* Nick is used, so exclude '!'. */
+	{
+		for (p = mask; *p; p++)
+			{
+				if (*p != '*' && *p != '?' && *p != '.' && *p != '!' && *p != '@')
+					count++;
+			}
+	}
+	else /* No nick is used, so don't look for '!'. */
+	{
+		for (p = mask; *p; p++)
+			{
+				if (*p != '*' && *p != '?' && *p != '.' && *p != '@')
+					count++;
+			}
+	}
+	
+	if (min_non_wildcard_chars > count)
+		return true;
+	
+	return false;
+}
+
 bool validtopic(const char *topic)
 {
 	int i;

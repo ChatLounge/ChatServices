@@ -131,6 +131,7 @@ E void unregister_email_canonicalizer(email_canonicalizer_t func, void *user_dat
 E bool email_within_limits(const char *email);
 E bool validhostmask(const char *host);
 E char *pretty_mask(char *mask);
+E bool check_not_enough_non_wildcard_chars(const char *mask, int min_non_wildcard_chars, bool usenick);
 E bool validtopic(const char *topic);
 E bool has_ctrl_chars(const char *text);
 E char *sbytes(float x);
