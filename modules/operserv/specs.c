@@ -88,6 +88,7 @@ static struct priv_category operserv_privs = {
 	{
 		{ PRIV_OMODE, N_("set channel modes") },
 		{ PRIV_AKILL, N_("add and remove autokills") },
+		{ PRIV_AKILL_ANYMASK, N_("add autokills with extremely wide masks") },
 		{ PRIV_MASS_AKILL, N_("masskill channels or regexes") },
 		{ PRIV_JUPE, N_("jupe servers") },
 		{ PRIV_NOOP, N_("NOOP access") },
