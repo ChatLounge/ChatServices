@@ -214,9 +214,6 @@ static void os_cmd_akill_add(sourceinfo_t *si, int parc, char *parv[])
 	}
 	else
 	{
-		const char *p;
-		int i = 0;
-
 		kuser = collapse(strtok(target, "@"));
 		khost = collapse(strtok(NULL, ""));
 
@@ -234,20 +231,10 @@ static void os_cmd_akill_add(sourceinfo_t *si, int parc, char *parv[])
 			return;
 		}
 
-		/* make sure there's at least 4 non-wildcards */
-		/* except if the user has no wildcards */
-		for (p = kuser; *p; p++)
-		{
-			if (*p != '*' && *p != '?' && *p != '.')
-				i++;
-		}
-		for (p = khost; *p; p++)
-		{
-			if (*p != '*' && *p != '?' && *p != '.')
-				i++;
-		}
-
-		if (i < (int) config_options.kline_non_wildcard_chars && (strchr(kuser, '*') || strchr(kuser, '?')) && !has_priv(si, PRIV_AKILL_ANYMASK))
+		if (config_options.kline_non_wildcard_chars > 0 &&
+			check_not_enough_non_wildcard_chars(target, (int) config_options.kline_non_wildcard_chars, 0) &&
+			(strchr(kuser, '*') || strchr(kuser, '?')) &&
+			!has_priv(si, PRIV_AKILL_ANYMASK))
 		{
 			command_fail(si, fault_badparams, _("Invalid user@host: \2%s@%s\2. At least %u non-wildcard characters are required."), kuser, khost, config_options.kline_non_wildcard_chars);
 			return;
