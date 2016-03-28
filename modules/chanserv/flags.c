@@ -373,6 +373,21 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		}
 		else
 		{
+			if (!target)
+			{
+				command_fail(si, fault_needmoreparams, _("Invalid hostmask."));
+				return;
+			}
+
+			if (chansvs.min_non_wildcard_chars_host_acl > 0 &&
+				check_not_enough_non_wildcard_chars(target, (int) chansvs.min_non_wildcard_chars_host_acl, 1) &&
+				(strchr(target, '*') || strchr(target, '?')) &&
+				!has_priv(si, PRIV_AKILL_ANYMASK))
+			{
+				command_fail(si, fault_badparams, _("Invalid nick!user@host: \2%s\2  At least %u non-wildcard characters are required."), target, chansvs.min_non_wildcard_chars_host_acl);
+				return;
+			}
+
 			if (addflags & CA_FOUNDER)
 			{
 		                command_fail(si, fault_badparams, _("You may not set founder status on a hostmask."));

@@ -37,8 +37,15 @@ struct chansvs_
   unsigned int akick_time; /* default akick duration */
 
   unsigned int maxchans;    /* max channels one can register */
-  unsigned int maxchanacs;	/* max entries in chanacs list */
-  unsigned int maxfounders;	/* max founders per channel    */
+  unsigned int maxchanacs;  /* max entries in chanacs list */
+  unsigned int maxfounders; /* max founders per channel    */
+  
+  unsigned int min_non_wildcard_chars_host_acl; /* If not 0, defines the minimum number of
+                                                 * non-wildcard characters hostmask based
+                                                 * channel ACL entries must have.
+                                                 *
+                                                 * This is to prevent things such as *@* +Oo
+                                                 */
 
   char *founder_flags;		/* default founder flags for new channels */
 
@@ -46,14 +53,14 @@ struct chansvs_
 
   bool hide_xop;		/* hide XOP templates	      */
   
-  bool no_leveled_flags;	/* Do some flags have levels?  If true, old Atheme
-							 * behavior.  If false, these limitations apply:
-							 *  - To add/remove +f requires +s and/or +F.
-							 *  - To add/remove +s, requires +F.
-							 *  - To add/remove +R, requires +F.
-							 *
-							 *  Default configuration setting is false.
-							 */
+  bool no_leveled_flags;    /* Do some flags have levels?  If true, old Atheme
+                             * behavior.  If false, these limitations apply:
+                             *  - To add/remove +f requires +s and/or +F.
+                             *  - To add/remove +s, requires +F.
+                             *  - To add/remove +R, requires +F.
+                             *
+                             *  Default configuration setting is false.
+                             */
 };
 
 /* authentication services */

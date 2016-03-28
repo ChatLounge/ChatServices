@@ -1236,6 +1236,14 @@ chanserv {
 	 * It is strongly recommended NOT to enable this.
 	 */
 	#no_leveled_flags;
+	
+	/* (*) min_non_wildcard_chars_host_acl
+	 * If not 0, determines the minimum number of non-wildcard
+	 * characters must be present in hostmask based ACL entries.
+	 *
+	 * If 0, disables this checking (old Atheme behavior).
+	 */
+	min_non_wildcard_chars_host_acl = 4;
 
 	/* (*) trigger
 	 * This setting allows you to change the trigger prefix for

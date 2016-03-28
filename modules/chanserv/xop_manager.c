@@ -16,9 +16,9 @@
 
 DECLARE_MODULE_V1
 (
-	"chanserv/xop", false, _modinit, _moddeinit,
+	"chanserv/xop_manager", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 /* the individual command stuff, now that we've reworked, hardcode ;) --w00t */
@@ -248,6 +248,15 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 		if (!validhostmask(target))
 		{
 			command_fail(si, fault_badparams, _("\2%s\2 is neither a registered account nor a hostmask."), target);
+			return;
+		}
+		
+		if (validhostmask(target) && chansvs.min_non_wildcard_chars_host_acl > 0 &&
+			check_not_enough_non_wildcard_chars(target,
+				chansvs.min_non_wildcard_chars_host_acl, 1) &&
+			!has_priv(si, PRIV_AKILL_ANYMASK))
+		{
+			command_fail(si, fault_badparams, _("Invalid nick!user@host: \2%s\2  At least %u non-wildcard characters are required."), target, chansvs.min_non_wildcard_chars_host_acl);
 			return;
 		}
 

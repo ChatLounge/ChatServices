@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team <admin@chatlounge.net>
  * Copyright (c) 2010 - 2011 William Pitcock <nenolod@atheme.org>.
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -12,7 +13,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/access", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void cs_cmd_access(sourceinfo_t *si, int parc, char *parv[]);
@@ -867,6 +868,15 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 		command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 		return;
 	}
+	
+	if (validhostmask(target) && chansvs.min_non_wildcard_chars_host_acl > 0 &&
+		check_not_enough_non_wildcard_chars(target,
+			chansvs.min_non_wildcard_chars_host_acl, 1) &&
+		!has_priv(si, PRIV_AKILL_ANYMASK))
+	{
+		command_fail(si, fault_badparams, _("Invalid nick!user@host: \2%s\2  At least %u non-wildcard characters are required."), target, chansvs.min_non_wildcard_chars_host_acl);
+		return;
+	}
 
 	if (validhostmask(target))
 		ca = chanacs_open(mc, NULL, target, true, entity(si->smu));
@@ -1012,6 +1022,15 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 	if (!chanacs_source_has_flag(mc, si, CA_FLAGS))
 	{
 		command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
+		return;
+	}
+
+	if (validhostmask(target) && chansvs.min_non_wildcard_chars_host_acl > 0 &&
+		check_not_enough_non_wildcard_chars(target,
+			chansvs.min_non_wildcard_chars_host_acl, 1) &&
+		!has_priv(si, PRIV_AKILL_ANYMASK))
+	{
+		command_fail(si, fault_badparams, _("Invalid nick!user@host: \2%s\2  At least %u non-wildcard characters are required."), target, chansvs.min_non_wildcard_chars_host_acl);
 		return;
 	}
 
