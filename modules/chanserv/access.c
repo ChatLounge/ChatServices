@@ -1152,12 +1152,24 @@ static void cs_cmd_role_list(sourceinfo_t *si, int parc, char *parv[])
 	mychan_t *mc;
 	const char *channel = parv[0];
 	mowgli_list_t *l;
+	bool operoverride = false;
 
 	mc = mychan_find(channel);
 	if (!mc)
 	{
 		command_fail(si, fault_nosuch_target, _("Channel \2%s\2 is not registered."), channel);
 		return;
+	}
+
+	if (!(mc->flags & MC_PUBACL) && !chanacs_source_has_flag(mc, si, CA_ACLVIEW))
+	{
+		if (has_priv(si, PRIV_CHAN_AUSPEX))
+			operoverride = true;
+		else
+		{
+			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
+			return;
+		}
 	}
 
 	l = build_template_list(mc);
@@ -1176,6 +1188,11 @@ static void cs_cmd_role_list(sourceinfo_t *si, int parc, char *parv[])
 
 		free_template_list(l);
 	}
+
+	if (operoverride)
+		logcommand(si, CMDLOG_ADMIN, "ROLE:LIST: \2%s\2 (oper override)", mc->name);
+	else
+		logcommand(si, CMDLOG_GET, "ROLE:LIST: \2%s\2", mc->name);
 }
 
 /*
