@@ -37,7 +37,7 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 	command_success_nodata(si, _("How often services writes changes to the database: %d minutes"), config_options.commit_interval / 60);
 	command_success_nodata(si, _("Default kline expiry time: %d days"), config_options.kline_time / 86400);
-	command_success_nodata(si, _("Min. number of non-wildcard chars for klines: %u"), config_options.kline_non_wildcard_chars);
+	command_success_nodata(si, _("Minimum number of non-wildcard chars for klines: %u"), config_options.kline_non_wildcard_chars);
 	command_success_nodata(si, _("Will services be sending WALLOPS/GLOBOPS about various things: %s"), config_options.silent ? "no" : "yes");
 	command_success_nodata(si, _("How many messages before a flood is triggered, (if 0, flood protection is disabled): %d"), config_options.flood_msgs);
 	command_success_nodata(si, _("How long before the flood counter resets: %d seconds"), config_options.flood_time);
@@ -60,6 +60,10 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Default channel registration flags: %s"),
 		get_default_cflags());
 	command_success_nodata(si, _("Leveled flags are enabled: %s"), chansvs.no_leveled_flags ? "no" : "yes");
+	if (chansvs.min_non_wildcard_chars_host_acl == 0)
+		command_success_nodata(si, _("Minimum number of non-wildcard chars for hostmask-based channel ACLs: Check Disabled"));
+	else
+		command_success_nodata(si, _("Minimum number of non-wildcard chars for hostmask-based channel ACLs: %u"), chansvs.min_non_wildcard_chars_host_acl);
 	if (chansvs.fantasy)
 		command_success_nodata(si, _("Default channel fantasy trigger: %s"), chansvs.trigger);
 	command_success_nodata(si, _("Maximum number of entries allowed in a channel access list (if 0, unlimited): %d"), chansvs.maxchanacs);
