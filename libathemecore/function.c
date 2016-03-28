@@ -620,6 +620,7 @@ bool validtopic(const char *topic)
 				case 3:
 				case 6:
 				case 7:
+				case 15:
 				case 22:
 				case 23:
 				case 27:
