@@ -214,6 +214,22 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		strcat(buf, "ANTIFLOOD");
 	}
 
+	if (MC_NOSYNC & mc->flags)
+	{
+		if (*buf)
+			strcat(buf, " ");
+
+		strcat(buf, "NOSYNC");
+	}
+
+	if (MC_PUBACL & mc->flags)
+	{
+		if (*buf)
+			strcat(buf, " ");
+
+		strcat(buf, "PUBACL");
+	}
+
 	if (chansvs.fantasy && !metadata_find(mc, "disable_fantasy"))
 	{
 		if (*buf)
