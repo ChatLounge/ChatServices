@@ -76,7 +76,6 @@ SRCS =					\
 	version.c			\
 	voice.c				\
 	why.c				\
-	xop.c				\
 	xop_manager.c
 
 include ../../extra.mk
