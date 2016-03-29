@@ -55,6 +55,8 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Maximum number of usernames that can be registered to one email address: %d"), me.maxusers);
 	if (!nicksvs.no_nick_ownership)
 	command_success_nodata(si, _("Maximum number of nicknames that one user can own: %d"), nicksvs.maxnicks);
+	command_success_nodata(si, _("ChanServ/BotServ joins channels with: %s"),
+		chansvs.use_owner ? "owner" : (chansvs.use_admin ? "admin/protect" : "op"));
 	command_success_nodata(si, _("Default channel founder ACL flags: %s %s"),
 		chansvs.founder_flags ? chansvs.founder_flags : bitmask_to_flags(CA_ALLPRIVS & ca_all),
 		chansvs.founder_flags ? "" : "(default)");

@@ -19,39 +19,39 @@ typedef struct nicksvs_ nicksvs_t;
 /* core services */
 struct chansvs_
 {
-  char *nick;                   /* the IRC client's nickname  */
-  char *user;                   /* the IRC client's username  */
-  char *host;                   /* the IRC client's hostname  */
-  char *real;                   /* the IRC client's realname  */
+  char *nick;                /* the IRC client's nickname  */
+  char *user;                /* the IRC client's username  */
+  char *host;                /* the IRC client's hostname  */
+  char *real;                /* the IRC client's realname  */
 
-  bool fantasy;		/* enable fantasy commands    */
+  bool fantasy;              /* enable fantasy commands    */
 
-  char *trigger;		/* trigger, e.g. !, ` or .    */
+  char *trigger;             /* trigger, e.g. !, ` or .    */
 
-  bool changets;		/* use TS to better deop people */
+  bool changets;             /* use TS to better deop people */
 
-  service_t *me;                /* our user_t struct          */
+  service_t *me;             /* our user_t struct          */
 
-  unsigned int expiry;		/* expiry time                */
+  unsigned int expiry;       /* expiry time                */
 
-  unsigned int akick_time; /* default akick duration */
+  unsigned int akick_time;   /* default akick duration */
 
-  unsigned int maxchans;    /* max channels one can register */
-  unsigned int maxchanacs;  /* max entries in chanacs list */
-  unsigned int maxfounders; /* max founders per channel    */
+  unsigned int maxchans;     /* max channels one can register */
+  unsigned int maxchanacs;   /* max entries in chanacs list */
+  unsigned int maxfounders;  /* max founders per channel    */
   
-  unsigned int min_non_wildcard_chars_host_acl; /* If not 0, defines the minimum number of
-                                                 * non-wildcard characters hostmask based
-                                                 * channel ACL entries must have.
-                                                 *
-                                                 * This is to prevent things such as *@* +Oo
-                                                 */
+  unsigned int min_non_wildcard_chars_host_acl; /* If not 0, defines the
+                              * minimum number of non-wildcard characters
+                              * hostmask based channel ACL entries must have.
+                              *
+                              * This is to prevent things such as *@* +Oo
+                              */
 
-  char *founder_flags;		/* default founder flags for new channels */
+  char *founder_flags;      /* default founder flags for new channels */
 
-  char *deftemplates;		/* default templates          */
+  char *deftemplates;       /* default templates          */
 
-  bool hide_xop;		/* hide XOP templates	      */
+  bool hide_xop;            /* hide XOP templates      */
   
   bool no_leveled_flags;    /* Do some flags have levels?  If true, old Atheme
                              * behavior.  If false, these limitations apply:
@@ -60,6 +60,12 @@ struct chansvs_
                              *  - To add/remove +R, requires +F.
                              *
                              *  Default configuration setting is false.
+                             */
+  bool use_owner;           /* Control whether or not ChanServ and BotServ will
+                             * use the owner cmode when joining a channel.
+                             * Only takes effect if the IRCd supports owner mode.
+                             */
+  bool use_admin;           /* Same as use_owner, but for the admin cmode.
                              */
 };
 

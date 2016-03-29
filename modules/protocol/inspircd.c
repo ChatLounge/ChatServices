@@ -328,7 +328,10 @@ static bool check_delaymsg(const char *value, channel_t *c, mychan_t *mc, user_t
 
 static void inspircd_send_fjoin(channel_t *c, user_t *u, char *modes)
 {
-	sts(":%s FJOIN %s %lu %s :o,%s", me.numeric, c->name, (unsigned long)c->ts, modes, u->uid);
+	sts(":%s FJOIN %s %lu %s :%so,%s", me.numeric, c->name, (unsigned long)c->ts, modes,
+		ircd->uses_owner && chansvs.use_owner ? "q" :
+		(ircd->uses_protect && chansvs.use_admin ? "a" : ""),
+		u->uid);
 }
 
 /* login to our uplink */

@@ -138,7 +138,10 @@ static void ngircd_quit_sts(user_t *u, const char *reason)
 /* join a channel */
 static void ngircd_join_sts(channel_t *c, user_t *u, bool isnew, char *modes)
 {
-	sts(":%s NJOIN %s :@%s", ME, c->name, CLIENT_NAME(u));
+	sts(":%s NJOIN %s :%s@%s", ME, c->name,
+		ircd->uses_owner && chansvs.use_owner ? "~" :
+		(ircd->uses_protect && chansvs.use_admin ? "&" : ""),
+		CLIENT_NAME(u));
 	if (isnew && modes[0] && modes[1])
 		sts(":%s MODE %s %s", ME, c->name, modes);
 }

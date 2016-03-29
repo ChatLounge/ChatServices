@@ -311,6 +311,8 @@ void _modinit(module_t *m)
 	add_dupstr_conf_item("FOUNDER_FLAGS", &chansvs.me->conf_table, 0, &chansvs.founder_flags, NULL);
 	add_dupstr_conf_item("DEFTEMPLATES", &chansvs.me->conf_table, 0, &chansvs.deftemplates, NULL);
 	add_duration_conf_item("AKICK_TIME", &chansvs.me->conf_table, 0, &chansvs.akick_time, "m", 0);
+	add_bool_conf_item("USE_OWNER", &chansvs.me->conf_table, 0, &chansvs.use_owner, false);
+	add_bool_conf_item("USE_ADMIN", &chansvs.me->conf_table, 0, &chansvs.use_admin, false);
 }
 
 void _moddeinit(module_unload_intent_t intent)

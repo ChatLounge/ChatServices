@@ -1285,6 +1285,22 @@ chanserv {
 	 * by default (the old behaviour).
 	 */
 	#akick_time = 10;
+	
+	/* (*) use_owner
+	 * If enabled, ChanServ and BotServ will join channels using the owner
+	 * channel mode.  Only takes effect if the IRCd supports the owner mode.
+	 * This is mostly cosmetic and has no effect on operation, other than
+	 * perhaps preventing kicks on ChanServ, on IRCds that don't prohibit
+	 * this.  This takes precedence over use_admin, which is listed just below.
+	 */
+	use_owner = false;
+
+	/* (*) use_admin
+	 * Similar to use_owner, but is for the admin channel mode, for IRCds
+	 * that support it.  If enabled at the same time as use_owner, use_owner
+	 * will take precedence.
+	 */
+	use_admin = false;
 
 	/* (*)antiflood_enforce_method
 	 * The enforcement method to use for flood protection by default.

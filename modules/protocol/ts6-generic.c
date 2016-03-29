@@ -129,11 +129,19 @@ static void ts6_wallops_sts(const char *text)
 static void ts6_join_sts(channel_t *c, user_t *u, bool isnew, char *modes)
 {
 	if (isnew)
-		sts(":%s SJOIN %lu %s %s :@%s", ME, (unsigned long)c->ts,
-				c->name, modes, CLIENT_NAME(u));
+		sts(":%s SJOIN %lu %s %s :%s@%s", ME, (unsigned long)c->ts,
+				c->name, modes,
+				ircd->uses_owner && chansvs.use_owner ? "~" :
+				(ircd->uses_protect && chansvs.use_admin ?
+				(ircd->type == PROTOCOL_SHADOWIRCD ? "!" : "&") : ""),
+				CLIENT_NAME(u));
 	else
-		sts(":%s SJOIN %lu %s + :@%s", ME, (unsigned long)c->ts,
-				c->name, CLIENT_NAME(u));
+		sts(":%s SJOIN %lu %s + :%s@%s", ME, (unsigned long)c->ts,
+				c->name,
+				ircd->uses_owner && chansvs.use_owner ? "~" :
+				(ircd->uses_protect && chansvs.use_admin ?
+				(ircd->type == PROTOCOL_SHADOWIRCD ? "!" : "&") : ""),
+				CLIENT_NAME(u));
 }
 
 static void ts6_chan_lowerts(channel_t *c, user_t *u)
