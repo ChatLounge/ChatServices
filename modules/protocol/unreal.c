@@ -369,14 +369,14 @@ static void unreal_join_sts(channel_t *c, user_t *u, bool isnew, char *modes)
 	if (isnew)
 		sts(":%s SJOIN %lu %s %s :%s@%s", ME, (unsigned long)c->ts,
 			c->name, modes,
-			ircd->uses_owner && chansvs.use_owner ? "~" :
-			(ircd->uses_protect && chansvs.use_admin ? "&" : ""),
+			ircd->uses_owner && chansvs.use_owner ? "*" :
+			(ircd->uses_protect && chansvs.use_admin ? "~" : ""),
 			CLIENT_NAME(u));
 	else
 		sts(":%s SJOIN %lu %s + :%s@%s", ME, (unsigned long)c->ts,
 			c->name,
-			ircd->uses_owner && chansvs.use_owner ? "~" :
-			(ircd->uses_protect && chansvs.use_admin ? "&" : ""),
+			ircd->uses_owner && chansvs.use_owner ? "*" :
+			(ircd->uses_protect && chansvs.use_admin ? "~" : ""),
 			CLIENT_NAME(u));
 }
 
