@@ -120,7 +120,10 @@ static void ngircd_invite_sts(user_t *sender, user_t *target, channel_t *channel
 
 	if (!chanuser_find(channel, sender))
 	{
-		sts(":%s NJOIN %s :@%s", ME, channel->name, CLIENT_NAME(sender));
+		sts(":%s NJOIN %s :%s@%s", ME, channel->name,
+			ircd->uses_owner && chansvs.use_owner ? "~" :
+			(ircd->uses_protect && chansvs.use_admin ? "&" : ""),
+			CLIENT_NAME(sender));
 		joined = true;
 	}
 
