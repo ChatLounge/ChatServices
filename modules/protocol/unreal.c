@@ -385,8 +385,11 @@ static void unreal_chan_lowerts(channel_t *c, user_t *u)
 {
 	slog(LG_DEBUG, "unreal_chan_lowerts(): lowering TS for %s to %lu",
 			c->name, (unsigned long)c->ts);
-	sts(":%s SJOIN %lu %s %s :@%s", ME, (unsigned long)c->ts, c->name,
-			channel_modes(c, true), CLIENT_NAME(u));
+	sts(":%s SJOIN %lu %s %s :%s@%s", ME, (unsigned long)c->ts, c->name,
+			channel_modes(c, true),
+			ircd->uses_owner && chansvs.use_owner ? "*" :
+			(ircd->uses_protect && chansvs.use_admin ? "~" : ""),
+			CLIENT_NAME(u));
 }
 
 /* kicks a user from a channel */
