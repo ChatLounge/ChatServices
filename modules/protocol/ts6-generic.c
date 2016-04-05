@@ -148,8 +148,12 @@ static void ts6_chan_lowerts(channel_t *c, user_t *u)
 {
 	slog(LG_DEBUG, "ts6_chan_lowerts(): lowering TS for %s to %lu",
 			c->name, (unsigned long)c->ts);
-	sts(":%s SJOIN %lu %s %s :@%s", ME, (unsigned long)c->ts, c->name,
-				channel_modes(c, true), CLIENT_NAME(u));
+	sts(":%s SJOIN %lu %s %s :%s@%s", ME, (unsigned long)c->ts, c->name,
+				channel_modes(c, true),
+				ircd->uses_owner && chansvs.use_owner ? "~" :
+				(ircd->uses_protect && chansvs.use_admin ?
+				(ircd->type == PROTOCOL_SHADOWIRCD ? "!" : "&") : ""),
+				CLIENT_NAME(u));
 	if (ircd->uses_uid)
 		chanban_clear(c);
 }
@@ -378,7 +382,11 @@ static void ts6_topic_sts(channel_t *c, user_t *source, const char *setter, time
 	 */
 	if (!chanuser_find(c, source))
 	{
-		sts(":%s SJOIN %lu %s + :@%s", ME, (unsigned long)c->ts, c->name, CLIENT_NAME(source));
+		sts(":%s SJOIN %lu %s + :%s@%s", ME, (unsigned long)c->ts, c->name,
+				ircd->uses_owner && chansvs.use_owner ? "~" :
+				(ircd->uses_protect && chansvs.use_admin ?
+				(ircd->type == PROTOCOL_SHADOWIRCD ? "!" : "&") : ""),
+				CLIENT_NAME(source));
 		joined = 1;
 	}
 	sts(":%s TOPIC %s :%s", CLIENT_NAME(source), c->name, topic);
@@ -730,8 +738,16 @@ static void m_sjoin(sourceinfo_t *si, int parc, char *parv[])
 			{
 				/* it's a service, reop */
 				sts(":%s PART %s :Reop", CLIENT_NAME(cu->user), c->name);
-				sts(":%s SJOIN %lu %s + :@%s", ME, (unsigned long)ts, c->name, CLIENT_NAME(cu->user));
-				cu->modes = CSTATUS_OP;
+				sts(":%s SJOIN %lu %s + :%s@%s", ME, (unsigned long)ts, c->name,
+						ircd->uses_owner && chansvs.use_owner ? "~" :
+						(ircd->uses_protect && chansvs.use_admin ?
+						(ircd->type == PROTOCOL_SHADOWIRCD ? "!" : "&") : ""),
+						CLIENT_NAME(cu->user));
+				if (ircd->uses_owner && chansvs.use_owner)
+					cu->modes |= CSTATUS_OWNER;
+				else if (ircd->uses_protect && chansvs.use_admin)
+					cu->modes |= CSTATUS_PROTECT;
+				cu->modes |= CSTATUS_OP;
 			}
 			else
 				cu->modes = 0;
@@ -823,7 +839,15 @@ static void m_join(sourceinfo_t *si, int parc, char *parv[])
 			{
 				/* it's a service, reop */
 				sts(":%s PART %s :Reop", CLIENT_NAME(cu->user), c->name);
-				sts(":%s SJOIN %lu %s + :@%s", ME, (unsigned long)ts, c->name, CLIENT_NAME(cu->user));
+				sts(":%s SJOIN %lu %s + :@%s", ME, (unsigned long)ts, c->name,
+						ircd->uses_owner && chansvs.use_owner ? "~" :
+						(ircd->uses_protect && chansvs.use_admin ?
+						(ircd->type == PROTOCOL_SHADOWIRCD ? "!" : "&") : ""),
+						CLIENT_NAME(cu->user));
+				if (ircd->uses_owner && chansvs.use_owner)
+					cu->modes |= CSTATUS_OWNER;
+				else if (ircd->uses_protect && chansvs.use_admin)
+					cu->modes |= CSTATUS_PROTECT;
 				cu->modes = CSTATUS_OP;
 			}
 			else
