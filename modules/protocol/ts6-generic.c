@@ -839,7 +839,7 @@ static void m_join(sourceinfo_t *si, int parc, char *parv[])
 			{
 				/* it's a service, reop */
 				sts(":%s PART %s :Reop", CLIENT_NAME(cu->user), c->name);
-				sts(":%s SJOIN %lu %s + :@%s", ME, (unsigned long)ts, c->name,
+				sts(":%s SJOIN %lu %s + :%s@%s", ME, (unsigned long)ts, c->name,
 						ircd->uses_owner && chansvs.use_owner ? "~" :
 						(ircd->uses_protect && chansvs.use_admin ?
 						(ircd->type == PROTOCOL_SHADOWIRCD ? "!" : "&") : ""),
