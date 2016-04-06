@@ -95,6 +95,8 @@ static bool evaluate_condition(sourceinfo_t *si, const char *s)
 		return has_any_privs(si);
 	else if (!strcmp(word, "no_leveled_flags"))
 		return chansvs.no_leveled_flags;
+	else if (!strcmp(word, "soper"))
+		return (is_soper(si->smu) || is_conf_soper(si->smu));
 	else if (!strcmp(word, "priv"))
 	{
 		if (p != NULL && (q = strchr(p, ' ')) != NULL)
