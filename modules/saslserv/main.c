@@ -35,6 +35,7 @@ static void sasl_mech_register(sasl_mechanism_t *mech);
 static void sasl_mech_unregister(sasl_mechanism_t *mech);
 static void mechlist_build_string(char *ptr, size_t buflen);
 static void mechlist_do_rebuild();
+static void on_shutdown(void *unused);
 
 sasl_mech_register_func_t sasl_mech_register_funcs = { &sasl_mech_register, &sasl_mech_unregister };
 
@@ -131,6 +132,8 @@ void _modinit(module_t *m)
 
 	saslsvs = service_add("saslserv", saslserv);
 	authservice_loaded++;
+
+	hook_add_shutdown(on_shutdown);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -143,10 +146,12 @@ void _moddeinit(module_unload_intent_t intent)
 
 	mowgli_timer_destroy(base_eventloop, delete_stale_timer);
 
-        if (saslsvs != NULL)
+	if (saslsvs != NULL)
 		service_delete(saslsvs);
 
 	authservice_loaded--;
+
+	hook_del_shutdown(on_shutdown);
 
 	if (sessions.head != NULL)
 		slog(LG_DEBUG, "saslserv/main: shutting down with a non-empty session list, a mech did not unregister itself!");
@@ -655,6 +660,12 @@ static void delete_stale(void *vptr)
 		} else
 			p->flags |= ASASL_MARKED_FOR_DELETION;
 	}
+}
+
+static void on_shutdown(void *unused)
+{
+	if (saslsvs->me != NULL)
+		quit_sts(saslsvs->me, "shutting down");
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
