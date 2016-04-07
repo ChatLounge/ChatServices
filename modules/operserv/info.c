@@ -73,6 +73,8 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("Default channel fantasy trigger: %s"), chansvs.trigger);
 	command_success_nodata(si, _("Maximum number of entries allowed in a channel access list (if 0, unlimited): %d"), chansvs.maxchanacs);
 	command_success_nodata(si, _("Maximum number of founders allowed per channel: %d"), chansvs.maxfounders);
+	command_success_nodata(si, _("SaslServ sends a QUIT right before shutdown or restart: %s"),
+		config_options.send_sasl_quit ? "Yes" : "No");
 
 	if (IS_TAINTED)
 	{

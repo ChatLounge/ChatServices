@@ -664,7 +664,7 @@ static void delete_stale(void *vptr)
 
 static void on_shutdown(void *unused)
 {
-	if (saslsvs->me != NULL)
+	if (config_options.send_sasl_quit && saslsvs->me != NULL)
 		quit_sts(saslsvs->me, "shutting down");
 }
 
