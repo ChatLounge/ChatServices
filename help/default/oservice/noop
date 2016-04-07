@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/noop
+#endif
 Help for NOOP:
 
 NOOP allows you to deny IRCop access on a per-hostmask

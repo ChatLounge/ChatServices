@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/register
+#endif
 Help for REGISTER:
 
 This will register an account with &nick&. This allows

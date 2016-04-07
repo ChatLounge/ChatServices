@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/access
+#endif
 Help for ROLE LIST:
 
 ROLE LIST lists all channel-specific and network-wide roles

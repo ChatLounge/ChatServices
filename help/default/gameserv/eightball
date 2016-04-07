@@ -1,3 +1,6 @@
+#if soper
+Command provided by: gameserv/eightball
+#endif
 Help for EIGHTBALL:
 
 Asks the magic 8-ball a question.

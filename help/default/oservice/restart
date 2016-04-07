@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/restart
+#endif
 Help for RESTART:
 
 RESTART shuts down services and restarts them.

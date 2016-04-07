@@ -1,3 +1,6 @@
+#if soper
+Command provided by: helpserv/services
+#endif
 Help for SERVICES:
 
 SERVICES allows you to view a list of all services running on the network

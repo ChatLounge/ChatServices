@@ -1,3 +1,6 @@
+#if soper
+Command provided by: gameserv/dice
+#endif
 Help for CALC:
 
 CALC lets you do some simple mathematics with

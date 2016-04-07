@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/fdrop
+#endif
 Help for FDROP:
 
 FDROP allows you to "unregister" a registered group.

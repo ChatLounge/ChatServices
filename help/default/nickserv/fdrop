@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/drop
+#endif
 Help for FDROP:
 
 FDROP forcefully removes the given account, including

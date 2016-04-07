@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_fantasy
+#endif
 Help for SET FANTASY:
 
 SET FANTASY allows you to enable or disable ChanServ

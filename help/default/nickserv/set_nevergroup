@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/set_nevergroup
+#endif
 Help for SET NEVERGROUP:
 
 SET NEVERGROUP prevents others from adding you to

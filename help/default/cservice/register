@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/register
+#endif
 Help for REGISTER:
 
 REGISTER allows you to register a channel

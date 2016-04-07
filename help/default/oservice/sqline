@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/sqline
+#endif
 Help for SQLINE:
 
 SQLINE allows you to deny the use of certain nicknames

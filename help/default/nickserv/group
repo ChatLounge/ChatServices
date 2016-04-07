@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/group
+#endif
 Help for GROUP:
 
 GROUP registers your current nickname to your account.

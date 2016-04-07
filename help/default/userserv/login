@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/login
+#endif
 Help for LOGIN:
 
 LOGIN identifies you with services so that you

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/set_joinflags
+#endif
 Help for SET JOINFLAGS:
 
 SET JOINFLAGS allows a group to specify the flags assigned

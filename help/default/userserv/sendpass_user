@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/sendpass_user
+#endif
 Help for SENDPASS:
 
 SENDPASS emails a key to the email address

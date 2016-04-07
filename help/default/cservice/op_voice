@@ -1,3 +1,6 @@
+#if soper
+Commands provided by: chanserv/op and chanserv/voice
+#endif
 Help for OP|DEOP|VOICE|DEVOICE:
 
 These commands perform status mode changes on a channel.

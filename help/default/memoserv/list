@@ -1,3 +1,6 @@
+#if soper
+Command provided by: memoserv/list
+#endif
 Help for LIST:
 
 LIST shows you your memos in your inbox,

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/set_open
+#endif
 Help for SET OPEN:
 
 SET OPEN allows a group to be open to any user joining

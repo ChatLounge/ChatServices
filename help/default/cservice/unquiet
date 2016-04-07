@@ -1,3 +1,6 @@
+#if soper
+Commands provided by: chanserv/quiet
+#endif
 Help for UNQUIET:
 
 The UNQUIET command allows you to unmute a user or hostmask

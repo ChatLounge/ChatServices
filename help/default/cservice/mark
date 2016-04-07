@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/mark
+#endif
 Help for MARK:
 
 MARK allows operators to attach a note to a channel.

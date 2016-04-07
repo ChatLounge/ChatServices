@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/list
+#endif
 Help for LIST:
 
 LIST shows accounts that match a given

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: statserv/channel
+#endif
 Help for CHANNEL:
 
 CHANNEL provides various minor informations about channels.

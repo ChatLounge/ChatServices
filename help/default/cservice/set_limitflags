@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_limitflags
+#endif
 Help for SET LIMITFLAGS:
 
 SET LIMITFLAGS limits the power of the +f flag.

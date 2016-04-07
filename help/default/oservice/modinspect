@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/modinspect
+#endif
 Help for MODINSPECT:
 
 MODINSPECT displays detailed information about a module.

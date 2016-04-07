@@ -1,3 +1,6 @@
+#if soper
+Command provided by: hostserv/offer
+#endif
 Help for OFFER:
 
 OFFER allows you to offer a list of vHosts to the users

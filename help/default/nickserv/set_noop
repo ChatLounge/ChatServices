@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/set_noop
+#endif
 Help for SET NOOP:
 
 SET NOOP prevents services from automatically

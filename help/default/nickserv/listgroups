@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/listgroups
+#endif
 Help for LISTGROUPS:
 
 LISTGROUPS shows the groups that you have access

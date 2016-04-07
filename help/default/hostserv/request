@@ -1,3 +1,6 @@
+#if soper
+Command provided by: hostserv/request
+#endif
 Help for REQUEST:
 
 REQUEST activation of the vHost. You must be identified

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: botserv/set_fantasy
+#endif
 Help for SET FANTASY:
 
 Enables or disables fantasy mode on a channel.

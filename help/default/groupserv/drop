@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/drop
+#endif
 Help for DROP:
 
 DROP allows you to "unregister" a registered group.

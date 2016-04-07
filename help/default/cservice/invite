@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/invite
+#endif
 Help for INVITE:
 
 INVITE requests services to invite you to the

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/sendpass
+#endif
 Help for SENDPASS:
 
 #if !module nickserv/setpass

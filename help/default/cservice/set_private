@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_private
+#endif
 Help for SET PRIVATE:
 
 SET PRIVATE hides various information about

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: statserv/server
+#endif
 Help for SERVER:
 
 SERVER provides various information about the servers on the network.

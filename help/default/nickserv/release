@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/enforce
+#endif
 Help for RELEASE:
 
 RELEASE removes an enforcer for your nick or

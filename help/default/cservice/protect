@@ -1,3 +1,6 @@
+#if soper
+Commands provided by: chanserv/protect
+#endif
 Help for PROTECT|DEPROTECT:
 
 These commands perform status mode changes on a channel.

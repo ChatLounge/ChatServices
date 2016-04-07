@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/flags
+#endif
 Help for FLAGS:
 
 The FLAGS command allows for the granting/removal of group

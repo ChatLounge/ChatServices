@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/access
+#endif
 Help for ACCESS INFO:
 
 ACCESS INFO displays what level of access a given user has

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/invite
+#endif
 Help for INVITE:
 
 INVITE allows you to invite a user to join a 

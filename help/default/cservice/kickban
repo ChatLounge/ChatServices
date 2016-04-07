@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/kick
+#endif
 Help for KICKBAN:
 
 The KICKBAN command allows for the removal of a user from

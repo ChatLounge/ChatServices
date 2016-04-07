@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/modlist
+#endif
 Help for MODLIST:
 
 MODLIST displays a listing of all loaded

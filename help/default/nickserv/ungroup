@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/group
+#endif
 Help for UNGROUP:
 
 UNGROUP unregisters the given nickname from your

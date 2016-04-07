@@ -1,3 +1,6 @@
+#if soper
+Command provided by: hostserv/request
+#endif
 Help for WAITING:
 
 WAITING lists all vHosts currently waiting for activation.

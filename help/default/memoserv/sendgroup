@@ -1,3 +1,6 @@
+#if soper
+Command provided by: memoserv/sendgroup
+#endif
 Help for SENDGROUP:
 
 SENDGROUP allows you to send a memo to all members

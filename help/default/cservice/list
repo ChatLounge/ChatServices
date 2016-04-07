@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/list
+#endif
 Help for LIST:
 
 LIST shows channels that match a given criteria.

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/count
+#endif
 Help for COUNT:
 
 This will give a count of how many entries are in each of

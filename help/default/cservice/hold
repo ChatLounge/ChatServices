@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/hold
+#endif
 Help for HOLD:
 
 HOLD prevents a channel from expiring for inactivity.

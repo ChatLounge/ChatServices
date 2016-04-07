@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/why
+#endif
 Help for WHY:
 
 The WHY command shows the access entries an online

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/taxonomy
+#endif
 Help for TAXONOMY:
 
 The taxonomy command lists metadata information associated

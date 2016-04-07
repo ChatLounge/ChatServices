@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/drop
+#endif
 Help for DROP:
 
 Using this command removes your account from services' database.

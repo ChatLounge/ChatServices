@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/clear_bans
+#endif
 Help for CLEAR BANS:
 
 This command removes all bans found in a specific

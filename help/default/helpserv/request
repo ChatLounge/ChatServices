@@ -1,3 +1,6 @@
+#if soper
+Command provided by: helpserv/ticket
+#endif
 Help for REQUEST:
 
 REQUEST help from network staff. This works much like

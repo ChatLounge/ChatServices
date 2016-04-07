@@ -1,3 +1,6 @@
+#if soper
+Command provided by: botserv/main
+#endif
 Help for ASSIGN:
 
 Assigns a bot pointed out by nick to the channel chan. You

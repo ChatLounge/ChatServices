@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/register
+#endif
 Help for REGISTER:
 
 REGISTER allows you to register a group so that you can easily

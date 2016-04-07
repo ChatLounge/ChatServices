@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/info
+#endif
 Help for INFO:
 
 INFO displays channel information such as

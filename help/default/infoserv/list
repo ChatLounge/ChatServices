@@ -1,3 +1,6 @@
+#if soper
+Command provided by: infoserv/main
+#endif
 Help for LIST:
 
 LIST allows you to view all informational messages in the database.

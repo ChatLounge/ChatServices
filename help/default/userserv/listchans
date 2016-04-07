@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/listchans
+#endif
 Help for LISTCHANS:
 
 LISTCHANS shows the channels that you have access

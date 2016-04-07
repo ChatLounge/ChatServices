@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_mlock
+#endif
 Help for SET MLOCK:
 
 MLOCK (or "mode lock") allows you to enforce a set

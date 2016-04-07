@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/ftransfer
+#endif
 Help for FTRANSFER:
 
 FTRANSFER forcefully transfers foundership

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/compare
+#endif
 Help for COMPARE:
 
 COMPARE allows operators with chan:auspex

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/halfop
+#endif
 Help for HALFOP|DEHALFOP:
 
 These commands perform status mode changes on a channel.

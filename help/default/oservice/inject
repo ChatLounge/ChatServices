@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/inject
+#endif
 Help for INJECT:
 
 INJECT fakes data from the uplink.  This

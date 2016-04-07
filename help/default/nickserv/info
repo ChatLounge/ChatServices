@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/info
+#endif
 Help for INFO:
 
 INFO displays account information such as

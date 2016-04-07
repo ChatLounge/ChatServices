@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_secure
+#endif
 Help for SET SECURE:
 
 SET SECURE prevents anyone not on the channel

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: hostserv/onoff
+#endif
 Help for ON:
 
 Activates the vHost currently assigned to the nick in use.

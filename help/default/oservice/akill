@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/akill
+#endif
 Help for AKILL:
 
 AKILL allows you to maintain network-wide bans.

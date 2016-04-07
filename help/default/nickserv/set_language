@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/set_language
+#endif
 Help for SET LANGUAGE:
 
 SET LANGUAGE changes the language services

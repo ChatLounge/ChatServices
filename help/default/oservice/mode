@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/mode
+#endif
 Help for MODE:
 
 MODE allows for the editing of modes on a channel. Some networks

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: memoserv/ignore
+#endif
 Help for IGNORE:
 
 IGNORE allows you to ignore memos from another

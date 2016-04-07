@@ -1,3 +1,6 @@
+#if soper
+Command provided by: gameserv/rps
+#endif
 Help for RPS:
 
 RPS will randomly reply "Rock", "Paper", or "Scissors".

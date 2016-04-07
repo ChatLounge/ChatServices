@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/sync
+#endif
 Help for SYNC:
 
 The SYNC command will force all channel statuses to flags, giving and taking

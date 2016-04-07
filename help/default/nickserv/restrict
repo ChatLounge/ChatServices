@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/restrict
+#endif
 Help for RESTRICT:
 
 RESTRICT allows operators to restrict what an account can and can not do.

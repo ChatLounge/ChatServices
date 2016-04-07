@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/set_quietchg
+#endif
 Help for SET QUIETCHG:
 
 SET QUIETCHG prevents services from automatically

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/set
+#endif
 Help for SET KLINETIME:
 
 SET KLINETIME allows network staff to set a default time before

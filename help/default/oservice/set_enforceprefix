@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/set
+#endif
 Help for SET ENFORCEPREFIX:
 
 SET ENFORCEPREFIX changes the prefix of the nick

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/topic
+#endif
 Help for TOPIC:
 
 The TOPIC command allows for the changing of a topic on a channel.

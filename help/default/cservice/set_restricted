@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_restricted
+#endif
 Help for SET RESTRICTED:
 
 SET RESTRICTED designates a channel as restricted access.

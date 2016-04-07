@@ -1,3 +1,6 @@
+#if soper
+Command provided by: statserv/netsplit
+#endif
 Help for NETSPLIT:
 
 NETSPLIT allows you to monitor server splits.

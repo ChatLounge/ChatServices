@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/set_neverop
+#endif
 Help for SET NEVEROP:
 
 SET NEVEROP prevents others from adding you to

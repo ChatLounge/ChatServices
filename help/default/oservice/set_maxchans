@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/set
+#endif
 Help for SET MAXCHANS:
 
 SET MAXCHANS allows setting how many channels one account may

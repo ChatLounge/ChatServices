@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/access
+#endif
 Help for ACCESS LIST:
 
 ACCESS LIST lists all users with channel access and their

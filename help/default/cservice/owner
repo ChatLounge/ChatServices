@@ -1,3 +1,6 @@
+#if soper
+Commands provided by: chanserv/owner
+#endif
 Help for OWNER|DEOWNER:
 
 These commands perform status mode changes on a channel.

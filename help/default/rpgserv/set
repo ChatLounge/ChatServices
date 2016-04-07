@@ -1,3 +1,6 @@
+#if soper
+Command provided by: rpgserv/set
+#endif
 Help for SET:
 
 SET allows you to provide details about your role-playing

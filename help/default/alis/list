@@ -1,3 +1,6 @@
+#if soper
+Command provided by: alis/main
+#endif
 Help for LIST:
 
 LIST gives a list of channels matching the

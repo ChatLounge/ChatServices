@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_guard
+#endif
 Help for SET GUARD:
 
 SET GUARD allows you to have &nick& join your channel.

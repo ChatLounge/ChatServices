@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/clearchan
+#endif
 Help for CLEARCHAN:
 
 CLEARCHAN allows operators to clear

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: memoserv/read
+#endif
 Help for READ:
 
 READ allows you to read a memo that another

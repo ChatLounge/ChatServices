@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/set_hidemail
+#endif
 Help for SET HIDEMAIL:
 
 SET HIDEMAIL prevents an account's e-mail address

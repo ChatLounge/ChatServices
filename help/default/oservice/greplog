@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/greplog
+#endif
 Help for GREPLOG:
 
 GREPLOG searches through services logs and

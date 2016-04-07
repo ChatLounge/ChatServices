@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/quiet
+#endif
 Help for QUIET:
 
 The QUIET command allows you to mute a user or hostmask in

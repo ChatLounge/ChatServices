@@ -1,3 +1,6 @@
+#if soper
+Command provided by: gameserv/namegen
+#endif
 Help for NAMEGEN:
 
 NAMEGEN provides you with a list of possible

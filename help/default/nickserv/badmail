@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/badmail
+#endif
 Help for BADMAIL:
 
 BADMAIL allows you to maintain a list of email addresses that are

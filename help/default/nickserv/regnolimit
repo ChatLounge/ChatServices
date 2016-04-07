@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/regnolimit
+#endif
 Help for REGNOLIMIT:
 
 REGNOLIMIT allows a user to maintain an

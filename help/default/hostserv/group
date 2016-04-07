@@ -1,3 +1,6 @@
+#if soper
+Command provided by: hostserv/group
+#endif
 Help for GROUP:
 
 This command will set the current nick's vHost as the

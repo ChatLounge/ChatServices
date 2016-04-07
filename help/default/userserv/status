@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/status
+#endif
 Help for STATUS:
 
 STATUS returns information about your current

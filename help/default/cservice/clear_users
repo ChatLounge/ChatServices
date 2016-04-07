@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/clear_users
+#endif
 Help for CLEAR USERS:
 
 Clear users will kick all users out of the channel,

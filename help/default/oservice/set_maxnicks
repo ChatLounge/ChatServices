@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/set
+#endif
 Help for SET MAXNICKS:
 
 SET MAXNICKS allows setting how many nicknames one account

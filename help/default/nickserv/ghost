@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/ghost
+#endif
 Help for GHOST:
 
 GHOST disconnects an old user session, or somebody

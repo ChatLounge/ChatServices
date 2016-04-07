@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/set_enforcetime
+#endif
 Help for SET ENFORCETIME:
 
 SET ENFORCETIME sets how long (in seconds) after someone attempts

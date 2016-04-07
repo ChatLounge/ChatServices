@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/verify
+#endif
 Help for VERIFY:
 
 VERIFY confirms a change associated with

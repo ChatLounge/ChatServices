@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/ignore
+#endif
 Help for IGNORE:
 
 Services has an ignore list which functions similarly to

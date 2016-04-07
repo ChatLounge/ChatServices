@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/vhost
+#endif
 Help for VHOST:
 
 VHOST allows operators to set a virtual host (also

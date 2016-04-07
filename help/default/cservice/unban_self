@@ -1,3 +1,6 @@
+#if soper
+Module provided by: chanserv/unban_self
+#endif
 Help for UNBAN:
 
 The UNBAN command allows you to remove all bans matching

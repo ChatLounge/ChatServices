@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/drop
+#endif
 Help for DROP:
 
 Using this command makes &nick& remove your account

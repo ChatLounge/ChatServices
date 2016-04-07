@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/setpass
+#endif
 Help for SETPASS:
 
 SETPASS allows you to set a new password

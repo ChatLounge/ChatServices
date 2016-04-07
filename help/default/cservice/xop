@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/xop_manager
+#endif
 Help for xOP:
 
 The xOP commands allow you to maintain channel
@@ -28,9 +31,9 @@ the same as those required for the corresponding
 FLAGS commands.
 
 #if halfops
-Syntax: VOP|HOP|AOP|SOP <#channel> ADD|DEL|LIST <nickname|hostmask>
+Syntax: VOP|HOP|AOP|SOP|MANAGER <#channel> ADD|DEL|LIST <nickname|hostmask>
 #else
-Syntax: VOP|AOP|SOP <#channel> ADD|DEL|LIST <nickname|hostmask>
+Syntax: VOP|AOP|SOP|MANAGER <#channel> ADD|DEL|LIST <nickname|hostmask>
 #endif
 
 Examples:

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/template
+#endif
 Help for TEMPLATE:
 
 The TEMPLATE command allows definition of sets of flags,

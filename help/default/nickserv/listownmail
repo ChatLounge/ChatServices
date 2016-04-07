@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/listownmail
+#endif
 Help for LISTOWNMAIL:
 
 LISTOWNMAIL shows accounts registered to

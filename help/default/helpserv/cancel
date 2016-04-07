@@ -1,3 +1,6 @@
+#if soper
+Command provided by: helpserv/ticket
+#endif
 Help for CANCEL:
 
 CANCEL allows you to cancel a currently pending request for help.

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/set_email
+#endif
 Help for SET EMAIL:
 
 SET EMAIL allows you to change or set the email

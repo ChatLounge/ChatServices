@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/modload
+#endif
 Help for MODLOAD:
 
 MODLOAD loads one or more modules.

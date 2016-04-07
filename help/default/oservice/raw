@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/raw
+#endif
 Help for RAW:
 
 RAW injects data into the uplink.  This

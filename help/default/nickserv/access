@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/access
+#endif
 Help for ACCESS:
 
 ACCESS maintains a list of user@host masks from where

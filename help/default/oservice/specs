@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/specs
+#endif
 Help for SPECS:
 
 SPECS shows the privileges you have in services.

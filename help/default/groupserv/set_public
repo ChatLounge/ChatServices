@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/set_public
+#endif
 Help for SET PUBLIC:
 
 SET PUBLIC shows group membership when users request NickServ

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_pubacl
+#endif
 Help for SET PUBACL:
 
 SET PUBACL allows the channel access list to be publicly visible.

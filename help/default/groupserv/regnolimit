@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/regnolimit
+#endif
 Help for REGNOLIMIT:
 
 REGNOLIMIT allows a group to collectively maintain an

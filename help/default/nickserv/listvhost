@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/vhost
+#endif
 Help for LISTVHOST:
 
 LISTVHOST shows accounts which have a vHost set

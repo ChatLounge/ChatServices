@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/xop_manager
+#endif
 Help for FORCEXOP:
 
 FORCEXOP resets all channel access levels to

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/hold
+#endif
 Help for HOLD:
 
 HOLD prevents an account and all channels registered to

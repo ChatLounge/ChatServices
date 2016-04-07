@@ -1,3 +1,6 @@
+#if soper
+Module provided by: chanserv/ban
+#endif
 Help for UNBAN:
 
 The UNBAN command allows you to unban a user or hostmask

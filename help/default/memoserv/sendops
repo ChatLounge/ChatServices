@@ -1,3 +1,6 @@
+#if soper
+Command provided by: memoserv/sendops
+#endif
 Help for SENDOPS:
 
 SENDOPS allows you to send a memo to all ops

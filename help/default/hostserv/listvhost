@@ -1,3 +1,6 @@
+#if soper
+Command provided by: hostserv/vhost
+#endif
 Help for LISTVHOST:
 
 LISTVHOST allows operators to see virtual hosts (also

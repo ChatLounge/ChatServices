@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_founder
+#endif
 Help for SET FOUNDER:
 
 SET FOUNDER allows you to set a new founder

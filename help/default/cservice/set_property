@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_property
+#endif
 Help for SET PROPERTY:
 
 SET PROPERTY manipulates metadata

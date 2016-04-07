@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/sync
+#endif
 Help for SET NOSYNC:
 
 SET NOSYNC allows channel staff to disable

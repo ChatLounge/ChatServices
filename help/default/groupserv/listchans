@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/listchans
+#endif
 Help for LISTCHANS:
 
 LISTCHANS shows the channels that a group has

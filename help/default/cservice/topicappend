@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/topic
+#endif
 Help for TOPICAPPEND:
 
 The TOPICAPPEND command allows for the addition to a topic on a channel.

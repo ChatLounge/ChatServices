@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/recover
+#endif
 Help for RECOVER:
 
 RECOVER allows you to regain control of your

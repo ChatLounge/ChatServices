@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/mark
+#endif
 Help for MARK:
 
 MARK allows operators to attach a note to an account.

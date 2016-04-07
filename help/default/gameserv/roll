@@ -1,3 +1,6 @@
+#if soper
+Command provided by: gameserv/dice and gameserv/gamecalc
+#endif
 Help for ROLL:
 
 ROLL lets you roll a series of virtual dice

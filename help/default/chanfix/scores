@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanfix/fix
+#endif
 Help for SCORES:
 
 SCORES lists all users' chanfix scores

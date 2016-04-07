@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/rakill
+#endif
 Help for RAKILL:
 
 RAKILL allows for regex-based akills,

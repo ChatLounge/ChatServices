@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/resetpass
+#endif
 Help for RESETPASS:
 
 RESETPASS sets a random password for the specified

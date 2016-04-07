@@ -1,3 +1,6 @@
+#if soper
+Command provided by: botserv/main
+#endif
 Help for UNASSIGN:
 
 Unassigns a bot from a channel. When you use this command,

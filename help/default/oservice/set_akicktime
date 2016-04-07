@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/set
+#endif
 Help for SET AKICKTIME:
 
 SET AKICKTIME allows network staff to the default duration

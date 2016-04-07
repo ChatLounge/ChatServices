@@ -1,3 +1,6 @@
+#if soper
+Command provided by: botserv/main
+#endif
 Help for BOT:
 
 Allows opers to create, modify, and delete bots

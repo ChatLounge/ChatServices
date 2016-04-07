@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/clear_quiets
+#endif
 Help for CLEAR QUIETS:
 
 This command removes all quiets found in a specific

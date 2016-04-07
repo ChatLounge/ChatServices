@@ -1,3 +1,6 @@
+#if soper
+Command provided by: botserv/set_private
+#endif
 Help for SET PRIVATE:
 
 This option prevents a bot from being assigned to a

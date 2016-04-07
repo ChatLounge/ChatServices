@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/set
+#endif
 Help for SET COMMITINTERVAL:
 
 SET COMMITINTERVAL allows network staff to set how often (in minutes)

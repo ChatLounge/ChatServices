@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/jupe
+#endif
 Help for JUPE:
 
 JUPE introduces a fake server with the given name, so

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/ban
+#endif
 Help for BAN:
 
 The BAN command allows you to ban a user or hostmask from

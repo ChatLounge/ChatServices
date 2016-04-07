@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/access
+#endif
 Help for ACCESS SET:
 
 ACCESS SET will change the given user's role to the given

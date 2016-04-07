@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/uptime
+#endif
 Help for UPTIME:
 
 UPTIME shows services uptime and the number of

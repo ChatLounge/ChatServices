@@ -1,3 +1,6 @@
+#if soper
+Command provided by: hostserv/disable
+#endif
 Help for DISABLE:
 
 Permanently deactivates and removes your vhost.  After using

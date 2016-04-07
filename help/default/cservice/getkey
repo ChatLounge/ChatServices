@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/getkey
+#endif
 Help for GETKEY:
 
 GETKEY returns the key (+k, password to be allowed in)

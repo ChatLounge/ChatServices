@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/return
+#endif
 Help for RETURN:
 
 RETURN resets the specified account

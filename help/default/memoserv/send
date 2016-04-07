@@ -1,3 +1,6 @@
+#if soper
+Command provided by: memoserv/send
+#endif
 Help for SEND:
 
 SEND allows you to send a memo to a nickname

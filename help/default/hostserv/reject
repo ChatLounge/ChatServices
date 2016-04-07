@@ -1,3 +1,6 @@
+#if soper
+Command provided by: hostserv/request
+#endif
 Help for REJECT:
 
 Reject the requested vHost for the given nick.

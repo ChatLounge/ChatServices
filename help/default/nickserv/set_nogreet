@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/set_nogreet
+#endif
 Help for SET NOGREET:
 
 This setting allows you to opt-out of channel greeting notices.

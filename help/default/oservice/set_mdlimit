@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/set
+#endif
 Help for SET MDLIMIT:
 
 SET MDLIMIT sets how many pieces of metadata can belong

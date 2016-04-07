@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/verify
+#endif
 Help for FVERIFY:
 
 FVERIFY allows administrators to confirm a change

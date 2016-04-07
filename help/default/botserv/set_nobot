@@ -1,3 +1,6 @@
+#if soper
+Command provided by: botserv/set_nobot
+#endif
 Help for SET NOBOT:
 
 This option marks a channel as unassignable. If a bot

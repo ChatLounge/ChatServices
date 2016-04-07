@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/set_prefix
+#endif
 Help for SET PREFIX:
 
 PREFIX allows you to customize the channel fantasy trigger

@@ -1,3 +1,6 @@
+#if soper
+Command provided by: groupserv/join
+#endif
 Help for JOIN:
 
 JOIN allows you to join a group set as open for anyone to

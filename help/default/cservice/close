@@ -1,3 +1,6 @@
+#if soper
+Command provided by: chanserv/close
+#endif
 Help for CLOSE:
 
 CLOSE prevents a channel from being used. Anyone

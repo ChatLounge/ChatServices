@@ -1,3 +1,6 @@
+#if soper
+Command provided by: nickserv/enforce
+#endif
 Help for SET ENFORCE:
 
 SET ENFORCE allows you to enable more protection for

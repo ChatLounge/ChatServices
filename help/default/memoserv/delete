@@ -1,3 +1,6 @@
+#if soper
+Command provided by: memoserv/delete
+#endif
 Help for DELETE:
 
 DELETE allows you to delete memos from your

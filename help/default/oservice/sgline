@@ -1,3 +1,6 @@
+#if soper
+Command provided by: operserv/sgline
+#endif
 Help for SGLINE:
 
 SGLINE allows you to maintain network-wide bans by
