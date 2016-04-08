@@ -44,6 +44,11 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Default maximum number of clones allowed: %d"), config_options.default_clone_allowed);
 	command_success_nodata(si, _("Number of commands used before ratelimiting starts, (if 0, ratelimiting is disabled): %d"), config_options.ratelimit_uses);
 	command_success_nodata(si, _("How long before ratelimiting counter resets, (if 0, ratelimiting is disabled): %d seconds"), config_options.ratelimit_period);
+	command_success_nodata(si, _("Number of services ignores: %d"), cnt.svsignore);
+	command_success_nodata(si, _("Number of services operators: %d"), cnt.soper);
+	command_success_nodata(si, _("Number of registered accounts: %d"), cnt.myuser);
+	if (!nicksvs.no_nick_ownership)
+		command_success_nodata(si, _("Number of registered nicks: %d"), cnt.mynick);
 	command_success_nodata(si, _("No nick ownership enabled: %s"), nicksvs.no_nick_ownership ? "yes" : "no");
 	command_success_nodata(si, _("Nickname expiration time: %d days"), nicksvs.expiry / 86400);
 	command_success_nodata(si, _("Nickname enforce expiry time: %d days"), nicksvs.enforce_expiry / 86400);
@@ -55,6 +60,7 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Maximum number of usernames that can be registered to one email address: %d"), me.maxusers);
 	if (!nicksvs.no_nick_ownership)
 	command_success_nodata(si, _("Maximum number of nicknames that one user can own: %d"), nicksvs.maxnicks);
+	command_success_nodata(si, _("Number of registered channels: %d"), cnt.mychan);
 	command_success_nodata(si, _("ChanServ/BotServ joins channels with: %s"),
 		chansvs.use_owner ? "owner" : (chansvs.use_admin ? "admin/protect" : "op"));
 	command_success_nodata(si, _("Default channel founder ACL flags: %s %s"),
