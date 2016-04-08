@@ -511,6 +511,8 @@ static void osinfo_hook(sourceinfo_t *si)
 {
 	mowgli_node_t *n;
 
+	command_success_nodata(si, _("\02Proxy Scan Settings\02"));
+	command_success_nodata(si, _("===================================="));
 	if (action)
 		command_success_nodata(si, "Action taken when a user is an a DNSBL: %s", action);
 	else
@@ -522,6 +524,7 @@ static void osinfo_hook(sourceinfo_t *si)
 
 		command_success_nodata(si, "Blacklist(s): %s", blptr->host);
 	}
+	command_success_nodata(si, _("===================================="));
 }
 
 static void write_dnsbl_exempt_db(database_handle_t *db)

@@ -207,8 +207,11 @@ static void osinfo_hook(sourceinfo_t *si)
 {
 	return_if_fail(si != NULL);
 
+	command_success_nodata(si, _("\02%s Settings\02"), hostsvs->nick);
+	command_success_nodata(si, _("===================================="));
 	/* Can't think of a better way to phrase this, feel free to fix if you can. */
 	command_success_nodata(si, "Requested vHosts will be per-nick: %s", request_per_nick ? "Yes" : "No");
+	command_success_nodata(si, _("===================================="));
 }
 
 /* REQUEST <host> */

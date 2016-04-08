@@ -257,7 +257,10 @@ static void osinfo_hook(sourceinfo_t *si)
 {
 	return_if_fail(si != NULL);
 
+	command_success_nodata(si, _("\02%s Settings\02"), infoserv->nick);
+	command_success_nodata(si, _("===================================="));
 	command_success_nodata(si, "How many messages will be sent to users on connect: %u", logoninfo_count);
+	command_success_nodata(si, _("===================================="));
 }
 
 static void is_cmd_post(sourceinfo_t *si, int parc, char *parv[])

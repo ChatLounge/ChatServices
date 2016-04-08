@@ -1069,7 +1069,10 @@ static void osinfo_hook(sourceinfo_t *si)
 {
 	return_if_fail(si != NULL);
 
+	command_success_nodata(si, _("\02%s Settings\02"), botsvs->nick);
+	command_success_nodata(si, _("===================================="));
 	command_success_nodata(si, "Minimum number of users that must be in a channel for a bot to be assigned: %u", min_users);
+	command_success_nodata(si, _("===================================="));
 }
 
 static void on_shutdown(void *unused)

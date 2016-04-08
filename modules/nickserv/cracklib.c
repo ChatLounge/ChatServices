@@ -76,7 +76,10 @@ static void osinfo_hook(sourceinfo_t *si)
 {
 	return_if_fail(si != NULL);
 
+	command_success_nodata(si, _("\02%s Cracklib Settings\02"), nicksvs.nick);
+	command_success_nodata(si, _("===================================="));
 	command_success_nodata(si, "Registrations will fail with bad passwords: %s", cracklib_warn ? "No" : "Yes");
+	command_success_nodata(si, _("===================================="));
 }
 
 void

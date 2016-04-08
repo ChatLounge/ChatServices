@@ -35,6 +35,9 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 	logcommand(si, CMDLOG_GET, "INFO");
 
+	command_success_nodata(si, _("===================================="));
+	command_success_nodata(si, _("\02General Settings\02"));
+	command_success_nodata(si, _("===================================="));
 	command_success_nodata(si, _("How often services writes changes to the database: %d minutes"), config_options.commit_interval / 60);
 	command_success_nodata(si, _("Default kline expiry time: %d days"), config_options.kline_time / 86400);
 	command_success_nodata(si, _("Minimum number of non-wildcard chars for klines: %u"), config_options.kline_non_wildcard_chars);
@@ -44,41 +47,6 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Default maximum number of clones allowed: %d"), config_options.default_clone_allowed);
 	command_success_nodata(si, _("Number of commands used before ratelimiting starts, (if 0, ratelimiting is disabled): %d"), config_options.ratelimit_uses);
 	command_success_nodata(si, _("How long before ratelimiting counter resets, (if 0, ratelimiting is disabled): %d seconds"), config_options.ratelimit_period);
-	command_success_nodata(si, _("Number of services ignores: %d"), cnt.svsignore);
-	command_success_nodata(si, _("Number of services operators: %d"), cnt.soper);
-	command_success_nodata(si, _("Number of registered accounts: %d"), cnt.myuser);
-	if (!nicksvs.no_nick_ownership)
-		command_success_nodata(si, _("Number of registered nicks: %d"), cnt.mynick);
-	command_success_nodata(si, _("No nick ownership enabled: %s"), nicksvs.no_nick_ownership ? "yes" : "no");
-	command_success_nodata(si, _("Nickname expiration time: %d days"), nicksvs.expiry / 86400);
-	command_success_nodata(si, _("Nickname enforce expiry time: %d days"), nicksvs.enforce_expiry / 86400);
-	command_success_nodata(si, _("Default nickname enforce delay: %d seconds"), nicksvs.enforce_delay);
-	command_success_nodata(si, _("Nickname enforce prefix: %s"), nicksvs.enforce_prefix);
-	command_success_nodata(si, _("Default user registration account flags: %s"),
-		get_default_uflags());
-	command_success_nodata(si, _("Maximum number of logins allowed per username: %d"), me.maxlogins);
-	command_success_nodata(si, _("Maximum number of usernames that can be registered to one email address: %d"), me.maxusers);
-	if (!nicksvs.no_nick_ownership)
-	command_success_nodata(si, _("Maximum number of nicknames that one user can own: %d"), nicksvs.maxnicks);
-	command_success_nodata(si, _("Number of registered channels: %d"), cnt.mychan);
-	command_success_nodata(si, _("ChanServ/BotServ joins channels with: %s"),
-		chansvs.use_owner ? "owner" : (chansvs.use_admin ? "admin/protect" : "op"));
-	command_success_nodata(si, _("Default channel founder ACL flags: %s %s"),
-		chansvs.founder_flags ? chansvs.founder_flags : bitmask_to_flags(CA_ALLPRIVS & ca_all),
-		chansvs.founder_flags ? "" : "(default)");
-	command_success_nodata(si, _("Maximum number of channels that one user can own: %d"), chansvs.maxchans);
-	command_success_nodata(si, _("Channel expiration time: %d days"), chansvs.expiry / 86400);
-	command_success_nodata(si, _("Default channel registration flags: %s"),
-		get_default_cflags());
-	command_success_nodata(si, _("Leveled flags are enabled: %s"), chansvs.no_leveled_flags ? "no" : "yes");
-	if (chansvs.min_non_wildcard_chars_host_acl == 0)
-		command_success_nodata(si, _("Minimum number of non-wildcard chars for hostmask-based channel ACLs: Check Disabled"));
-	else
-		command_success_nodata(si, _("Minimum number of non-wildcard chars for hostmask-based channel ACLs: %u"), chansvs.min_non_wildcard_chars_host_acl);
-	if (chansvs.fantasy)
-		command_success_nodata(si, _("Default channel fantasy trigger: %s"), chansvs.trigger);
-	command_success_nodata(si, _("Maximum number of entries allowed in a channel access list (if 0, unlimited): %d"), chansvs.maxchanacs);
-	command_success_nodata(si, _("Maximum number of founders allowed per channel: %d"), chansvs.maxfounders);
 	command_success_nodata(si, _("SaslServ sends a QUIT right before shutdown or restart: %s"),
 		config_options.send_sasl_quit ? "Yes" : "No");
 
@@ -108,6 +76,49 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	{
 		command_success_nodata(si, _("user@host mask(s) that are autokline exempt: %s"), (char *)n2->data);
 	}
+
+	command_success_nodata(si, _("Number of services ignores: %d"), cnt.svsignore);
+	command_success_nodata(si, _("Number of services operators: %d"), cnt.soper);
+	command_success_nodata(si, _("===================================="));
+	command_success_nodata(si, _("\02%s Settings\02"), nicksvs.nick);
+	command_success_nodata(si, _("===================================="));
+	command_success_nodata(si, _("Number of registered accounts: %d"), cnt.myuser);
+	if (!nicksvs.no_nick_ownership)
+		command_success_nodata(si, _("Number of registered nicks: %d"), cnt.mynick);
+	command_success_nodata(si, _("No nick ownership enabled: %s"), nicksvs.no_nick_ownership ? "yes" : "no");
+	command_success_nodata(si, _("Nickname expiration time: %d days"), nicksvs.expiry / 86400);
+	command_success_nodata(si, _("Nickname enforce expiry time: %d days"), nicksvs.enforce_expiry / 86400);
+	command_success_nodata(si, _("Default nickname enforce delay: %d seconds"), nicksvs.enforce_delay);
+	command_success_nodata(si, _("Nickname enforce prefix: %s"), nicksvs.enforce_prefix);
+	command_success_nodata(si, _("Default user registration account flags: %s"),
+		get_default_uflags());
+	command_success_nodata(si, _("Maximum number of logins allowed per username: %d"), me.maxlogins);
+	command_success_nodata(si, _("Maximum number of usernames that can be registered to one email address: %d"), me.maxusers);
+	if (!nicksvs.no_nick_ownership)
+	command_success_nodata(si, _("Maximum number of nicknames that one user can own: %d"), nicksvs.maxnicks);
+	command_success_nodata(si, _("===================================="));
+	command_success_nodata(si, _("\02%s Settings\02"), chansvs.nick);
+	command_success_nodata(si, _("===================================="));
+	command_success_nodata(si, _("Number of registered channels: %d"), cnt.mychan);
+	command_success_nodata(si, _("ChanServ/BotServ joins channels with: %s"),
+		chansvs.use_owner ? "owner" : (chansvs.use_admin ? "admin/protect" : "op"));
+	command_success_nodata(si, _("Default channel founder ACL flags: %s %s"),
+		chansvs.founder_flags ? chansvs.founder_flags : bitmask_to_flags(CA_ALLPRIVS & ca_all),
+		chansvs.founder_flags ? "" : "(default)");
+	command_success_nodata(si, _("Maximum number of channels that one user can own: %d"), chansvs.maxchans);
+	command_success_nodata(si, _("Channel expiration time: %d days"), chansvs.expiry / 86400);
+	command_success_nodata(si, _("Default channel registration flags: %s"),
+		get_default_cflags());
+	command_success_nodata(si, _("Leveled flags are enabled: %s"), chansvs.no_leveled_flags ? "no" : "yes");
+	if (chansvs.min_non_wildcard_chars_host_acl == 0)
+		command_success_nodata(si, _("Minimum number of non-wildcard chars for hostmask-based channel ACLs: Check Disabled"));
+	else
+		command_success_nodata(si, _("Minimum number of non-wildcard chars for hostmask-based channel ACLs: %u"), chansvs.min_non_wildcard_chars_host_acl);
+	if (chansvs.fantasy)
+		command_success_nodata(si, _("Default channel fantasy trigger: %s"), chansvs.trigger);
+	command_success_nodata(si, _("Maximum number of entries allowed in a channel access list (if 0, unlimited): %d"), chansvs.maxchanacs);
+	command_success_nodata(si, _("Maximum number of founders allowed per channel: %d"), chansvs.maxfounders);
+	command_success_nodata(si, _("===================================="));
 
 	hook_call_operserv_info(si);
 }
