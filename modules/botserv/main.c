@@ -825,7 +825,10 @@ static void bs_cmd_botlist(sourceinfo_t *si, int parc, char *parv[])
 			command_success_nodata(si, "\2%d:\2 %s (%s@%s) [%s]", ++i, bot->nick, bot->user, bot->host, bot->real);
 	}
 
-	command_success_nodata(si, _("\2%d\2 bots available."), i);
+	if (i == 1) /* 1 is not plural. - Ben */
+		command_success_nodata(si, _("\2%d\2 bot available."), i);
+	else
+		command_success_nodata(si, _("\2%d\2 bots available."), i);
 	if (si->su != NULL && has_priv(si, PRIV_CHAN_ADMIN))
 	{
 		i = 0;
@@ -837,7 +840,10 @@ static void bs_cmd_botlist(sourceinfo_t *si, int parc, char *parv[])
 			if (bot->private)
 				command_success_nodata(si, "\2%d:\2 %s (%s@%s) [%s]", ++i, bot->nick, bot->user, bot->host, bot->real);
 		}
-		command_success_nodata(si, _("\2%d\2 private bots available."), i);
+		if (i == 1) /* 1 is not plural. - Ben */
+			command_success_nodata(si, _("\2%d\2 private bot available."), i);
+		else
+			command_success_nodata(si, _("\2%d\2 private bots available."), i);
 	}
 	command_success_nodata(si, "Use \2/msg %s ASSIGN #chan botnick\2 to assign one to your channel.", si->service->me->nick);
 }
