@@ -213,13 +213,26 @@ static void ns_cmd_badmail(sourceinfo_t *si, int parc, char *parv[])
 		{
 			l = n->data;
 
+			if(parv[1] != NULL && match(parv[1], l->mail))
+				continue;
+
 			tm = *localtime(&l->mail_ts);
 			strftime(buf, BUFSIZE, TIME_FORMAT, &tm);
 			command_success_nodata(si, "Email: \2%s\2, Reason: \2%s\2 (%s - %s)",
 				l->mail, l->reason, l->creator, buf);
+
 		}
-		command_success_nodata(si, "End of list.");
-		logcommand(si, CMDLOG_GET, "BADMAIL:LIST");
+		if(parv[1] == NULL)
+		{
+			command_success_nodata(si, "End of list.");
+			logcommand(si, CMDLOG_GET, "BADMAIL:LIST");
+		}
+		else
+		{
+			command_success_nodata(si, "End of list matching: %s", parv[1]);
+			logcommand(si, CMDLOG_GET, "BADMAIL:LIST:%s", parv[1]);
+		}
+
 		return;
 	}
 	else

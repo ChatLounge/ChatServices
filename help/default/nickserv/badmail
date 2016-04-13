@@ -3,16 +3,16 @@ Command provided by: nickserv/badmail
 #endif
 Help for BADMAIL:
 
-BADMAIL allows you to maintain a list of email addresses that are
+BADMAIL allows you to maintain a list of e-mail addresses that are
 not allowed to be used to register accounts.
 
-These email addresses are saved to the Atheme database and are kept
-between services restarts.
+These e-mail addresses are saved to the ChatServices database and
+are kept between services restarts.
 
-In BADMAIL ADD, you are able to use glob matching to disallow email
+In BADMAIL ADD, you are able to use glob matching to disallow e-mail
 addresses that match a pattern.
 
-Syntax: BADMAIL ADD <email> [reason]
+Syntax: BADMAIL ADD <e-mail> [reason]
 
 Examples:
     /msg &nick& BADMAIL ADD jdhore1@gmail.com bar reason
@@ -21,7 +21,7 @@ Examples:
     /msg &nick& BADMAIL ADD some-spambot-pattern-*@gmail.com
 
 BADMAIL DEL allows you to remove entries from the list of currently
-banned email addresses.
+banned e-mail addresses.
 
 Syntax: BADMAIL DEL <email>
 
@@ -29,9 +29,14 @@ Examples:
     /msg &nick& BADMAIL DEL foo@bar.com
     /msg &nick& BADMAIL DEL *@aol.com
 
-BADMAIL LIST allows you to list the currently banned email addresses.
+BADMAIL LIST allows you to list the currently banned e-mail addresses.
 
-Syntax: BADMAIL LIST
+Syntax: BADMAIL LIST [e-mail glob mask]
+
+If an e-mail mask is specified, only bad e-mail addresses that match
+the mask will be listed.  If no mask is specified, all bad e-mail
 
 Examples:
     /msg &nick& BADMAIL LIST
+    /msg &nick& BADMAIL LIST *@*.tk
+    /msg &nick& BADMAIL LIST *@aol.com
