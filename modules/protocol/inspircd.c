@@ -926,7 +926,10 @@ static void m_fjoin(sourceinfo_t *si, int parc, char *parv[])
 			if (cu->user->server == me.me)
 			{
 				/* it's a service, reop */
-				sts(":%s FMODE %s %lu +o %s", me.numeric, c->name, (unsigned long)ts, cu->user->uid);
+				sts(":%s FMODE %s %lu +%so %s", me.numeric, c->name, (unsigned long)ts,
+					ircd->uses_owner && chansvs.use_owner ? "q" :
+					(ircd->uses_protect && chansvs.use_admin ? "a" : ""),
+					cu->user->uid);
 				cu->modes = CSTATUS_OP;
 			}
 			else
