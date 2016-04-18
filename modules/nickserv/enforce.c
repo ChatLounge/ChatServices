@@ -100,7 +100,8 @@ static void guest_nickname(user_t *u)
 	 * you shouldn't use this module. */
 	for (tries = 0; tries < 30; tries++)
 	{
-		snprintf(gnick, sizeof gnick, "%s%d", nicksvs.enforce_prefix, arc4random()%100000);
+		snprintf(gnick, sizeof gnick, "%s%s", nicksvs.enforce_prefix, base36_encode(arc4random()%1679616));
+		/* 36^4 = 1,679,616 */
 
 		if (!user_find_named(gnick))
 			break;
