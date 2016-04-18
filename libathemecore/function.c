@@ -44,6 +44,29 @@ char *random_string(int sz)
 	return buf;
 }
 
+/* Shamelessly ripped from https://en.wikipedia.org/wiki/Base36#C_implementation
+ * - Ben
+ */
+char *base36_encode(long unsigned int value)
+{
+	static char base36[36] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	/* log(2**64) / log(36) = 12.38 => max 13 char + '\0' */
+	static char buffer[14];
+	unsigned int offset = sizeof(buffer);
+
+	buffer[--offset] = '\0';
+	do {
+		buffer[--offset] = base36[value % 36];
+	} while (value /= 36);
+
+	return strncpy(buffer, &buffer[offset], sizeof(buffer));
+}
+
+long unsigned int base36_decode(const char *text)
+{
+	return strtoul(text, NULL, 36);
+}
+
 void create_challenge(sourceinfo_t *si, const char *name, int v, char *dest)
 {
 	char buf[256];
