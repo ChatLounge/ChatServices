@@ -135,7 +135,7 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 	while (i != 0)
 	{
 		i =  i/10;
-		if ((i > 5))
+		if (i > 5)
 			entrywidth++;
 	}
 
@@ -151,7 +151,7 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 	for (i; i < entrywidth; i++)
 	{
 		mowgli_strlcat(entryborder, "-", BUFSIZE);
-		if (!(i > 4))
+		if (i > 4)
 			mowgli_strlcat(entryspacing, " ", BUFSIZE);
 	}
 
@@ -160,7 +160,7 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 	for (i; i < nickhostwidth; i++)
 	{
 		mowgli_strlcat(nickhostborder, "-", BUFSIZE);
-		if (!(i > 11))
+		if (i > 11)
 			mowgli_strlcat(nickhostspacing, " ", BUFSIZE);
 	}
 
