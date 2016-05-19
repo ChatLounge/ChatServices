@@ -67,6 +67,30 @@ long unsigned int base36_decode(const char *text)
 	return strtoul(text, NULL, 36);
 }
 
+/* Similar to base36_encode but instead utilizes the Natural Area Code which
+ * is base30, as the vowels have been removed.
+ * https://en.wikipedia.org/wiki/Natural_Area_Code
+ * - Ben
+ */
+char *naturalareacode_encode(long unsigned int value)
+{
+	static char naturalareacode[30] = "0123456789BCDFGHJKLMNPQRSTVWXZ";
+	static char buffer[15];
+	unsigned int offset = sizeof(buffer);
+
+	buffer[--offset] = '\0';
+	do {
+		buffer[--offset] = naturalareacode[value % 36];
+	} while (value /= 30);
+
+	return strncpy(buffer, &buffer[offset], sizeof(buffer));
+}
+
+long unsigned int naturalareacode_decode(const char *text)
+{
+	return strtoul(text, NULL, 30);
+}
+
 void create_challenge(sourceinfo_t *si, const char *name, int v, char *dest)
 {
 	char buf[256];

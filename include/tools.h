@@ -121,6 +121,8 @@ E char *get_default_cflags();
 E char *random_string(int sz);
 E char *base36_encode(long unsigned int value);
 E long unsigned int base36_decode(const char *text);
+E char *naturalareacode_encode(long unsigned int value);
+E long unsigned int naturalareacode_decode(const char *text);
 E void create_challenge(sourceinfo_t *si, const char *name, int v, char *dest);
 E void tb2sp(char *line);
 E char *replace(char *s, int size, const char *old, const char *new);
