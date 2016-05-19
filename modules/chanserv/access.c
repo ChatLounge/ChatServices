@@ -566,11 +566,13 @@ static unsigned int xflag_apply_batch(unsigned int in, int parc, char *parv[])
 static void cs_cmd_access_list(sourceinfo_t *si, int parc, char *parv[])
 {
 	chanacs_t *ca;
-	mowgli_node_t *n;
+	mowgli_node_t *m, *n;
 	mychan_t *mc;
 	const char *channel = parv[0];
 	bool operoverride = false;
-	unsigned int i = 1;
+	unsigned int i = 0;
+	unsigned int entrywidth = 5, nickhostwidth = 13, rolewidth = 4; /* "Nickname/Host" is 13 chars long, "Role" is 4. */
+	char fmtstring[BUFSIZE], entryspacing[BUFSIZE], entryborder[BUFSIZE], nickhostspacing[BUFSIZE], nickhostborder[BUFSIZE], roleborder[BUFSIZE];
 
 	mc = mychan_find(channel);
 	if (!mc)
@@ -590,8 +592,69 @@ static void cs_cmd_access_list(sourceinfo_t *si, int parc, char *parv[])
 		}
 	}
 
-	command_success_nodata(si, _("Entry Nickname/Host          Role"));
-	command_success_nodata(si, "----- ---------------------- ----");
+	/* Set entrywidth, flagswidth, and nickhostwidth to the length of the
+	 * longest entries.
+	 * - Ben
+	 */
+	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
+	{
+		ca = m->data;
+
+		if (strlen(ca->entity ? ca->entity->name : ca->host) > nickhostwidth)
+			nickhostwidth = strlen(ca->entity ? ca->entity->name : ca->host);
+
+		if (strlen(get_template_name(mc, ca->level)) > rolewidth)
+			rolewidth = strlen(get_template_name(mc, ca->level));
+
+		i++;
+	}
+
+	while (i != 0)
+	{
+		i =  i/10;
+		if (i > 5)
+			entrywidth++;
+	}
+
+	mowgli_strlcpy(entryspacing, " ", BUFSIZE);
+	mowgli_strlcpy(entryborder, "-", BUFSIZE);
+	mowgli_strlcpy(nickhostspacing, " ", BUFSIZE);
+	mowgli_strlcpy(nickhostborder, "-", BUFSIZE);
+	mowgli_strlcpy(roleborder, "-", BUFSIZE);
+
+	i = 1;
+
+	for (i; i < entrywidth; i++)
+	{
+		mowgli_strlcat(entryborder, "-", BUFSIZE);
+		if (i > 4)
+			mowgli_strlcat(entryspacing, " ", BUFSIZE);
+	}
+
+	i = 1;
+
+	for (i; i < nickhostwidth; i++)
+	{
+		mowgli_strlcat(nickhostborder, "-", BUFSIZE);
+		if (i > 12)
+			mowgli_strlcat(nickhostspacing, " ", BUFSIZE);
+	}
+
+	i = 1;
+
+	for (i; i < rolewidth; i++)
+	{
+		mowgli_strlcat(roleborder, "-", BUFSIZE);
+	}
+
+	command_success_nodata(si, _("Entry%sNickname/Host%sRole"), entryspacing, nickhostspacing);
+	command_success_nodata(si, "%s %s %s", entryborder, nickhostborder, roleborder);
+
+	/* Make dynamic format string. */
+	snprintf(fmtstring, BUFSIZE, "%%%ud %%-%us %%s",
+		entrywidth, nickhostwidth);
+
+	i = 1;
 
 	MOWGLI_ITER_FOREACH(n, mc->chanacs.head)
 	{
@@ -604,12 +667,12 @@ static void cs_cmd_access_list(sourceinfo_t *si, int parc, char *parv[])
 
 		role = get_template_name(mc, ca->level);
 
-		command_success_nodata(si, _("%-5d %-22s %s"), i, ca->entity ? ca->entity->name : ca->host, role);
+		command_success_nodata(si, _(fmtstring), i, ca->entity ? ca->entity->name : ca->host, role);
 
 		i++;
 	}
 
-	command_success_nodata(si, "----- ---------------------- ----");
+	command_success_nodata(si, "%s %s %s", entryborder, nickhostborder, roleborder);
 	command_success_nodata(si, _("End of \2%s\2 ACCESS listing."), channel);
 
 	if (operoverride)
