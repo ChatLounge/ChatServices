@@ -101,7 +101,7 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 	unsigned int entrywidth = 5, nickhostwidth = 13, flagswidth = 5; /* "Nickname/Host" is 13 chars long, "Flags" is 5. */
 	bool operoverride = false;
 	unsigned int i = 0;
-	char fmtstring[BUFSIZE];
+	char fmtstring[BUFSIZE], entryspacing[BUFSIZE], entryborder[BUFSIZE], nickhostspacing[BUFSIZE], nickhostborder[BUFSIZE], flagsborder[BUFSIZE];
 
 	if (!(mc->flags & MC_PUBACL) && !chanacs_source_has_flag(mc, si, CA_ACLVIEW))
 	{
@@ -114,9 +114,8 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 		}
 	}
 
-	/* Set flagswidth and nickhostwidth to the length of the longest entries.
-	 * Not doing this for entry because I don't expect a channel to have over
-	 * 99,999 ACL entries..
+	/* Set entrywidth, flagswidth, and nickhostwidth to the length of the
+	 * longest entries.
 	 * - Ben
 	 */
 	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
@@ -139,7 +138,6 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 			entrywidth++;
 	}
 
-	char entryspacing[BUFSIZE], entryborder[BUFSIZE], nickhostspacing[BUFSIZE], nickhostborder[BUFSIZE], flagsborder[BUFSIZE];
 	mowgli_strlcpy(entryspacing, " ", BUFSIZE);
 	mowgli_strlcpy(entryborder, "-", BUFSIZE);
 	mowgli_strlcpy(nickhostspacing, " ", BUFSIZE);
@@ -155,30 +153,30 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 			mowgli_strlcat(entryspacing, " ", BUFSIZE);
 	}
 
-	i = 0;
+	i = 1;
 
 	for (i; i < nickhostwidth; i++)
 	{
 		mowgli_strlcat(nickhostborder, "-", BUFSIZE);
-		if (i > 11)
+		if (i > 12)
 			mowgli_strlcat(nickhostspacing, " ", BUFSIZE);
 	}
 
-	i = 0;
+	i = 1;
 
 	for (i; i < flagswidth; i++)
 	{
 		mowgli_strlcat(flagsborder, "-", BUFSIZE);
 	}
 
-	command_success_nodata(si, _("Entry Nickname/Host%sFlags"), nickhostspacing);
+	command_success_nodata(si, _("Entry%sNickname/Host%sFlags"), entryspacing, nickhostspacing);
 	command_success_nodata(si, "%s %s %s", entryborder, nickhostborder, flagsborder);
 
 	i = 1;
 
 	/* Make dynamic format string. */
-	snprintf(fmtstring, BUFSIZE, "%%-%ud %%-%us %%-%us (%%s) (%%s) [modified %%s ago, on %%s]",
-		entrywidth, nickhostwidth + 1, flagswidth);
+	snprintf(fmtstring, BUFSIZE, "%%%ud %%-%us %%-%us (%%s) (%%s) [modified %%s ago, on %%s]",
+		entrywidth, nickhostwidth, flagswidth);
 
 	MOWGLI_ITER_FOREACH(n, mc->chanacs.head)
 	{
