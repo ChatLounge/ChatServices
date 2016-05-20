@@ -54,10 +54,10 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 {
 	user_t *u = si->su;
 	myuser_t *mu;
-	mowgli_node_t *n, *tn;
+	mowgli_node_t *n, *ln, *tn;
 	const char *target = parv[0];
 	const char *password = parv[1];
-	char lau[BUFSIZE];
+	char buf[BUFSIZE], lau[BUFSIZE];
 
 	if (si->su == NULL)
 	{
@@ -145,10 +145,25 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 		        u->myuser = NULL;
 		}
 
-		command_success_nodata(si, nicksvs.no_nick_ownership ? _("You are now logged in as \2%s\2.") : _("You are now identified for \2%s\2."), entity(mu)->name);
+		command_success_nodata(si, nicksvs.no_nick_ownership ? _("You are now logged in as: \2%s\2") : _("You are now identified for: \2%s\2"), entity(mu)->name);
 
 		myuser_login(si->service, u, mu, true);
 		logcommand(si, CMDLOG_LOGIN, COMMAND_UC);
+
+		buf[0] = '\0';
+		MOWGLI_ITER_FOREACH(ln, mu->logins.head)
+		{
+			if (strlen(buf) > 80)
+			{
+				command_success_nodata(si, _("Logins to this account: %s"), buf);
+				buf[0] = '\0';
+			}
+			if (buf[0])
+				mowgli_strlcat(buf, " ", sizeof buf);
+			mowgli_strlcat(buf, ((user_t *)(ln->data))->nick, sizeof buf);
+		}
+		if (buf[0])
+			command_success_nodata(si, _("Logins to this account: %s"), buf);
 
 		return;
 	}
