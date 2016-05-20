@@ -17,7 +17,7 @@ DECLARE_MODULE_V1
 
 static void ns_cmd_logout(sourceinfo_t *si, int parc, char *parv[]);
 
-command_t ns_logout = { "LOGOUT", N_("Logs your services session out."), AC_NONE, 2, ns_cmd_logout, { .path = "nickserv/logout" } };
+command_t ns_logout = { "LOGOUT", N_("Logout of your services session."), AC_NONE, 2, ns_cmd_logout, { .path = "nickserv/logout" } };
 
 void _modinit(module_t *m)
 {
@@ -60,17 +60,17 @@ static void ns_cmd_logout(sourceinfo_t *si, int parc, char *parv[])
 		}
 
 		if (u->myuser == si->smu || (pass != NULL && verify_password(u->myuser, pass)))
-			notice(nicksvs.nick, u->nick, "You were logged out by \2%s\2.", si->su->nick);
+			notice(nicksvs.nick, u->nick, "You were logged out by: \2%s\2", si->su->nick);
 		else if (pass != NULL)
 		{
 			logcommand(si, CMDLOG_LOGIN, "failed LOGOUT \2%s\2 (bad password)", u->nick);
-			command_fail(si, fault_authfail, _("Authentication failed. Invalid password for \2%s\2."), entity(u->myuser)->name);
+			command_fail(si, fault_authfail, _("Authentication failed.  Invalid password for: \2%s\2"), entity(u->myuser)->name);
 			bad_password(si, u->myuser);
 			return;
 		}
 		else
 		{
-			command_fail(si, fault_authfail, _("You may not log out \2%s\2."), u->nick);
+			command_fail(si, fault_authfail, _("You may not logout: \2%s\2"), u->nick);
 			return;
 		}
 	}
@@ -88,12 +88,12 @@ static void ns_cmd_logout(sourceinfo_t *si, int parc, char *parv[])
 	if (si->su != u)
 	{
 		logcommand(si, CMDLOG_LOGIN, "LOGOUT: \2%s\2", u->nick);
-		command_success_nodata(si, _("\2%s\2 has been logged out."), u->nick);
+		command_success_nodata(si, _("\2%s\2 has been logged out of: \2%s\2"), u->nick, entity(u->myuser)->name);
 	}
 	else
 	{
 		logcommand(si, CMDLOG_LOGIN, "LOGOUT");
-		command_success_nodata(si, _("You have been logged out."));
+		command_success_nodata(si, _("You have been logged out of: \2%s\2"), entity(u->myuser)->name);
 	}
 
 	u->myuser->lastlogin = CURRTIME;
