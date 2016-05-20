@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2005-2006 William Pitcock, et al.
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the NickServ IDENTIFY and LOGIN functions.
@@ -29,7 +30,7 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[]);
 #ifdef NICKSERV_LOGIN
 command_t ns_login = { "LOGIN", N_("Authenticates to a services account."), AC_NONE, 2, ns_cmd_login, { .path = "nickserv/login" } };
 #else
-command_t ns_identify = { "IDENTIFY", N_("Identifies to services for a nickname."), AC_NONE, 2, ns_cmd_login, { .path = "nickserv/identify" } };
+command_t ns_identify = { "IDENTIFY", N_("Authenticates to a services account."), AC_NONE, 2, ns_cmd_login, { .path = "nickserv/identify" } };
 #endif
 
 void _modinit(module_t *m)
@@ -89,21 +90,21 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 
 	if (metadata_find(mu, "private:freeze:freezer"))
 	{
-		command_fail(si, fault_authfail, nicksvs.no_nick_ownership ? "You cannot login as \2%s\2 because the account has been frozen." : "You cannot identify to \2%s\2 because the nickname has been frozen.", entity(mu)->name);
+		command_fail(si, fault_authfail, "You may not login as \2%s\2 because the account has been frozen.", entity(mu)->name);
 		logcommand(si, CMDLOG_LOGIN, "failed " COMMAND_UC " to \2%s\2 (frozen)", entity(mu)->name);
 		return;
 	}
 
 	if (u->myuser == mu)
 	{
-		command_fail(si, fault_nochange, _("You are already logged in as \2%s\2."), entity(u->myuser)->name);
+		command_fail(si, fault_nochange, _("You are already logged in as: \2%s\2"), entity(u->myuser)->name);
 		if (mu->flags & MU_WAITAUTH)
 			command_fail(si, fault_nochange, _("Please check your email for instructions to complete your registration."));
 		return;
 	}
 	else if (u->myuser != NULL && !command_find(si->service->commands, "LOGOUT"))
 	{
-		command_fail(si, fault_alreadyexists, _("You are already logged in as \2%s\2."), entity(u->myuser)->name);
+		command_fail(si, fault_alreadyexists, _("You are already logged in as: \2%s\2"), entity(u->myuser)->name);
 		return;
 	}
 
@@ -127,7 +128,7 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 		/* if they are identified to another account, nuke their session first */
 		if (u->myuser)
 		{
-			command_success_nodata(si, _("You have been logged out of \2%s\2."), entity(u->myuser)->name);
+			command_success_nodata(si, _("You have been logged out of: \2%s\2"), entity(u->myuser)->name);
 
 			if (ircd_on_logout(u, entity(u->myuser)->name))
 				/* logout killed the user... */
@@ -170,7 +171,7 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 
 	logcommand(si, CMDLOG_LOGIN, "failed " COMMAND_UC " to \2%s\2 (bad password)", entity(mu)->name);
 
-	command_fail(si, fault_authfail, _("Invalid password for \2%s\2."), entity(mu)->name);
+	command_fail(si, fault_authfail, _("Invalid password for: \2%s\2"), entity(mu)->name);
 	bad_password(si, mu);
 }
 
