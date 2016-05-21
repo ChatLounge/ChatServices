@@ -238,20 +238,28 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	 */
 	else if (mu == si->smu || has_user_auspex)
 	{
-		buf[0] = '\0';
+//		buf[0] = '\0';
 		MOWGLI_ITER_FOREACH(n, mu->logins.head)
 		{
-			if (strlen(buf) > 80)
-			{
-				command_success_nodata(si, _("Logins from: %s"), buf);
-				buf[0] = '\0';
-			}
-			if (buf[0])
-				mowgli_strlcat(buf, " ", sizeof buf);
-			mowgli_strlcat(buf, ((user_t *)(n->data))->nick, sizeof buf);
+//			if (strlen(buf) > 80)
+//			{
+//				command_success_nodata(si, _("Logins from: %s"), buf);
+//				buf[0] = '\0';
+//			}
+//			if (buf[0])
+//				mowgli_strlcat(buf, " ", sizeof buf);
+//			mowgli_strlcat(buf, ((user_t *)(n->data))->nick, sizeof buf);
+
+			snprintf(buf, BUFSIZE, "Logins to this account: %s (%s@%s) [%s]\0",
+				((user_t *)(n->data))->nick,
+				((user_t *)(n->data))->user,
+				((user_t *)(n->data))->host,
+				((user_t *)(n->data))->ip
+				);
+			command_success_nodata(si, _("Logins to this account: %s"), buf);
 		}
-		if (buf[0])
-			command_success_nodata(si, _("Logins from: %s"), buf);
+//		if (buf[0])
+//			command_success_nodata(si, _("Logins from: %s"), buf);
 	}
 	/* tell them this account is online, but not which nick
 	 * unless we have already told them above
