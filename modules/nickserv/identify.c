@@ -113,14 +113,8 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 		if (MOWGLI_LIST_LENGTH(&mu->logins) >= me.maxlogins)
 		{
 			command_fail(si, fault_toomany, _("There are already \2%zu\2 sessions logged in to \2%s\2 (maximum allowed: %u)."), MOWGLI_LIST_LENGTH(&mu->logins), entity(mu)->name, me.maxlogins);
-//			lau[0] = '\0';
 			MOWGLI_ITER_FOREACH(n, mu->logins.head)
 			{
-//				if (lau[0] != '\0')
-//					mowgli_strlcat(lau, ", ", sizeof lau);
-//				mowgli_strlcat(lau, ((user_t *)n->data)->nick, sizeof lau);
-//			}
-//			command_fail(si, fault_toomany, _("Logged in nicks are: %s"), lau);
 				snprintf(lau, BUFSIZE, "Logins to this account: %s (%s@%s) [%s]\0",
 					((user_t *)(n->data))->nick,
 					((user_t *)(n->data))->user,
@@ -160,18 +154,8 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 		myuser_login(si->service, u, mu, true);
 		logcommand(si, CMDLOG_LOGIN, COMMAND_UC);
 
-//		buf[0] = '\0';
 		MOWGLI_ITER_FOREACH(ln, mu->logins.head)
 		{
-//			if (strlen(buf) > 80)
-//			{
-//				command_success_nodata(si, _("Logins to this account: %s"), buf);
-//				buf[0] = '\0';
-//			}
-//			if (buf[0])
-//				mowgli_strlcat(buf, " ", sizeof buf);
-//			mowgli_strlcat(buf, ((user_t *)(ln->data))->nick, sizeof buf);
-
 			snprintf(buf, BUFSIZE, "Logins to this account: %s (%s@%s) [%s]\0",
 				((user_t *)(ln->data))->nick,
 				((user_t *)(ln->data))->user,
@@ -180,8 +164,6 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 				);
 			command_success_nodata(si, _("Logins to this account: %s"), buf);
 		}
-//		if (buf[0])
-//			command_success_nodata(si, _("Logins to this account: %s"), buf);
 
 		return;
 	}
