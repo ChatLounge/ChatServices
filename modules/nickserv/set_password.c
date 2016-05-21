@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
+ * Copyright (c) 2016 ChatLounge IRC Network Development
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Changes the password associated with your account.
@@ -70,7 +71,7 @@ static void ns_cmd_set_password(sourceinfo_t *si, int parc, char *parv[])
 
 	set_password(si->smu, password);
 
-	command_success_nodata(si, _("The password for \2%s\2 has been changed to \2%s\2."), entity(si->smu)->name, password);
+	command_success_nodata(si, _("The password for \2%s\2 has been changed to: \2%s\2"), entity(si->smu)->name, password);
 
 	return;
 }

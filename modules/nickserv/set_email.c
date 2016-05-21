@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
+ * Copyright (c) 2016 ChatLounge IRC Network Development
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Changes your e-mail address.
@@ -65,7 +66,7 @@ static void ns_cmd_set_email(sourceinfo_t *si, int parc, char *parv[])
 			metadata_delete(si->smu, "private:verify:emailchg:timestamp");
 		}
 		else
-			command_fail(si, fault_nochange, _("The email address for account \2%s\2 is already set to \2%s\2."), entity(si->smu)->name, si->smu->email);
+			command_fail(si, fault_nochange, _("The email address for account \2%s\2 is already set to: \2%s\2"), entity(si->smu)->name, si->smu->email);
 		return;
 	}
 
@@ -99,7 +100,7 @@ static void ns_cmd_set_email(sourceinfo_t *si, int parc, char *parv[])
 		}
 
 		logcommand(si, CMDLOG_SET, "SET:EMAIL: \2%s\2 (\2%s\2 -> \2%s\2) (awaiting verification)", entity(si->smu)->name, si->smu->email, email);
-		command_success_nodata(si, _("An email containing email changing instructions has been sent to \2%s\2."), email);
+		command_success_nodata(si, _("An email containing email changing instructions has been sent to: \2%s\2"), email);
 		command_success_nodata(si, _("Your email address will not be changed until you follow these instructions."));
 
 		return;
@@ -107,7 +108,7 @@ static void ns_cmd_set_email(sourceinfo_t *si, int parc, char *parv[])
 
 	logcommand(si, CMDLOG_SET, "SET:EMAIL: \2%s\2 (\2%s\2 -> \2%s\2)", entity(si->smu)->name, si->smu->email, email);
 	myuser_set_email(si->smu, email);
-	command_success_nodata(si, _("The email address for account \2%s\2 has been changed to \2%s\2."), entity(si->smu)->name, si->smu->email);
+	command_success_nodata(si, _("The email address for account \2%s\2 has been changed to: \2%s\2"), entity(si->smu)->name, si->smu->email);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
