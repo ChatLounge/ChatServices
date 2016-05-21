@@ -607,6 +607,8 @@ static void sasl_newuser(hook_user_nick_t *data)
 	user_t *u = data->u;
 	sasl_session_t *p;
 	myuser_t *mu;
+	mowgli_node_t *ln;
+	char buf[BUFSIZE];
 
 	/* If the user has been killed, don't do anything. */
 	if (!u)
@@ -637,6 +639,19 @@ static void sasl_newuser(hook_user_nick_t *data)
 	myuser_login(saslsvs, u, mu, false);
 
 	logcommand_user(saslsvs, u, CMDLOG_LOGIN, "LOGIN");
+
+	notice(saslsvs->nick, u->nick, _("You are now logged in to: %s"), entity(mu)->name);
+
+	MOWGLI_ITER_FOREACH(ln, mu->logins.head)
+	{
+		snprintf(buf, BUFSIZE, "Logins to this account: %s (%s@%s) [%s]\0",
+			((user_t *)(ln->data))->nick,
+			((user_t *)(ln->data))->user,
+			((user_t *)(ln->data))->host,
+			((user_t *)(ln->data))->ip
+			);
+		notice(saslsvs->nick, u->nick, _("Logins to this account: %s"), buf);
+	}
 }
 
 /* This function is run approximately once every 30 seconds.
