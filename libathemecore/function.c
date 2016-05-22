@@ -80,7 +80,7 @@ char *naturalareacode_encode(long unsigned int value)
 
 	buffer[--offset] = '\0';
 	do {
-		buffer[--offset] = naturalareacode[value % 36];
+		buffer[--offset] = naturalareacode[value % 30];
 	} while (value /= 30);
 
 	return strncpy(buffer, &buffer[offset], sizeof(buffer));
