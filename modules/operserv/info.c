@@ -90,12 +90,15 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Nickname enforce expiry time: %d days"), nicksvs.enforce_expiry / 86400);
 	command_success_nodata(si, _("Default nickname enforce delay: %d seconds"), nicksvs.enforce_delay);
 	command_success_nodata(si, _("Nickname enforce prefix: %s"), nicksvs.enforce_prefix);
+	command_success_nodata(si, _("Use dynamic nickname enforcement (append digits to current nick): %s"), nicksvs.use_dynamic_enforce ? "Yes" : "No");
+	if (nicksvs.use_dynamic_enforce)
+		command_success_nodata(si, _("Maximum nick length: %u"), nicksvs.maxnicklength);
 	command_success_nodata(si, _("Default user registration account flags: %s"),
 		get_default_uflags());
 	command_success_nodata(si, _("Maximum number of logins allowed per username: %d"), me.maxlogins);
 	command_success_nodata(si, _("Maximum number of usernames that can be registered to one email address: %d"), me.maxusers);
 	if (!nicksvs.no_nick_ownership)
-	command_success_nodata(si, _("Maximum number of nicknames that one user can own: %d"), nicksvs.maxnicks);
+		command_success_nodata(si, _("Maximum number of nicknames that one user can own: %d"), nicksvs.maxnicks);
 	command_success_nodata(si, _("===================================="));
 	command_success_nodata(si, _("\02%s Settings\02"), chansvs.nick);
 	command_success_nodata(si, _("===================================="));

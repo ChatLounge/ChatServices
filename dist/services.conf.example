@@ -1081,6 +1081,23 @@ nickserv {
 	 */
 	#enforce_prefix = "User";
 
+	/* (*)use_dynamic_enforce
+	 * If enabled, instead of the enforce prefix it will append the enforce
+	 * suffix of random digits to the end of the current nick.  If the
+	 * difference between the current nick length and the maximum length
+	 * (see: nickserv:maxnicklength) is less than 5, the digits will be
+	 * overwritten over the existing nick.
+	 */
+	#use_dynamic_enforce;
+
+	/* (*)maxnicklength
+	 * If specified, this is the value used to determine maximum nick length
+	 * when dynamic enforce is used.  If you are using dynamic enforce, you
+	 * MUST set this to the same value as the maximum nick length on your
+	 * network.  Otherwise, undefined and strange behavior may occur.
+	 */
+	#maxnicklength = 32;
+
 	/* (*)cracklib_dict
 	 * The location and filename prefix of the cracklib dictionaries
 	 * for use with nickserv/cracklib. This must be provided if you are

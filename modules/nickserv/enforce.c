@@ -91,8 +91,16 @@ static bool log_enforce_victim_out(user_t *u, myuser_t *mu)
 /* sends an FNC for the given user */
 static void guest_nickname(user_t *u)
 {
-	char gnick[NICKLEN];
+	char gnick[NICKLEN], oldnick[NICKLEN];
 	int tries;
+
+	if (nicksvs.use_dynamic_enforce)
+	{
+		if (strlen(u->nick) + 5 > nicksvs.maxnicklength + 1)
+			snprintf(oldnick, nicksvs.maxnicklength - 4, u->nick);
+		else
+			snprintf(oldnick, sizeof oldnick, u->nick);
+	}
 
 	/* Generate a new guest nickname and check if it already exists
 	 * This will try to generate a new nickname 30 different times
@@ -100,7 +108,8 @@ static void guest_nickname(user_t *u)
 	 * you shouldn't use this module. */
 	for (tries = 0; tries < 30; tries++)
 	{
-		snprintf(gnick, sizeof gnick, "%s%s", nicksvs.enforce_prefix, naturalareacode_encode(arc4random()%24300000));
+		snprintf(gnick, sizeof gnick, "%s%s", nicksvs.use_dynamic_enforce ? oldnick : nicksvs.enforce_prefix,
+			naturalareacode_encode(arc4random()%24300000));
 		/* 30^5 = 24,300,000 */
 
 		if (!user_find_named(gnick))

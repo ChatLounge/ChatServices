@@ -74,6 +74,7 @@ struct nicksvs_
 {
   bool  spam;
   bool  no_nick_ownership;
+  bool  use_dynamic_enforce;
 
   char   *nick;
   char   *user;
@@ -86,8 +87,11 @@ struct nicksvs_
   unsigned int expiry;          /* expiry time                */
   unsigned int enforce_expiry;  /* expiry time                */
   unsigned int enforce_delay;   /* delay for nickname enforce */
+  unsigned int maxnicklength;   /* Maximum nick length.  Only needed for dynamic
+                                 * enforce prefix.
+                                 */
   char         *enforce_prefix; /* prefix for enforcement */
-  char	       *cracklib_dict; /* cracklib dictionary path */
+  char         *cracklib_dict; /* cracklib dictionary path */
   mowgli_list_t emailexempts; /* emails exempt from maxusers checks */
 };
 
