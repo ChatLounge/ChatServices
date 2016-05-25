@@ -619,7 +619,7 @@ void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount)
 	if (is_soper(mu))
 		slog(LG_INFO, "SOPER: \2%s\2 as \2%s\2", u->nick, entity(mu)->name);
 
-	myuser_notice(svs->me->nick, mu, "%s!%s@%s has just authenticated as you (%s)", u->nick, u->user, u->vhost, entity(mu)->name);
+	myuser_notice(svs->me->nick, mu, "%s!%s@%s [%s] has just authenticated as you (%s)", u->nick, u->user, u->host, u->ip, entity(mu)->name);
 
 	u->myuser = mu;
 	mowgli_node_add(u, mowgli_node_create(), &mu->logins);
