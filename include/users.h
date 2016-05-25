@@ -91,6 +91,7 @@ E void user_mode(user_t *user, const char *modes);
 E void user_sethost(user_t *source, user_t *target, const char *host);
 E const char *user_get_umodestr(user_t *u);
 E bool user_is_channel_banned(user_t *u, char ban_type);
+E void user_show_all_logins(myuser_t *mu, user_t *source, user_t *target);
 
 /* uid.c */
 E void init_uid(void);

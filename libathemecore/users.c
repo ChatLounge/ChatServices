@@ -656,6 +656,32 @@ bool user_is_channel_banned(user_t *u, char ban_type)
 	return false;
 }
 
+/* user_show_all_logins: When executed, shows the target user what other
+ * clients logged into his account.
+ *
+ * Input: myuser_t *mu
+ *        user_t *source (services client the notices will come from)
+ *        user_t *target (user to get notices)
+ * Output: None
+ * Side Effects: Shows a series of notices to the user.
+ */
+void user_show_all_logins(myuser_t *mu, user_t *source, user_t *target)
+{
+	mowgli_node_t *n;
+
+	notice(source->nick, target->nick, _("Logins to your account:"));
+
+	MOWGLI_ITER_FOREACH(n, mu->logins.head)
+	{
+		user_t *ul = (user_t *)(n->data);
+
+		notice(source->nick, target->nick, "  %s (%s@%s) [%s]",
+			ul->nick, ul->user, ul->host, ul->ip);
+	}
+
+	notice(source->nick, target->nick, _("End of logins list."));
+}
+
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
  * vim:ts=8
  * vim:sw=8
