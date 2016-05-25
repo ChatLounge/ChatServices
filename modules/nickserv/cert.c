@@ -195,6 +195,8 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 		myuser_login(ns, cu, mu, true);
 		logcommand_user(ns, cu, CMDLOG_LOGIN, "LOGIN via CERT IDENTIFY (%s)", cu->certfp);
 		notice(ns->nick, cu->nick, nicksvs.no_nick_ownership ? _("You are now logged in as \2%s\2.") : _("You are now identified for \2%s\2."), entity(mu)->name);
+
+		user_show_all_logins(mu, nicksvs.me->me, cu);
 	}
 	else
 	{
