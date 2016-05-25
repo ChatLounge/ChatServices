@@ -601,6 +601,8 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 
 	myuser_login(svs, u, mu, true);
 	logcommand_user(svs, u, CMDLOG_LOGIN, "LOGIN via CERTFP (%s)", certfp);
+
+	user_show_all_logins(mu, svs->me, u);
 }
 
 void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount)

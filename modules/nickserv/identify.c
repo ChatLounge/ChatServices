@@ -55,7 +55,7 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 {
 	user_t *u = si->su;
 	myuser_t *mu;
-	mowgli_node_t *n, *ln, *tn;
+	mowgli_node_t *n, *tn;
 	const char *target = parv[0];
 	const char *password = parv[1];
 	char buf[BUFSIZE], lau[BUFSIZE];
@@ -154,16 +154,7 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 		myuser_login(si->service, u, mu, true);
 		logcommand(si, CMDLOG_LOGIN, COMMAND_UC);
 
-		MOWGLI_ITER_FOREACH(ln, mu->logins.head)
-		{
-			snprintf(buf, BUFSIZE, "Logins to this account: %s (%s@%s) [%s]\0",
-				((user_t *)(ln->data))->nick,
-				((user_t *)(ln->data))->user,
-				((user_t *)(ln->data))->host,
-				((user_t *)(ln->data))->ip
-				);
-			command_success_nodata(si, _("Logins to this account: %s"), buf);
-		}
+		user_show_all_logins(mu, nicksvs.me->me, u);
 
 		return;
 	}
