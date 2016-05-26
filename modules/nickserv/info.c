@@ -233,26 +233,10 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 				command_success_nodata(si, _("User seen  : %s (%s ago)"), lastlogin, time_ago(mu->lastlogin));
 		}
 	}
-	/* someone is logged in to this account
-	 * if they're privileged, show them the sessions
-	 */
-	else if (mu == si->smu || has_user_auspex)
-	{
-		MOWGLI_ITER_FOREACH(n, mu->logins.head)
-		{
-			snprintf(buf, BUFSIZE, "Logins to this account: %s (%s@%s) [%s]\0",
-				((user_t *)(n->data))->nick,
-				((user_t *)(n->data))->user,
-				((user_t *)(n->data))->host,
-				((user_t *)(n->data))->ip
-				);
-			command_success_nodata(si, _("Logins to this account: %s"), buf);
-		}
-	}
 	/* tell them this account is online, but not which nick
 	 * unless we have already told them above
 	 */
-	else if (u == NULL)
+	else if (u == NULL && !(mu == si->smu || has_user_auspex))
 	{
 		if (mn != NULL)
 			command_success_nodata(si, _("User seen  : now"));
@@ -464,6 +448,10 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	req.mu = mu;
 	req.mn = mn;
 	hook_call_user_info(&req);
+
+	/* If permitted, show all user logins to the account. */
+	if (mu == si->smu || has_user_auspex)
+		user_show_all_logins(mu, nicksvs.me->me, si->su);
 
 	command_success_nodata(si, _("*** \2End of Info\2 ***"));
 
