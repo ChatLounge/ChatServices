@@ -813,8 +813,8 @@ void handle_eob(server_t *s)
 		return;
 	if (s->flags & SF_EOB)
 		return;
-	slog(LG_NETWORK, "handle_eob(): end of burst from %s (%d users)",
-			s->name, s->users);
+	slog(LG_NETWORK, "handle_eob(): end of burst from %s (%d user%s)",
+			s->name, s->users, s->users == 1 ? "" : "s");
 	hook_call_server_eob(s);
 	s->flags |= SF_EOB;
 	/* convert P10 style EOB to ircnet/ratbox style */
