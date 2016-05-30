@@ -77,7 +77,10 @@ static void ns_cmd_listchans(sourceinfo_t *si, int parc, char *parv[])
 
 	if (MOWGLI_LIST_LENGTH(&entity(mu)->chanacs) == 0)
 	{
-		command_success_nodata(si, _("No channel access was found for the nickname \2%s\2."), entity(mu)->name);
+		if (mu == si->smu)
+			command_success_nodata(si, _("You don't have any channel access."));
+		else
+			command_success_nodata(si, _("No channel access was found for the account: \2%s\2"), entity(mu)->name);
 		return;
 	}
 
@@ -95,7 +98,12 @@ static void ns_cmd_listchans(sourceinfo_t *si, int parc, char *parv[])
 	i = MOWGLI_LIST_LENGTH(&entity(mu)->chanacs) - akicks;
 
 	if (i == 0)
-		command_success_nodata(si, _("No channel access was found for the nickname \2%s\2."), entity(mu)->name);
+	{
+		if (mu == si->smu)
+			command_success_nodata(si, _("You don't have any channel access."));
+		else
+			command_success_nodata(si, _("No channel access was found for the account: \2%s\2"), entity(mu)->name);
+	}
 	else
 		command_success_nodata(si, ngettext(N_("\2%d\2 channel access match for the nickname \2%s\2"),
 						    N_("\2%d\2 channel access matches for the nickname \2%s\2"), i),
