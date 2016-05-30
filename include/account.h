@@ -465,6 +465,8 @@ E bool chanacs_modify_simple(chanacs_t *ca, unsigned int addflags, unsigned int 
 E bool chanacs_change(mychan_t *mychan, myentity_t *mt, const char *hostmask, unsigned int *addflags, unsigned int *removeflags, unsigned int restrictflags, myentity_t *setter);
 E bool chanacs_change_simple(mychan_t *mychan, myentity_t *mt, const char *hostmask, unsigned int addflags, unsigned int removeflags, myentity_t *setter);
 
+E const char *get_template_name(mychan_t *mc, unsigned int level);
+
 E void expire_check(void *arg);
 /* Check the database for (version) problems common to all backends */
 E void db_check(void);

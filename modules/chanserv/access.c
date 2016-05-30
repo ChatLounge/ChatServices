@@ -391,7 +391,7 @@ static void free_template_list(mowgli_list_t *l)
  *
  * but now we just return an exact template name or <Custom>.
  */
-static const char *get_template_name(mychan_t *mc, unsigned int level)
+/* static const char *get_template_name(mychan_t *mc, unsigned int level)
 {
 	mowgli_list_t *l;
 	mowgli_node_t *n;
@@ -399,9 +399,9 @@ static const char *get_template_name(mychan_t *mc, unsigned int level)
 	template_t *exact_t = NULL;
 
 	l = build_template_list(mc);
-
+*/
 	/* find exact_t, lesser_t and greater_t */
-	MOWGLI_ITER_FOREACH(n, l->head)
+/*	MOWGLI_ITER_FOREACH(n, l->head)
 	{
 		template_t *t = n->data;
 
@@ -417,7 +417,7 @@ static const char *get_template_name(mychan_t *mc, unsigned int level)
 	free_template_list(l);
 
 	return flagname;
-}
+} */
 
 /*
  * Update a role entry and synchronize the changes with the access list.
@@ -598,13 +598,25 @@ static void cs_cmd_access_list(sourceinfo_t *si, int parc, char *parv[])
 	 */
 	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
 	{
+		const char *template;
 		ca = m->data;
 
 		if (strlen(ca->entity ? ca->entity->name : ca->host) > nickhostwidth)
 			nickhostwidth = strlen(ca->entity ? ca->entity->name : ca->host);
 
-		if (strlen(get_template_name(mc, ca->level)) > rolewidth)
-			rolewidth = strlen(get_template_name(mc, ca->level));
+		template = get_template_name(mc, ca->level);
+
+		if (template == NULL)
+		{
+			/* "<Custom> is 8 chars long." */
+			if (rolewidth < 8)
+				rolewidth = 8;
+		}
+		else
+		{
+			if (strlen(get_template_name(mc, ca->level)) > rolewidth)
+				rolewidth = strlen(get_template_name(mc, ca->level));
+		}
 
 		i++;
 	}
@@ -667,7 +679,7 @@ static void cs_cmd_access_list(sourceinfo_t *si, int parc, char *parv[])
 
 		role = get_template_name(mc, ca->level);
 
-		command_success_nodata(si, _(fmtstring), i, ca->entity ? ca->entity->name : ca->host, role);
+		command_success_nodata(si, _(fmtstring), i, ca->entity ? ca->entity->name : ca->host, role == NULL ? "<Custom>" : role);
 
 		i++;
 	}
@@ -908,6 +920,7 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 	const char *channel = parv[0];
 	const char *target = parv[1];
 	const char *role = parv[2];
+	const char *template = NULL;
 
 	mc = mychan_find(channel);
 	if (!mc)
@@ -961,10 +974,13 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
+	template = get_template_name(mc, ca->level);
+
 	if (ca->level != 0)
 	{
 		chanacs_close(ca);
-		command_fail(si, fault_toomany, _("\2%s\2 already has the \2%s\2 role in \2%s\2."), target, get_template_name(mc, ca->level), mc->name);
+		command_fail(si, fault_toomany, _("\2%s\2 already has the \2%s\2 role in \2%s\2."), target,
+			template == NULL ? "<Custom>" : template, mc->name);
 		return;
 	}
 

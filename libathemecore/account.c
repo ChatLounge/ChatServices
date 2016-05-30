@@ -28,6 +28,7 @@
 #include "datastream.h"
 #include "privs.h"
 #include "authcookie.h"
+#include "template.h"
 
 mowgli_patricia_t *nicklist;
 mowgli_patricia_t *oldnameslist;
@@ -40,6 +41,12 @@ mowgli_heap_t *mycertfp_heap; /* HEAP_USER */
 mowgli_heap_t *myuser_name_heap;	/* HEAP_USER / 2 */
 mowgli_heap_t *mychan_heap;	/* HEAP_CHANNEL */
 mowgli_heap_t *chanacs_heap;	/* HEAP_CHANACS */
+
+/* Template iteration - Needed for get_template_name */
+typedef struct {
+	const char *res;
+	unsigned int level;
+} template_iter_t;
 
 /*
  * init_accounts()
@@ -1965,6 +1972,64 @@ bool chanacs_change_simple(mychan_t *mychan, myentity_t *mt, const char *hostmas
 	a = addflags & ca_all;
 	r = removeflags & ca_all;
 	return chanacs_change(mychan, mt, hostmask, &a, &r, ca_all, setter);
+}
+
+static int global_template_search(const char *key, void *data, void *privdata)
+{
+	template_iter_t *iter = privdata;
+	default_template_t *def_t = data;
+
+	if (def_t->flags == iter->level)
+		iter->res = key;
+
+	return 0;
+}
+
+const char *get_template_name(mychan_t *mc, unsigned int level)
+{
+	metadata_t *md;
+	const char *p, *q, *r;
+	char *s;
+	char ss[40];
+	static char flagname[400];
+	template_iter_t iter;
+
+	md = metadata_find(mc, "private:templates");
+	if (md != NULL)
+	{
+		p = md->value;
+		while (p != NULL)
+		{
+			while (*p == ' ')
+				p++;
+			q = strchr(p, '=');
+			if (q == NULL)
+				break;
+			r = strchr(q, ' ');
+			if (r != NULL && r < q)
+				break;
+			mowgli_strlcpy(ss, q, sizeof ss);
+			if (r != NULL && r - q < (int)(sizeof ss - 1))
+			{
+				ss[r - q] = '\0';
+			}
+			if (level == flags_to_bitmask(ss, 0))
+			{
+				mowgli_strlcpy(flagname, p, sizeof flagname);
+				s = strchr(flagname, '=');
+				if (s != NULL)
+					*s = '\0';
+				return flagname;
+			}
+			p = r;
+		}
+	}
+
+	iter.res = NULL;
+	iter.level = level;
+	mowgli_patricia_foreach(global_template_dict, global_template_search, &iter);
+
+	return iter.res;
 }
 
 static int expire_myuser_cb(myentity_t *mt, void *unused)
