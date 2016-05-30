@@ -218,8 +218,11 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	char *channel = parv[0];
 	char *target = sstrdup(parv[1]);
 	char *flagstr = parv[2];
+	const char *oldtemplate = NULL;
+	const char *newtemplate = NULL;
 	const char *str1;
 	unsigned int addflags, removeflags, restrictflags;
+	unsigned int oldlevel, newlevel;
 	hook_channel_acl_req_t req;
 	mychan_t *mc;
 
@@ -418,6 +421,7 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 
 			req.ca = ca;
 			req.oldlevel = ca->level;
+			oldlevel = ca->level;
 
 			if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
 			{
@@ -427,6 +431,7 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 			}
 
 			req.newlevel = ca->level;
+			newlevel = ca->level;
 
 			hook_call_channel_acl_change(&req);
 			chanacs_close(ca);
@@ -464,6 +469,7 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 
 			req.ca = ca;
 			req.oldlevel = ca->level;
+			oldlevel = ca->level;
 
 			if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
 			{
@@ -473,6 +479,7 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 			}
 
 			req.newlevel = ca->level;
+			newlevel = ca->level;
 
 			hook_call_channel_acl_change(&req);
 			chanacs_close(ca);
@@ -483,10 +490,41 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 			command_fail(si, fault_nochange, _("Channel access to \2%s\2 for \2%s\2 unchanged."), channel, target);
 			return;
 		}
+
+		if (oldlevel != 0)
+			oldtemplate = get_template_name(mc, oldlevel);
+
+		if (newlevel != 0)
+			newtemplate = get_template_name(mc, newlevel);
+
 		flagstr = bitmask_to_flags2(addflags, removeflags);
-		command_success_nodata(si, _("Flags \2%s\2 were set on \2%s\2 in \2%s\2."), flagstr, target, channel);
-		logcommand(si, CMDLOG_SET, "FLAGS: \2%s\2 \2%s\2 \2%s\2", mc->name, target, flagstr);
-		verbose(mc, "\2%s\2 set flags \2%s\2 on \2%s\2.", get_source_name(si), flagstr, target);
+		command_success_nodata(si, _("Flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) were set on \2%s\2 in \2%s\2."),
+			flagstr,
+			oldtemplate == NULL ? "<No template>" : oldtemplate,
+			newtemplate == NULL ? "<No template>" : newtemplate,
+			target, channel);
+		logcommand(si, CMDLOG_SET, "FLAGS: \2%s\2 \2%s\2 \2%s\2 (Old template: \2%s\2 New template: \2%s\2)",
+			mc->name, target, flagstr,
+			oldtemplate == NULL ? "<No template>" : oldtemplate,
+			newtemplate == NULL ? "<No template>" : newtemplate);
+
+		if (oldtemplate == NULL)
+		{
+			if (newtemplate == NULL)
+				verbose(mc, "\2%s\2 set flags \2%s\2 on: \2%s\2", get_source_name(si), flagstr, target);
+			else
+				verbose(mc, "\2%s\2 set flags \2%s\2 (New template: \2%s\2) on: \2%s\2",
+					get_source_name(si), flagstr, newtemplate, target);
+		}
+		else
+		{
+			if (newtemplate == NULL)
+				verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2) on: \2%s\2",
+					get_source_name(si), flagstr, oldtemplate, target);
+			else
+				verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) on: \2%s\2",
+					get_source_name(si), flagstr, oldtemplate, newtemplate, target);
+		}
 	}
 
 	free(target);
