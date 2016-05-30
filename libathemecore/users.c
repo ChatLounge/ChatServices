@@ -669,6 +669,10 @@ void user_show_all_logins(myuser_t *mu, user_t *source, user_t *target)
 {
 	mowgli_node_t *n;
 
+	/* No logins?  Bail and don't show the title or the end of the list. */
+	if (MOWGLI_LIST_LENGTH(&mu->logins) == 0)
+		return;
+
 	notice(source->nick, target->nick, _("Logins to %s account:"), target->myuser == mu ? "your" : "this");
 
 	MOWGLI_ITER_FOREACH(n, mu->logins.head)
