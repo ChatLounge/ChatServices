@@ -669,7 +669,7 @@ void user_show_all_logins(myuser_t *mu, user_t *source, user_t *target)
 {
 	mowgli_node_t *n;
 
-	notice(source->nick, target->nick, _("Logins to your account:"));
+	notice(source->nick, target->nick, _("Logins to %s account:"), target->myuser == mu ? "your" : "this");
 
 	MOWGLI_ITER_FOREACH(n, mu->logins.head)
 	{
