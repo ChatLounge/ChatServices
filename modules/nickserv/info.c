@@ -450,7 +450,7 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	hook_call_user_info(&req);
 
 	/* If permitted, show all user logins to the account. */
-	if (MOWGLI_LIST_LENGTH(&mu->logins) > 0 && (mu == si->smu || has_user_auspex))
+	if (mu == si->smu || has_user_auspex)
 		user_show_all_logins(mu, nicksvs.me->me, si->su);
 
 	command_success_nodata(si, _("*** \2End of Info\2 ***"));
