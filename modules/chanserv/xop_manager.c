@@ -239,6 +239,8 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 {
 	chanacs_t *ca;
 	unsigned int addflags = level, removeflags = ~level;
+	unsigned int oldflags;
+	const char *oldtemplate;
 	bool isnew;
 	hook_channel_acl_req_t req;
 
@@ -264,7 +266,7 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 		ca = chanacs_open(mc, NULL, target, true, entity(si->smu));
 		if (ca->level == level)
 		{
-			command_fail(si, fault_nochange, _("\2%s\2 is already on the %s list for \2%s\2"), target, leveldesc, mc->name);
+			command_fail(si, fault_nochange, _("\2%s\2 is already on the %s list for: \2%s\2"), target, leveldesc, mc->name);
 			return;
 		}
 		isnew = ca->level == 0;
@@ -279,9 +281,11 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 		req.ca = ca;
 		req.oldlevel = ca->level;
 
+		oldflags = ca->level;
+
 		if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
 		{
-			command_fail(si, fault_noprivs, _("You are not authorized to modify the access entry for \2%s\2 on \2%s\2."), target, mc->name);
+			command_fail(si, fault_noprivs, _("You are not authorized to modify the access entry for \2%s\2 on: \2%s\2"), target, mc->name);
 			chanacs_close(ca);
 			return;
 		}
@@ -294,10 +298,14 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 
 		if (!isnew)
 		{
-			/* they have access? change it! */
-			logcommand(si, CMDLOG_SET, "ADD: \2%s\2 \2%s\2 on \2%s\2 (changed access)", mc->name, leveldesc, target);
-			command_success_nodata(si, _("\2%s\2's access on \2%s\2 has been changed to \2%s\2."), target, mc->name, leveldesc);
-			verbose(mc, "\2%s\2 changed \2%s\2's access to \2%s\2.", get_source_name(si), target, leveldesc);
+			oldtemplate = get_template_name(mc, oldflags);
+
+			logcommand(si, CMDLOG_SET, "ADD: \2%s\2 \2%s\2 on \2%s\2 (changed access from \2%s\2)",
+				mc->name, leveldesc, target, oldtemplate == NULL ? "<Custom>" : oldtemplate);
+			command_success_nodata(si, _("\2%s\2's access on \2%s\2 has been changed from \2%s\2 to \2%s\2."),
+				target, mc->name, oldtemplate == NULL ? "<Custom>" : oldtemplate, leveldesc);
+			verbose(mc, "\2%s\2 changed \2%s\2's access from \2%s\2 to \2%s\2.",
+				get_source_name(si), target, oldtemplate == NULL ? "<Custom>" : oldtemplate, leveldesc);
 		}
 		else
 		{
@@ -333,11 +341,6 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 		return;
 	}
 
-	/*
-	 * this is a little more cryptic than it used to be, but much cleaner. Functionally should be
-	 * the same, with the exception that if they had access before, now it doesn't tell what it got
-	 * changed from (I considered the effort to put an extra lookup in not worth it. --w00t
-	 */
 	/* just assume there's just one entry for that user -- jilles */
 
 	isnew = ca->level == 0;
@@ -350,6 +353,7 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 
 	req.ca = ca;
 	req.oldlevel = ca->level;
+	oldflags = ca->level;
 
 	if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
 	{
@@ -365,10 +369,14 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 
 	if (!isnew)
 	{
-		/* they have access? change it! */
-		logcommand(si, CMDLOG_SET, "ADD: \2%s\2 \2%s\2 on \2%s\2 (changed access)", mc->name, leveldesc, mt->name);
-		command_success_nodata(si, _("\2%s\2's access on \2%s\2 has been changed to \2%s\2."), mt->name, mc->name, leveldesc);
-		verbose(mc, "\2%s\2 changed \2%s\2's access to \2%s\2.", get_source_name(si), mt->name, leveldesc);
+		oldtemplate = get_template_name(mc, oldflags);
+
+		logcommand(si, CMDLOG_SET, "ADD: \2%s\2 \2%s\2 on \2%s\2 (changed access from \2%s\2)",
+			mc->name, leveldesc, mt->name, oldtemplate == NULL ? "<Custom>" : oldtemplate);
+		command_success_nodata(si, _("\2%s\2's access on \2%s\2 has been changed from \2%s\2 to \2%s\2."),
+			mt->name, mc->name, oldtemplate == NULL ? "<Custom>" : oldtemplate, leveldesc);
+		verbose(mc, "\2%s\2 changed \2%s\2's access from \2%s\2 to \2%s\2.",
+			get_source_name(si), mt->name, oldtemplate == NULL ? "<Custom>" : oldtemplate, leveldesc);
 	}
 	else
 	{
