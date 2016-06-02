@@ -1080,6 +1080,7 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 	const char *channel = parv[0];
 	const char *target = parv[1];
 	const char *role = parv[2];
+	const char *oldtemplate, *newtemplate;
 
 	mc = mychan_find(channel);
 	if (!mc)
@@ -1206,10 +1207,24 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 	hook_call_channel_acl_change(&req);
 	chanacs_close(ca);
 
-	command_success_nodata(si, _("\2%s\2 now has the \2%s\2 role in \2%s\2."), target, role, channel);
-	verbose(mc, "\2%s\2 changed the access list role for \2%s\2 to \2%s\2.", get_source_name(si), target, role);
+	if (oldflags == 0)
+		oldtemplate = "<None>";
+	else
+		oldtemplate = get_template_name(mc, oldflags);
 
-	logcommand(si, CMDLOG_SET, "ACCESS:SET: \2%s\2 to \2%s\2 as \2%s\2", target, mc->name, role);
+	newtemplate = get_template_name(mc, newflags);
+
+	if (oldflags == 0)
+		command_success_nodata(si, _("\2%s\2 now has the \2%s\2 role on: \2%s\2"), target, newtemplate, channel);
+	else
+		command_success_nodata(si, _("\2%s\2 has been moved from the \2%s\2 role to the \2%s\2 role on: \2%s\2"), target,
+			oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate, channel);
+
+	verbose(mc, "\2%s\2 changed the access list role for \2%s\2 from \2%s\2 to \2%s\2.", get_source_name(si), target,
+		oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate);
+
+	logcommand(si, CMDLOG_SET, "ACCESS:SET: \2%s\2 on \2%s\2 from \2%s\2 to \2%s\2", target, mc->name,
+		oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate);
 }
 
 /*
