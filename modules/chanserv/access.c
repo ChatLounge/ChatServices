@@ -896,10 +896,10 @@ static void cs_cmd_access_del(sourceinfo_t *si, int parc, char *parv[])
 	hook_call_channel_acl_change(&req);
 	chanacs_close(ca);
 
-	command_success_nodata(si, _("\2%s\2 was removed from the \2%s\2 role in \2%s\2."), target, role, channel);
+	command_success_nodata(si, _("\2%s\2 was removed from the access list of \2%s\2 (had role: \2%s\2)."), target, channel, role);
 	verbose(mc, "\2%s\2 deleted \2%s\2 from the access list (had role: \2%s\2).", get_source_name(si), target, role);
 
-	logcommand(si, CMDLOG_SET, "ACCESS:DEL: \2%s\2 from \2%s\2", target, mc->name);
+	logcommand(si, CMDLOG_SET, "ACCESS:DEL: \2%s\2 from \2%s\2 (had role: \2%s\2)", target, mc->name, role);
 }
 
 /*
@@ -920,7 +920,8 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 	const char *channel = parv[0];
 	const char *target = parv[1];
 	const char *role = parv[2];
-	const char *template = NULL;
+	const char *oldtemplate = NULL;
+	const char *newtemplate;
 
 	mc = mychan_find(channel);
 	if (!mc)
@@ -974,13 +975,13 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	template = get_template_name(mc, ca->level);
+	oldtemplate = get_template_name(mc, ca->level);
 
 	if (ca->level != 0)
 	{
 		chanacs_close(ca);
 		command_fail(si, fault_toomany, _("\2%s\2 already has the \2%s\2 role in \2%s\2."), target,
-			template == NULL ? "<Custom>" : template, mc->name);
+			oldtemplate == NULL ? "<Custom>" : oldtemplate, mc->name);
 		return;
 	}
 
@@ -1053,13 +1054,16 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 
 	req.newlevel = newflags;
 
+	newtemplate = get_template_name(mc, newflags);
+
 	hook_call_channel_acl_change(&req);
 	chanacs_close(ca);
 
-	command_success_nodata(si, _("\2%s\2 was added with the \2%s\2 role in \2%s\2."), target, role, channel);
-	verbose(mc, "\2%s\2 added \2%s\2 to the access list (with role: \2%s\2).", get_source_name(si), target, role);
+	command_success_nodata(si, _("\2%s\2 was added to the access list of \2%s\2 with the \2%s\2 role."),
+		target, channel, newtemplate);
+	verbose(mc, "\2%s\2 added \2%s\2 to the access list with the \2%s\2 role.", get_source_name(si), target, newtemplate);
 
-	logcommand(si, CMDLOG_SET, "ACCESS:ADD: \2%s\2 to \2%s\2 as \2%s\2", target, mc->name, role);
+	logcommand(si, CMDLOG_SET, "ACCESS:ADD: \2%s\2 on \2%s\2 as \2%s\2", target, mc->name, newtemplate);
 }
 
 /*
