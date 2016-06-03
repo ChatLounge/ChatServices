@@ -1,9 +1,12 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService BAN/UNBAN function.
  *
+ * This module and chanserv/unban_self may not be loaded at the same time.
  */
 
 #include "atheme.h"
@@ -25,7 +28,8 @@ command_t cs_unban = { "UNBAN", N_("Removes a ban on a channel."),
 
 void _modinit(module_t *m)
 {
-        service_named_bind_command("chanserv", &cs_ban);
+	MODULE_CONFLICT(m, "chanserv/unban_self");
+	service_named_bind_command("chanserv", &cs_ban);
 	service_named_bind_command("chanserv", &cs_unban);
 }
 
