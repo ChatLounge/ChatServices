@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService QUIET/UNQUIET function.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/quiet", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
 static void cs_cmd_quiet(sourceinfo_t *si, int parc, char *parv[]);
@@ -26,7 +28,14 @@ command_t cs_unquiet = { "UNQUIET", N_("Removes a quiet on a channel."),
 
 void _modinit(module_t *m)
 {
-        service_named_bind_command("chanserv", &cs_quiet);
+	if (!ircd->uses_quiets)
+	{
+		slog(LG_ERROR, "This IRCd does not support quiets, unloading.");
+		(m)->mflags = MODTYPE_FAIL;
+		return;
+	}
+
+	service_named_bind_command("chanserv", &cs_quiet);
 	service_named_bind_command("chanserv", &cs_unquiet);
 }
 
@@ -41,42 +50,24 @@ static void make_extbanmask(char *buf, size_t buflen, const char *mask)
 	return_if_fail(buf != NULL);
 	return_if_fail(mask != NULL);
 
-	switch (ircd->type)
-	{
-	case PROTOCOL_INSPIRCD:
-		mowgli_strlcpy(buf, "m:", buflen);
-		break;
-	case PROTOCOL_UNREAL:
-		mowgli_strlcpy(buf, "~q:", buflen);
-		break;
-	default:
+	if (ircd->quiet_mask == NULL)
 		*buf = '\0';
-		break;
-	}
+	else
+		mowgli_strlcpy(buf, ircd->quiet_mask, buflen);
 
 	mowgli_strlcat(buf, mask, buflen);
 }
 
-static char get_quiet_ban_char(void)
-{
-	return (ircd->type == PROTOCOL_UNREAL ||
-			ircd->type == PROTOCOL_INSPIRCD) ? 'b' : 'q';
-}
-
 static char *strip_extban(char *mask)
 {
-	if (ircd->type == PROTOCOL_INSPIRCD)
-		return sstrdup(&mask[2]);
-	if (ircd->type == PROTOCOL_UNREAL)
-		return sstrdup(&mask[3]);
-	return sstrdup(mask);
+	return sstrdup(&mask[strlen(ircd->quiet_mask)]);
 }
 
 chanban_t *place_quietmask(channel_t *c, int dir, const char *hostbuf)
 {
 	char rhostbuf[BUFSIZE];
 	chanban_t *cb = NULL;
-	char banlike_char = get_quiet_ban_char();
+	char banlike_char = ircd->quiet_mchar[0];
 
 	make_extbanmask(rhostbuf, sizeof rhostbuf, hostbuf);
 	modestack_mode_param(chansvs.nick, c, MTYPE_ADD, banlike_char,
@@ -91,7 +82,7 @@ static void make_extban(char *buf, size_t size, user_t *tu)
 	return_if_fail(buf != NULL);
 	return_if_fail(tu != NULL);
 
-	switch (ircd->type)
+	/* switch (ircd->type)
 	{
 	case PROTOCOL_INSPIRCD:
 		mowgli_strlcpy(buf, "m:", size);
@@ -102,7 +93,12 @@ static void make_extban(char *buf, size_t size, user_t *tu)
 	default:
 		*buf = '\0';
 		break;
-	}
+	} */
+
+	if (ircd->quiet_mask == NULL)
+		*buf = '\0';
+	else
+		mowgli_strlcpy(buf, ircd->quiet_mask, size);
 
 	mowgli_strlcat(buf, tu->nick, size);
 	mowgli_strlcat(buf, "!", size);
@@ -192,11 +188,11 @@ static void notify_one_victim(sourceinfo_t *si, channel_t *c, user_t *u, int dir
 
 	if (dir == MTYPE_ADD)
 		change_notify(chansvs.nick, u,
-				"You have been quieted on %s by %s",
+				"You have been quieted on %s by: %s",
 				c->name, get_source_name(si));
 	else if (dir == MTYPE_DEL)
 		change_notify(chansvs.nick, u,
-				"You have been unquieted on %s by %s",
+				"You have been unquieted on %s by: %s",
 				c->name, get_source_name(si));
 }
 
@@ -209,7 +205,7 @@ static void notify_victims(sourceinfo_t *si, channel_t *c, chanban_t *cb, int di
 	mowgli_node_t ban_n;
 	user_t *to_notify[MAX_SINGLE_NOTIFY];
 	unsigned int to_notify_count = 0, i;
-	char banlike_char = get_quiet_ban_char();
+	char banlike_char = ircd->quiet_mchar[0];
 
 	return_if_fail(dir == MTYPE_ADD || dir == MTYPE_DEL);
 
@@ -362,7 +358,7 @@ static void cs_cmd_unquiet(sourceinfo_t *si, int parc, char *parv[])
 {
         const char *channel = parv[0];
         const char *target = parv[1];
-	char banlike_char = get_quiet_ban_char();
+	char banlike_char = ircd->quiet_mchar[0];
         channel_t *c = channel_find(channel);
 	mychan_t *mc = mychan_find(channel);
 	user_t *tu;
