@@ -44,7 +44,10 @@ ircd_t Unreal = {
 	"beI",                          /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
-	IRCD_HOLDNICK | IRCD_SASL_USE_PUID /* Flags */
+	IRCD_HOLDNICK | IRCD_SASL_USE_PUID, /* Flags */
+	true,					/* Uses quiets */
+	"b",					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	"~q:"						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ unreal_mode_list[] = {

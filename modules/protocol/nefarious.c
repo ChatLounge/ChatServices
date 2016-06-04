@@ -40,7 +40,10 @@ ircd_t Nefarious = {
 	"be",                           /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'e',                            /* Invex mchar (+e also exempts from +i in Nefarious) */
-	IRCD_CIDR_BANS                  /* Flags */
+	IRCD_CIDR_BANS,                 /* Flags */
+	false,					/* Uses quiets */
+	NULL,					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	""						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ nefarious_mode_list[] = {

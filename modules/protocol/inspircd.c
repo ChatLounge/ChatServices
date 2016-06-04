@@ -37,7 +37,10 @@ ircd_t InspIRCd = {
 	"beIgXw",                       /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
-	IRCD_CIDR_BANS | IRCD_HOLDNICK  /* Flags */
+	IRCD_CIDR_BANS | IRCD_HOLDNICK, /* Flags */
+	true,					/* Uses quiets */
+	"b",					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	"m:"					/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ inspircd_mode_list[] = {

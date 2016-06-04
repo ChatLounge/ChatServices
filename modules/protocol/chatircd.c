@@ -40,7 +40,10 @@ ircd_t chatircd = {
 	"beIq",                         /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
-	IRCD_CIDR_BANS | IRCD_HOLDNICK  /* Flags */
+	IRCD_CIDR_BANS | IRCD_HOLDNICK, /* Flags */
+	true,					/* Uses quiets */
+	"q",					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	""						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ chatircd_mode_list[] = {

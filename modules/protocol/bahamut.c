@@ -39,7 +39,10 @@ ircd_t Bahamut = {
 	"beI",                          /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
-	IRCD_HOLDNICK                   /* Flags */
+	IRCD_HOLDNICK,                  /* Flags */
+	false,					/* Uses quiets */
+	NULL,					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	""						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ bahamut_mode_list[] = {

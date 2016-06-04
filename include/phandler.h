@@ -33,6 +33,9 @@ struct ircd_ {
 	char except_mchar;
 	char invex_mchar;
 	int flags;
+	bool uses_quiets;			/* True if IRCd supports quiet functionality, else False. */
+	const char *quiet_mchar;	/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL */
+	const char *quiet_mask;		/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 typedef struct ircd_ ircd_t;

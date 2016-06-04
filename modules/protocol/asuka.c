@@ -40,7 +40,10 @@ ircd_t Asuka = {
 	"b",                            /* Ban-like cmodes */
 	0,                              /* Except mchar */
 	0,                              /* Invex mchar */
-	IRCD_CIDR_BANS                  /* Flags */
+	IRCD_CIDR_BANS,                 /* Flags */
+	false,					/* Uses quiets */
+	NULL,					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	""						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ asuka_mode_list[] = {
