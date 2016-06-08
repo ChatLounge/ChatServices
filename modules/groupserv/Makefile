@@ -9,29 +9,30 @@
 
 MODULE = groupserv
 
-BASE_SRCS =			\
-	acsnolimit.c		\
-	drop.c			\
-	fdrop.c			\
-	fflags.c		\
-	flags.c			\
-	help.c			\
-	info.c			\
-	invite.c		\
-	join.c			\
-	list.c			\
-	listchans.c		\
-	register.c		\
-	regnolimit.c		\
-	set.c			\
-	set_channel.c		\
-	set_description.c	\
-	set_email.c		\
-	set_groupname.c		\
-	set_joinflags.c		\
-	set_open.c		\
-	set_public.c		\
-	set_url.c		\
+BASE_SRCS =             \
+	acsnolimit.c        \
+	drop.c              \
+	fdrop.c             \
+	fflags.c            \
+	flags.c             \
+	help.c              \
+	info.c              \
+	invite.c            \
+	join.c              \
+	list.c              \
+	listchans.c         \
+	register.c          \
+	regnolimit.c        \
+	set.c               \
+	set_channel.c       \
+	set_description.c   \
+	set_email.c         \
+	set_groupname.c     \
+	set_joinflags.c     \
+	set_open.c          \
+	set_public.c        \
+	set_url.c           \
+	taxonomy.c          \
 
 SRCS = ${BASE_SRCS} ${EXTRA_SRCS}
 
