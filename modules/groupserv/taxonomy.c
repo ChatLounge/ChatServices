@@ -63,12 +63,12 @@ void gs_cmd_taxonomy(sourceinfo_t *si, int parc, char *parv[])
 			!groupacs_sourceinfo_has_flag(mg, si, GA_ACLVIEW) && !isoper)
 	{
 		command_fail(si, fault_noprivs, _("Group \2%s\2 is private."),
-			//target);
 			entity(mg)->name);
 		return;
 	}
 
-	if (isoper)
+	if (!(mg->flags & MG_PUBLIC) &&
+			!groupacs_sourceinfo_has_flag(mg, si, GA_ACLVIEW) && !isoper)
 		logcommand(si, CMDLOG_ADMIN, "TAXONOMY: \2%s\2 (oper)", entity(mg)->name);
 	else
 		logcommand(si, CMDLOG_GET, "TAXONOMY: \2%s\2", entity(mg)->name);
@@ -76,8 +76,8 @@ void gs_cmd_taxonomy(sourceinfo_t *si, int parc, char *parv[])
 
 	MOWGLI_PATRICIA_FOREACH(md, &state, object(mg)->metadata)
 	{
-//		if (!strncmp(md->name, "private:", 8) && !isoper)
-//			continue;
+		if (!strncmp(md->name, "private:", 8) && !isoper)
+			continue;
 
 		command_success_nodata(si, "%-32s: %s", md->name, md->value);
 	}
