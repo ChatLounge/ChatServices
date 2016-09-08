@@ -1,9 +1,16 @@
 /* groupserv.c - group services
  * Copyright (C) 2010 Atheme Development Group
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net/)
  */
 
+#define FLAGS_ADD 0x1
+#define FLAGS_DEL 0x2
+ 
 #include "atheme.h"
 #include "groupserv_main.h"
+
+static char flags_buf[128];
 
 struct gflags ga_flags[] = {
 	{ 'F', GA_FOUNDER },
@@ -25,6 +32,8 @@ struct gflags mg_flags[] = {
 	{ 'p', MG_PUBLIC },
 	{ 0, 0 }
 };
+
+unsigned int xgflag_lookup(const char *name);
 
 groupserv_config_t gs_config;
 
@@ -453,4 +462,193 @@ void mygroup_rename(mygroup_t *mg, const char *name)
 	entity(mg)->name = newname;
 
 	myentity_put(entity(mg));
+}
+
+/* Ripped from and based on flags/flags_make_bitmasks.
+ */
+void gflags_make_bitmasks(const char *string, unsigned int *addflags, unsigned int *removeflags)
+{
+	unsigned int i, flag;
+	int status = FLAGS_ADD;
+
+	*addflags = *removeflags = 0;
+	while (*string)
+	{
+		switch (*string)
+		{
+		  case '+':
+			  status = FLAGS_ADD;
+			  break;
+
+		  case '-':
+			  status = FLAGS_DEL;
+			  break;
+
+		  case '=':
+			  *addflags = 0;
+			  *removeflags = 0xFFFFFFFF;
+			  status = FLAGS_ADD;
+			  break;
+
+		  case '*':
+			  if (status == FLAGS_ADD)
+			  {
+				  *addflags |= GA_ALL_ALL;
+				  *addflags &= ~GA_BAN;
+				  *removeflags |= GA_BAN;
+			  }
+			  else if (status == FLAGS_DEL)
+			  {
+				  *addflags = 0;
+				  *removeflags = 0xFFFFFFFF;
+			  }
+			  break;
+
+		  default:
+			  if ((flag = xgflag_lookup(string)) != 0x0)
+			  {
+				  if (status == FLAGS_ADD)
+				  {
+					  *addflags |= flag;
+					  *removeflags &= ~flag;
+				  }
+				  else if (status == FLAGS_DEL)
+				  {
+					  *addflags &= ~flag;
+					  *removeflags |= flag;
+				  }
+
+				  *addflags &= GA_ALL_ALL;
+				  *removeflags &= GA_ALL_ALL;
+			  }
+		}
+
+		string++;
+	}
+
+	*addflags &= GA_ALL_ALL;
+	*removeflags &= GA_ALL_ALL;
+
+	return;
+}
+
+/* Ripped from flags/allow_flags
+ */
+unsigned int allow_gflags(mygroup_t *mg, unsigned int theirflags)
+{
+	unsigned int flags;
+
+	flags = theirflags;
+	flags &= ~GA_BAN;
+	if (!gs_config.no_leveled_flags)
+	{
+		if ((theirflags & GA_FLAGS) && !(flags & GA_SET))
+			flags &= ~GA_FLAGS;
+		if ((flags & GA_SET) && (theirflags & GA_SET))
+			flags &= ~GA_SET;
+	}
+	return flags;
+}
+
+char *bitmask_to_gflags(unsigned int flags)
+{
+	char *bptr;
+	unsigned int i = 0;
+
+	bptr = flags_buf;
+
+	*bptr++ = '+';
+
+	for (i = 0; i < ARRAY_SIZE(ga_flags); i++)
+		if (ga_flags[i].value & flags)
+			*bptr++ = ga_flags[i].ch;
+
+	*bptr++ = '\0';
+
+	return flags_buf;
+}
+
+char *bitmask_to_gflags2(unsigned int addflags, unsigned int removeflags)
+{
+	char *bptr;
+	unsigned int i = 0;
+
+	bptr = flags_buf;
+
+	if (removeflags)
+	{
+		*bptr++ = '-';
+		for (i = 0; i < ARRAY_SIZE(ga_flags); i++)
+			if (ga_flags[i].value & removeflags)
+				*bptr++ = ga_flags[i].ch;
+	}
+	if (addflags)
+	{
+		*bptr++ = '+';
+		for (i = 0; i < ARRAY_SIZE(ga_flags); i++)
+			if (ga_flags[i].value & addflags)
+				*bptr++ = ga_flags[i].ch;
+	}
+
+	*bptr++ = '\0';
+
+	return flags_buf;
+}
+
+bool groupacs_modify(groupacs_t *ga, unsigned int *addflags, unsigned int *removeflags, unsigned int restrictflags)
+{
+	return_val_if_fail(ga != NULL, false);
+	return_val_if_fail(addflags != NULL && removeflags != NULL, false);
+
+	*addflags &= ~ga->flags;
+	*removeflags &= ga->flags & ~*addflags;
+	/* no change? */
+	if ((*addflags | *removeflags) == 0)
+		return true;
+	/* attempting to add bad flag? */
+	if (~restrictflags & *addflags)
+		return false;
+	/* attempting to remove bad flag? */
+	if (~restrictflags & *removeflags)
+		return false;
+	/* attempting to manipulate user with more privs? */
+	if (~restrictflags & ga->flags)
+		return false;
+	ga->flags = (ga->flags | *addflags) & ~*removeflags;
+	//ga->tmodified = CURRTIME;
+
+	return true;
+}
+
+/* version that doesn't return the changes made */
+bool groupacs_modify_simple(groupacs_t *ga, unsigned int addflags, unsigned int removeflags)
+{
+	unsigned int a, r;
+
+	a = addflags & GA_ALL_ALL;
+	r = removeflags & GA_ALL_ALL;
+	return groupacs_modify(ga, &a, &r, GA_ALL_ALL);
+}
+
+void groupacs_close(groupacs_t *ga)
+{
+	if (ga->flags == 0)
+		object_unref(ga);
+}
+
+unsigned int xgflag_lookup(const char *name)
+{
+	unsigned int i = 0;
+	unsigned int ga_flags_size = sizeof(ga_flags) / sizeof(*ga_flags);
+
+	for (i = 0; i < ga_flags_size; i++)
+	{
+		if (ga_flags[i].ch == 0x0)
+			continue;
+
+		if (strchr(name, (unsigned int)ga_flags[i].ch))
+			return ga_flags[i].value;
+	}
+
+	return 0;
 }

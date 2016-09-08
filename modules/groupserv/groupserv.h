@@ -4,6 +4,8 @@
  * that need to access group functionality.
  *
  * Copyright (C) 2010 Atheme Development Group
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net/)
  */
 
 #ifndef GROUPSERV_H
@@ -29,9 +31,25 @@ mowgli_list_t * (*myentity_get_membership_list)(myentity_t *mu);
 const char * (*mygroup_founder_names)(mygroup_t *mg);
 void (*remove_group_chanacs)(mygroup_t *mg);
 
+const char * (*get_group_item)(const char *str, const char *name);
+unsigned int (*get_group_template_flags)(mygroup_t *mg, const char *name);
+unsigned int (*get_global_group_template_flags)(const char *name);
+
+void * (*gflags_make_bitmasks)(const char *string, unsigned int *addflags, unsigned int *removeflags);
+unsigned int (*allow_gflags)(mygroup_t *mg, unsigned int theirflags);
+char * (*bitmask_to_gflags)(unsigned int flags);
+char * (*bitmask_to_gflags2)(unsigned int addflags, unsigned int removeflags);
+bool (*groupacs_modify)(groupacs_t *ga, unsigned int *addflags, unsigned int *removeflags, unsigned int restrictflags);
+bool (*groupacs_modify_simple)(groupacs_t *ca, unsigned int addflags, unsigned int removeflags);
+void (*groupacs_close)(groupacs_t *ga);
+
+void (*show_global_group_template_flags)(sourceinfo_t *si);
+
 struct gflags *ga_flags;
 
 groupserv_config_t *gs_config;
+
+mowgli_patricia_t *global_group_template_dict;
 
 static inline void use_groupserv_main_symbols(module_t *m)
 {
@@ -47,13 +65,26 @@ static inline void use_groupserv_main_symbols(module_t *m)
     MODULE_TRY_REQUEST_SYMBOL(m, groupacs_sourceinfo_has_flag, "groupserv/main", "groupacs_sourceinfo_has_flag");
     MODULE_TRY_REQUEST_SYMBOL(m, groupacs_sourceinfo_flags, "groupserv/main", "groupacs_sourceinfo_flags");
 
+    MODULE_TRY_REQUEST_SYMBOL(m, get_group_item, "groupserv/main", "get_group_item");
+    MODULE_TRY_REQUEST_SYMBOL(m, get_group_template_flags, "groupserv/main", "get_group_template_flags");
+    MODULE_TRY_REQUEST_SYMBOL(m, get_global_group_template_flags, "groupserv/main", "get_global_group_template_flags");
+
     MODULE_TRY_REQUEST_SYMBOL(m, gs_flags_parser, "groupserv/main", "gs_flags_parser");
     MODULE_TRY_REQUEST_SYMBOL(m, myentity_get_membership_list, "groupserv/main", "myentity_get_membership_list");
     MODULE_TRY_REQUEST_SYMBOL(m, mygroup_founder_names, "groupserv/main", "mygroup_founder_names");
     MODULE_TRY_REQUEST_SYMBOL(m, remove_group_chanacs, "groupserv/main", "remove_group_chanacs");
+    MODULE_TRY_REQUEST_SYMBOL(m, gflags_make_bitmasks, "groupserv/main", "gflags_make_bitmasks");
+    MODULE_TRY_REQUEST_SYMBOL(m, allow_gflags, "groupserv/main", "allow_gflags");
+    MODULE_TRY_REQUEST_SYMBOL(m, bitmask_to_gflags, "groupserv/main", "bitmask_to_gflags");
+    MODULE_TRY_REQUEST_SYMBOL(m, bitmask_to_gflags2, "groupserv/main", "bitmask_to_gflags2");
+    MODULE_TRY_REQUEST_SYMBOL(m, groupacs_modify, "groupserv/main", "groupacs_modify");
+    MODULE_TRY_REQUEST_SYMBOL(m, groupacs_modify_simple, "groupserv/main", "groupacs_modify_simple");
+    MODULE_TRY_REQUEST_SYMBOL(m, groupacs_close, "groupserv/main", "groupacs_close");
 
     MODULE_TRY_REQUEST_SYMBOL(m, ga_flags, "groupserv/main", "ga_flags");
     MODULE_TRY_REQUEST_SYMBOL(m, gs_config, "groupserv/main", "gs_config");
+
+    MODULE_TRY_REQUEST_SYMBOL(m, global_group_template_dict, "groupserv/main", "global_group_template_dict");
 }
 
 #ifndef IN_GROUPSERV_SET

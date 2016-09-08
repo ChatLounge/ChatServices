@@ -1,5 +1,7 @@
 /* groupserv_main.h - group services main module header
  * Copyright (C) 2010 Atheme Development Group
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net/)
  */
 
 #ifndef GROUPSERV_MAIN_H
@@ -38,7 +40,21 @@ E unsigned int myentity_count_group_flag(myentity_t *mt, unsigned int flagset);
 
 E const char *mygroup_founder_names(mygroup_t *mg);
 
-/* services plumbing */
+E void gflags_make_bitmasks(const char *string, unsigned int *addflags, unsigned int *removeflags);
+E unsigned int allow_gflags(mygroup_t *mg, unsigned int theirflags);
+E char *bitmask_to_gflags(unsigned int flags);
+E char *bitmask_to_gflags2(unsigned int addflags, unsigned int removeflags);
+E bool groupacs_modify(groupacs_t *ga, unsigned int *addflags, unsigned int *removeflags, unsigned int restrictflags);
+E bool groupacs_modify_simple(groupacs_t *ca, unsigned int addflags, unsigned int removeflags);
+E void groupacs_close(groupacs_t *ga);
+
+E const char *get_group_item(const char *str, const char *name);
+E unsigned int get_group_template_flags(mygroup_t *mg, const char *name);
+E unsigned int get_global_group_template_flags(const char *name);
+
+E mowgli_patricia_t *global_group_template_dict;
+
+/* services plumbing - sync with groupserv_common.h */
 E service_t *groupsvs;
 E mowgli_list_t gs_cmdtree;
 E mowgli_list_t conf_gs_table;

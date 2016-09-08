@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net/)
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the GroupServ HELP command.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/flags", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
 static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[]);
@@ -114,7 +116,26 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		flags = ga->flags;
 
 	oldflags = flags;
-	flags = gs_flags_parser(parv[2], 1, flags);
+	if (strchr(parv[2], '+') || strchr(parv[2], '-') || strchr(parv[2], '=') || strchr(parv[2], '!'))
+	{
+		flags = gs_flags_parser(parv[2], 1, flags);
+		if (flags == 0)
+		{
+			command_fail(si, fault_badparams, _("Invalid flags specified."));
+			return;
+		}
+	}
+	else
+	{
+		char *templatename = strdup(parv[2]);
+
+		flags = get_group_template_flags(mg, templatename);
+		if (flags == 0)
+		{
+			command_fail(si, fault_badparams, _("Invalid template name."));
+			return;
+		}
+	}
 
 	/* check for MU_NEVEROP and forbid committing the change if it's enabled */
 	if (!(oldflags & GA_CHANACS) && (flags & GA_CHANACS))

@@ -1,5 +1,7 @@
 /* groupserv_common.h - group services common definitions
  * Copyright (C) 2010 Atheme Development Group
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net/)
  */
 
 #ifndef GROUPSERV_COMMON_H
@@ -44,8 +46,10 @@ struct mygroup_ {
 #define GA_BAN			0x00000040
 #define GA_INVITE		0x00000080
 #define GA_ACLVIEW		0x00000100
-#define GA_ALL			(GA_FLAGS | GA_CHANACS | GA_MEMOS | GA_SET | GA_VHOST | GA_INVITE | GA_ACLVIEW)
+#define GA_PUBACL		0x00000200
+#define GA_ALL			(GA_FLAGS | GA_CHANACS | GA_MEMOS | GA_SET | GA_VHOST | GA_INVITE | GA_ACLVIEW | GA_PUBACL)
 #define GA_ALL_OLD		(GA_FLAGS | GA_CHANACS | GA_MEMOS | GA_SET | GA_VHOST | GA_INVITE)
+#define GA_ALL_ALL		(GA_ALL | GA_BAN)
 
 #define PRIV_GROUP_ADMIN "group:admin"
 #define PRIV_GROUP_AUSPEX "group:auspex"
@@ -62,5 +66,13 @@ struct groupacs_ {
 	mowgli_node_t gnode;
 	mowgli_node_t unode;
 };
+
+typedef struct {
+	unsigned int flags;
+} default_group_template_t;
+
+E void set_global_group_template_flags(const char *name, unsigned int flags);
+E void clear_global_group_template_flags(void);
+E void fix_global_group_template_flags(void);
 
 #endif /* !GROUPSERV_H */

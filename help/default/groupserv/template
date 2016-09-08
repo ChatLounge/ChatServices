@@ -1,0 +1,42 @@
+#if soper
+Command provided by: groupserv/template
+#endif
+Help for TEMPLATE:
+
+The TEMPLATE command allows definition of sets of flags,
+simplifying the use of the FLAGS command.
+
+Syntax: TEMPLATE
+
+When given only the group argument, a listing of
+templates for the group will be displayed.
+
+Syntax: TEMPLATE <!group>
+
+Otherwise, a template is modified.  A modification may be
+specified by a flags change (starts with + or -, optionally
+preceded by an !).  Templates cannot be the empty set
+(making a template empty deletes it).
+
+If the ! form is used, all access entries which exactly
+match the template are changed accordingly.  This is
+not supported if the template includes or included
+founder access (+F).
+
+There is a limit on the length of all templates on a
+channel.
+
+If you are not a founder, similar restrictions apply
+as in FLAGS.
+
+Syntax: TEMPLATE <!group> [template oldtemplate]
+Syntax: TEMPLATE <!group> [template flag_changes]
+Syntax: TEMPLATE <!group> [template !flag_changes]
+
+Examples:
+    /msg &nick& TEMPLATE !foo
+    /msg &nick& TEMPLATE !foo member +A
+    /msg &nick& TEMPLATE !foo member !+A
+    /msg &nick& TEMPLATE !foo moderator +*-s
+    /msg &nick& TEMPLATE !foo management +*
+    /msg &nick& TEMPLATE !foo obsoletetemplate -*

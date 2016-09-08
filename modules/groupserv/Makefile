@@ -1,5 +1,8 @@
 
 # Copyright (c) 2003-2004 E. Will et al.
+# Copyright (c) 2016 ChatLounge IRC Network Development Team
+#     (http://www.chatlounge.net/)
+#
 # Rights to this code are documented in doc/LICENSE.
 #
 # This file contains build instructions.
@@ -33,6 +36,7 @@ BASE_SRCS =             \
 	set_public.c        \
 	set_url.c           \
 	taxonomy.c          \
+	template.c          \
 
 SRCS = ${BASE_SRCS} ${EXTRA_SRCS}
 
