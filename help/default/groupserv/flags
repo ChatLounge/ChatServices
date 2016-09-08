@@ -31,6 +31,7 @@ Permissions:
          NickServ INFO or anywhere else. NOTE that setting this flag will NOT
          automatically remove the users' privileges (if applicable).
     +i - Grants the ability to invite users to the group.
+    +A - View group access lists.
 
 The special permission +* adds all permissions except +F.
 The special permission -* removes all permissions including +F.
