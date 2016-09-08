@@ -70,9 +70,7 @@ static void gs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 	}
 	else
 	{
-		char *templatename = strdup(parv[2]);
-
-		flags = get_group_template_flags(mg, templatename);
+		flags = get_group_template_flags(mg, parv[2]);
 		if (flags == 0)
 		{
 			command_fail(si, fault_badparams, _("Invalid template name."));
