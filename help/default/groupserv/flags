@@ -12,9 +12,11 @@ permissions granted to users will be displayed.
 
 Syntax: FLAGS <!group>
 
-You can modify a users' flags if you yourself have the +f flag.
+You can modify a user's flags if you yourself have the +f flag.
 This has much the same syntax as chanserv/flags, using + to add
-flags to a user and - to remove flags from a user.
+flags to a user and - to remove flags from a user.  You may also
+specify a template name in place of the flag string to modify a
+group access entry.
 
 Syntax: FLAGS <!group> [nickname flag_changes]
 
