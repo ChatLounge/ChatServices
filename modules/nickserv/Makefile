@@ -58,6 +58,7 @@ BASE_SRCS =			\
 	set_private.c	\
 	set_property.c	\
 	set_quietchg.c	\
+	set_strictaccess.c	\
 	setpass.c	\
 	status.c	\
 	taxonomy.c	\

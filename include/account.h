@@ -99,23 +99,24 @@ struct myuser_
 };
 
 /* Keep this synchronized with mu_flags in libathemecore/flags.c */
-#define MU_HOLD        0x00000001
-#define MU_NEVEROP     0x00000002
-#define MU_NOOP        0x00000004
-#define MU_WAITAUTH    0x00000008
-#define MU_HIDEMAIL    0x00000010
-#define MU_NOMEMO      0x00000040
-#define MU_EMAILMEMOS  0x00000080
-#define MU_CRYPTPASS   0x00000100
+#define MU_HOLD         0x00000001
+#define MU_NEVEROP      0x00000002
+#define MU_NOOP         0x00000004
+#define MU_WAITAUTH     0x00000008
+#define MU_HIDEMAIL     0x00000010
+#define MU_NOMEMO       0x00000040
+#define MU_EMAILMEMOS   0x00000080
+#define MU_CRYPTPASS    0x00000100
 #define MU_NOBURSTLOGIN 0x00000400
-#define MU_ENFORCE     0x00000800 /* XXX limited use at this time */
-#define MU_USE_PRIVMSG 0x00001000 /* use PRIVMSG */
-#define MU_PRIVATE     0x00002000
-#define MU_QUIETCHG    0x00004000
-#define MU_NOGREET     0x00008000
-#define MU_REGNOLIMIT  0x00010000
-#define MU_NEVERGROUP  0x00020000
+#define MU_ENFORCE      0x00000800 /* XXX limited use at this time */
+#define MU_USE_PRIVMSG  0x00001000 /* use PRIVMSG */
+#define MU_PRIVATE      0x00002000
+#define MU_QUIETCHG     0x00004000
+#define MU_NOGREET      0x00008000
+#define MU_REGNOLIMIT   0x00010000
+#define MU_NEVERGROUP   0x00020000
 #define MU_PENDINGLOGIN 0x00040000
+#define MU_STRICTACCESS 0x00080000
 
 /* memoserv rate limiting parameters */
 #define MEMO_MAX_NUM   5

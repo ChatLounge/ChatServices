@@ -108,6 +108,12 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
+	if ((mu->flags & MU_STRICTACCESS) && (!myuser_access_verify(u, mu)))
+	{
+		command_fail(si, fault_authfail, _("You may not log in from this connection as STRICTACCESS has been enabled on this account."));
+		return;
+	}
+
 	if (verify_password(mu, password))
 	{
 		if (MOWGLI_LIST_LENGTH(&mu->logins) >= me.maxlogins)

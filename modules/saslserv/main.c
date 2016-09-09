@@ -554,6 +554,26 @@ static myuser_t *login_user(sasl_session_t *p)
 		p->authzid = sstrdup(p->username);
 	}
 
+	if ((target_mu->flags & MU_STRICTACCESS))
+	{
+		mowgli_node_t *n, *tn;
+		unsigned int notonaccesslist = 0;
+
+		MOWGLI_ITER_FOREACH_SAFE(n, tn, source_mu->logins.head)
+		{
+			user_t *u = (user_t *)n->data;
+			
+			if (!myuser_access_verify(u, target_mu))
+			{
+				notonaccesslist = 1;
+				notice(saslsvs->nick, u->nick, _("You may not log in from this connection as STRICTACCESS has been enabled on this account."));
+			}
+		}
+
+		if (notonaccesslist)
+			return NULL;
+	}
+
 	if(metadata_find(source_mu, "private:freeze:freezer"))
 	{
 		sasl_logcommand(p, source_mu, CMDLOG_LOGIN, "failed LOGIN to \2%s\2 (frozen)", entity(source_mu)->name);
@@ -642,17 +662,6 @@ static void sasl_newuser(hook_user_nick_t *data)
 	notice(saslsvs->nick, u->nick, _("You are now logged in to: %s"), entity(mu)->name);
 
 	user_show_all_logins(mu, saslsvs->me, u);
-
-//	MOWGLI_ITER_FOREACH(ln, mu->logins.head)
-//	{
-//		snprintf(buf, BUFSIZE, "Logins to this account: %s (%s@%s) [%s]\0",
-//			((user_t *)(ln->data))->nick,
-//			((user_t *)(ln->data))->user,
-//			((user_t *)(ln->data))->host,
-//			((user_t *)(ln->data))->ip
-//			);
-//		notice(saslsvs->nick, u->nick, _("Logins to this account: %s"), buf);
-//	}
 }
 
 /* This function is run approximately once every 30 seconds.

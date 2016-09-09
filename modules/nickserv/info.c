@@ -358,6 +358,13 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 		strcat(buf, "RegNoLimit");
 	}
+	if (MU_STRICTACCESS & mu->flags)
+	{
+		if (*buf)
+			strcat(buf, ", ");
+
+		strcat(buf, "StrictAccess");
+	}
 
 	if (*buf)
 		command_success_nodata(si, _("Flags      : %s"), buf);

@@ -31,6 +31,7 @@ int use_privmsg = 0;
 int use_account_private = 0;
 int use_channel_private = 0;
 int use_limitflags = 0;
+int use_myuser_strictaccess = 0;
 
 #define MAX_BUF 256
 

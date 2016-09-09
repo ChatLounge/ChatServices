@@ -69,6 +69,7 @@ struct gflags mu_flags[] = {
 	{ 'g', MU_NOGREET },
 	{ 'r', MU_REGNOLIMIT },
 	{ 'N', MU_NEVERGROUP },
+	{ 'A', MU_STRICTACCESS },
 	{ 0, 0 },
 };
 
