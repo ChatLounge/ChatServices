@@ -1,0 +1,15 @@
+#if soper
+nickserv/set_strictaccess
+#endif
+Help for SET STRICTACCESS:
+
+SET STRICTACCESS, if enabled, will mean it's only possible to
+identify/login to the account from connections from hosts
+listed in the NickServ ACCESS list.  Do NOT enable this
+feature unless you know what you are doing.
+
+Syntax: SET STRICTACCESS ON|OFF
+
+Example:
+    /msg &nick& SET STRICTACCESS ON
+    /msg &nick& SET STRICTACCESS OFF
