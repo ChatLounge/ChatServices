@@ -97,6 +97,8 @@ static bool evaluate_condition(sourceinfo_t *si, const char *s)
 		return chansvs.no_leveled_flags;
 	else if (!strcmp(word, "soper"))
 		return (is_soper(si->smu) || is_conf_soper(si->smu));
+	else if (!strcmp(word, "kline_do_not_remove_more_specific"))
+		return config_options.kline_do_not_remove_more_specific;
 	else if (!strcmp(word, "priv"))
 	{
 		if (p != NULL && (q = strchr(p, ' ')) != NULL)
