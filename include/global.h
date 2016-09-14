@@ -84,12 +84,18 @@ struct ConfOption
   unsigned int clone_time;               /* default expire for clone exemptions */
   unsigned int commit_interval;          /* interval between commits   */
 
-  bool silent;               /* stop sending WALLOPS?      */
-  bool join_chans;           /* join registered channels?  */
-  bool leave_chans;          /* leave channels when empty? */
-  bool secure;               /* require /msg <service>@host? */
-  bool kline_with_ident;     /* kline ident@host instead of *@host on automated bans? */
-  bool kline_verified_ident; /* Don't kline ident@host if first char of ident is ~ ? */
+  bool silent;                            /* stop sending WALLOPS?      */
+  bool join_chans;                        /* join registered channels?  */
+  bool leave_chans;                       /* leave channels when empty? */
+  bool secure;                            /* require /msg <service>@host? */
+  bool kline_with_ident;                  /* kline ident@host instead of *@host on automated bans? */
+  bool kline_verified_ident;              /* Don't kline ident@host if first char of ident is ~ ? */
+  bool kline_do_not_remove_more_specific; /* If enabled, automatically remove more specific k-lines
+                                           * like Skiddy@*.lamerz.net or *@poserz.lamerz.net if say,
+                                           * *@*.lamerz.net is added.  Only removes more specific
+                                           * k-lines that don't expire later than the one being set.
+                                           * Default is false/disabled.
+                                           */
 
   unsigned int defuflags;           /* default username flags     */
   unsigned int defcflags;           /* default channel flags      */

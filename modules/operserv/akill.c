@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2006 Atheme Development Group
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains functionality which implements
@@ -123,7 +125,8 @@ static void os_cmd_akill_add(sourceinfo_t *si, int parc, char *parv[])
 	char *treason, reason[BUFSIZE];
 	long duration;
 	char *s;
-	kline_t *k;
+	kline_t *k, *kl, *kln;
+	mowgli_node_t *n, *mkn;
 
 	if (!target || !token)
 	{
@@ -265,6 +268,66 @@ static void os_cmd_akill_add(sourceinfo_t *si, int parc, char *parv[])
 		command_fail(si, fault_nochange, _("AKILL \2%s@%s\2 is already matched in the database."), kuser, khost);
 		return;
 	}
+
+	/* Code for searching for more specific k-lines that will become irrelevant if a broader k-line is added.
+	 * e.g. suppose the k-lines BadGuy@*.lamerz.net and *@kiddiez.lamerz.net are set.  If a k-line on
+	 * *@*.lamerz.net is set, this will remove BadGuy@*.lamerz.net and *@kiddiez.lamerz.net as they are now
+	 * redundant. - Ben
+	 */
+	bool showntitle = false;
+	long unsigned int matchcount = 0;
+	mowgli_list_t matchingklns = { NULL, NULL, 0 };
+
+	if (!config_options.kline_do_not_remove_more_specific)
+	{
+		MOWGLI_ITER_FOREACH(n, klnlist.head)
+		{
+			kl = (kline_t *)n->data;
+
+			if (!match(kuser, kl->user) && (!match(khost, kl->host) || !match_ips(khost, kl->host)))
+			{
+				/* If the k-line is set to expire later than the k-line being set, don't remove it. */
+				if (duration && !kl->duration)
+					continue;
+
+				if (duration && (kl->expires > CURRTIME + duration))
+					continue;
+
+				if (!showntitle)
+				{
+					command_success_nodata(si, _("The following AKILLs are now redundant and removed:"));
+					command_success_nodata(si, "==================================================");
+					showntitle = true;
+				}
+
+				matchcount++;
+
+				command_success_nodata(si, _("\2Removed:\2 %u: \2%s@%s\2 was set by \2%s\2 (%s)"), kl->number, kl->user, kl->host, kl->setby, kl->reason);
+				verbose_wallops("\2%s\2 is \2removing\2 an \2AKILL\2 for \2%s@%s\2 -- reason: \2%s\2",
+					get_oper_name(si), kl->user, kl->host, kl->reason);
+
+				logcommand(si, CMDLOG_ADMIN, "AKILL:DEL: \2%s@%s\2", kl->user, kl->host);
+
+				/* Add the k-line to the list of k-lines to remove, if any. */
+				mowgli_node_add(kl, mowgli_node_create(), &matchingklns);
+			}
+		}
+	}
+
+	/* If applicable, actually remove the more specific k-lines and show the total k-lines removed. */
+	if (showntitle)
+	{
+		MOWGLI_ITER_FOREACH(mkn, matchingklns.head)
+		{
+			kln = (kline_t *)mkn->data;
+
+			kline_delete(kln);
+		}
+
+		command_success_nodata(si, _("A total of \2%u\2 matching, more specific AKILL%s been removed."), matchcount, matchcount == 1 ? " has" : "s have");
+	}
+
+	//mowgli_list_free(matchingklns);
 
 	k = kline_add(kuser, khost, reason, duration, get_storage_oper_name(si));
 

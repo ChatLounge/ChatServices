@@ -41,6 +41,12 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("How often services writes changes to the database: %d minutes"), config_options.commit_interval / 60);
 	command_success_nodata(si, _("Default kline expiry time: %d days"), config_options.kline_time / 86400);
 	command_success_nodata(si, _("Minimum number of non-wildcard chars for klines: %u"), config_options.kline_non_wildcard_chars);
+	command_success_nodata(si, _("Kline ident@host instead of *@host on automated bans: %s"),
+		config_options.kline_with_ident ? "yes" : "no");
+	command_success_nodata(si, _("Don't kline with ident@host if first char of ident is ~: %s"),
+		config_options.kline_verified_ident ? "yes" : "no");
+	command_success_nodata(si, _("Remove more specific klines if a wider kline is added: %s"),
+		config_options.kline_do_not_remove_more_specific ? "no" : "yes");
 	command_success_nodata(si, _("Will services be sending WALLOPS/GLOBOPS about various things: %s"), config_options.silent ? "no" : "yes");
 	command_success_nodata(si, _("How many messages before a flood is triggered, (if 0, flood protection is disabled): %d"), config_options.flood_msgs);
 	command_success_nodata(si, _("How long before the flood counter resets: %d seconds"), config_options.flood_time);
