@@ -29,6 +29,15 @@ The third example adds a permanent AKILL on foo@bar.com for "foo reason."
 The fourth example adds a AKILL on foo@bar.com for the duration specified
 in the configuration file for "foo reason."
 
+#if !kline_do_not_remove_more_specific
+If you add an AKILL that matches any existing AKILLs in the list, these
+more specific AKILLs will be removed automatically.  For example, if the
+AKILLs Skiddy@*.lamerz.net and *@poserz.lamerz.net are currently set,
+adding an AKILL on *@*.lamerz.net will remove them, as the new AKILL will
+match them both.  This only applies if the new AKILL is permanent, or if
+it expires later than any of the matching entries.
+
+#endif
 Syntax: AKILL DEL <hostmask|number>
 
 If number is specified it correlates with the number on AKILL LIST.
