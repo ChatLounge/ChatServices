@@ -1319,6 +1319,15 @@ chanserv {
 	 */
 	use_admin = false;
 
+	/* (*)flags_requires_account
+	 * If set, this defines the channel flags that may not be set on
+	 * hostmasks.  Regardless of this setting, +F (founder) may never
+	 * be set on hostmasks, and +b (AKICK) may always be set on
+	 * hostmasks.  If unset, the restricted flags includes only +F.
+	 * You must restart services if you change this setting.
+	 */
+	#flags_requires_account = "+Rs";
+
 	/* (*)antiflood_enforce_method
 	 * The enforcement method to use for flood protection by default.
 	 * This may be overridden by channel staff.

@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2007 William Pitcock, et al.
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService FLAGS functions.
@@ -392,7 +394,14 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 
 			if (addflags & CA_FOUNDER)
 			{
-		                command_fail(si, fault_badparams, _("You may not set founder status on a hostmask."));
+				command_fail(si, fault_badparams, _("You may not set founder status on a hostmask."));
+				return;
+			}
+
+			if (addflags & chansvs.flags_req_acct)
+			{
+				command_fail(si, fault_badparams, _("You may not add any of the following flags to hostmasks: %s"),
+					bitmask_to_flags(chansvs.flags_req_acct));
 				return;
 			}
 

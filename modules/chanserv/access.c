@@ -975,6 +975,13 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
+	if (validhostmask(target) && (get_template_flags(mc, role) & chansvs.flags_req_acct))
+	{
+		command_fail(si, fault_badparams, _("You may not add any of the following flags to hostmasks: %s"),
+			bitmask_to_flags(chansvs.flags_req_acct));
+		return;
+	}
+
 	oldtemplate = get_template_name(mc, ca->level);
 
 	if (ca->level != 0)
@@ -1135,6 +1142,13 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 	{
 		chanacs_close(ca);
 		command_fail(si, fault_toomany, _("Channel \2%s\2 access list is full."), mc->name);
+		return;
+	}
+
+	if (validhostmask(target) && (get_template_flags(mc, role) & chansvs.flags_req_acct))
+	{
+		command_fail(si, fault_badparams, _("You may not add any of the following flags to hostmasks: %s"),
+			bitmask_to_flags(chansvs.flags_req_acct));
 		return;
 	}
 

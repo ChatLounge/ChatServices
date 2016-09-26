@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2010 Atheme Development Group, et al.
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for OS INFO
@@ -118,6 +120,8 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Channel expiration time: %d days"), chansvs.expiry / 86400);
 	command_success_nodata(si, _("Default channel registration flags: %s"),
 		get_default_cflags());
+	command_success_nodata(si, _("Channel ACL flags that may only be set on accounts: %s"),
+		bitmask_to_flags(chansvs.flags_req_acct));
 	command_success_nodata(si, _("Leveled flags are enabled: %s"), chansvs.no_leveled_flags ? "no" : "yes");
 	if (chansvs.min_non_wildcard_chars_host_acl == 0)
 		command_success_nodata(si, _("Minimum number of non-wildcard chars for hostmask-based channel ACLs: Check Disabled"));

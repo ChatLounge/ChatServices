@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains the main() routine.
@@ -263,8 +265,33 @@ static int c_ci_templates(mowgli_config_file_entry_t *ce)
 	return 0;
 }
 
+/* Convert flags_requires_account into an unsigned integer representation,
+ * ensure CA_FOUNDER is included, and CA_AKICK is NOT included.
+ */
+
+static int c_ci_flags_requires_account(mowgli_config_file_entry_t *ce)
+{
+	unsigned int flags;
+
+	if (ce->vardata == NULL)
+	{
+		chansvs.flags_req_acct = CA_FOUNDER;
+		return 0;
+	}
+
+	flags = flags_to_bitmask((char *)ce->vardata, CA_FOUNDER);
+
+	flags &= ~CA_AKICK;
+
+	chansvs.flags_req_acct |= flags;
+
+	return 0;
+}
+
 void _modinit(module_t *m)
 {
+	chansvs.flags_req_acct = CA_FOUNDER;
+
 	hook_add_event("config_ready");
 	hook_add_config_ready(chanserv_config_ready);
 
@@ -313,6 +340,7 @@ void _modinit(module_t *m)
 	add_duration_conf_item("AKICK_TIME", &chansvs.me->conf_table, 0, &chansvs.akick_time, "m", 0);
 	add_bool_conf_item("USE_OWNER", &chansvs.me->conf_table, 0, &chansvs.use_owner, false);
 	add_bool_conf_item("USE_ADMIN", &chansvs.me->conf_table, 0, &chansvs.use_admin, false);
+	add_conf_item("FLAGS_REQUIRES_ACCOUNT", &chansvs.me->conf_table, c_ci_flags_requires_account);
 }
 
 void _moddeinit(module_unload_intent_t intent)

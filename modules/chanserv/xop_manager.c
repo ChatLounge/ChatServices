@@ -261,6 +261,13 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 			command_fail(si, fault_badparams, _("Invalid nick!user@host: \2%s\2  At least %u non-wildcard characters are required."), target, chansvs.min_non_wildcard_chars_host_acl);
 			return;
 		}
+		
+		if (validhostmask(target) && (addflags & chansvs.flags_req_acct))
+		{
+			command_fail(si, fault_badparams, _("You may not add any of the following flags to hostmasks: %s"),
+				bitmask_to_flags(chansvs.flags_req_acct));
+			return;
+		}
 
 		target = collapse(target);
 		ca = chanacs_open(mc, NULL, target, true, entity(si->smu));
