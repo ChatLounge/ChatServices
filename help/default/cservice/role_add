@@ -43,6 +43,7 @@ Flags:
 #endif
     +founder - Grants full founder access.
     +banned - Enables automatic kickban.
+    +exempt - Enables exemption from automatic kickban and self-unban.
 
 Examples:
     /msg &nick& ROLE #atheme ADD helpers topic autovoice
