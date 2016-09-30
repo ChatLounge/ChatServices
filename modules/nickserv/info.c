@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2006 William Pitcock, et al.
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the NickServ INFO functions.

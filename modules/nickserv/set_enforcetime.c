@@ -1,8 +1,10 @@
 /*
  * Copyright (c) 2010 Atheme Development Group
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
- * This file contains code for the NickServ SET ENFORCETIMEOUT function.
+ * This file contains code for the NickServ SET ENFORCETIME function.
  */
 
 #include "atheme.h"
@@ -20,17 +22,37 @@ static void ns_cmd_set_enforcetime(sourceinfo_t *si, int parc, char *parv[]);
 
 command_t ns_set_enforcetime = { "ENFORCETIME", N_("Amount of time it takes before nickname protection occurs."), AC_NONE, 1, ns_cmd_set_enforcetime, { .path = "nickserv/set_enforcetime" } };
 
+static void show_enforcetime(hook_user_req_t *hdata)
+{
+	metadata_t *md;
+	
+	if (!(hdata->mu == hdata->si->smu || has_priv(hdata->si, PRIV_USER_AUSPEX)))
+		return;
+
+	if ((md = metadata_find(hdata->mu, "private:enforcetime")) != NULL)
+	{
+		int enforcetime = atoi(md->value);
+		command_success_nodata(hdata->si, "%s has an enforce grace period of %d second%s.",
+			entity(hdata->mu)->name, enforcetime, enforcetime == 1 ? "" : "s");
+	}
+}
+
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_DEPENDENCY(m, "nickserv/enforce");
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
 
 	command_add(&ns_set_enforcetime, *ns_set_cmdtree);
+
+	hook_add_event("user_info");
+	hook_add_user_info(show_enforcetime);
 }
 
 void _moddeinit(module_unload_intent_t intent)
 {
 	command_delete(&ns_set_enforcetime, *ns_set_cmdtree);
+
+	hook_del_user_info(show_enforcetime);
 }
 
 static void ns_cmd_set_enforcetime(sourceinfo_t *si, int parc, char *parv[])
@@ -65,7 +87,7 @@ static void ns_cmd_set_enforcetime(sourceinfo_t *si, int parc, char *parv[])
 		{
 			logcommand(si, CMDLOG_SET, "SET:ENFORCETIME: %d", enforcetime);
 			metadata_add(si->smu, "private:enforcetime", setting);
-			command_success_nodata(si, _("The \2%s\2 for account \2%s\2 has been set to \2%d\2 seconds."), "ENFORCETIME", entity(si->smu)->name, enforcetime);
+			command_success_nodata(si, _("The \2%s\2 for account \2%s\2 has been set to \2%d\2 second%s."), "ENFORCETIME", entity(si->smu)->name, enforcetime, enforcetime == 1 ? "" : "s");
 		}
 		else
 		{
