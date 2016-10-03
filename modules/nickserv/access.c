@@ -404,6 +404,11 @@ static void ns_cmd_access(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("Deleted mask \2%s\2 from your access list."), mask);
 		logcommand(si, CMDLOG_SET, "ACCESS:DEL: \2%s\2", mask);
 		myuser_access_delete_enforce(mu, mask);
+
+		if ((MU_STRICTACCESS & mu->flags) && !myuser_access_verify(si->su, mu))
+		{
+			command_success_nodata(si, _("\2WARNING\2: You have removed the last ACCESS list entry that matches this connection.  You will not be able to ID from this host unless you add it back."));
+		}
 	}
 	else
 	{

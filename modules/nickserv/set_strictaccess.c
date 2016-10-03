@@ -38,6 +38,12 @@ static void ns_cmd_set_strictaccess(sourceinfo_t *si, int parc, char *parv[])
 			return;
 		}
 
+		if (!myuser_access_verify(si->su, si->smu))
+		{
+			command_fail(si, fault_nochange, _("You may not enable this option from a connection that doesn't match an access list entry."));
+			return;
+		}
+
 		logcommand(si, CMDLOG_SET, "SET:STRICTACCESS:ON");
 
 		si->smu->flags |= MU_STRICTACCESS;
@@ -60,7 +66,7 @@ static void ns_cmd_set_strictaccess(sourceinfo_t *si, int parc, char *parv[])
 
 		si->smu->flags &= ~MU_STRICTACCESS;
 
-		command_success_nodata(si, _("The \2%s\2 has been removed for: \2%s\2"),
+		command_success_nodata(si, _("The \2%s\2 flag has been removed for: \2%s\2"),
 			"STRICTACCESS", entity(si->smu)->name);
 
 		return;
