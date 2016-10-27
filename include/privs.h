@@ -15,8 +15,10 @@
 #define PRIV_USER_AUSPEX     "user:auspex"
 #define PRIV_USER_ADMIN      "user:admin"
 #define PRIV_USER_SENDPASS   "user:sendpass"
-#define PRIV_USER_VHOST      "user:vhost"
 #define PRIV_USER_FREGISTER  "user:fregister"
+/* hostserv */
+#define PRIV_USER_VHOST      "user:vhost"
+#define PRIV_USER_VHOSTOVERRIDE "user:vhostoverride"
 /* chanserv */
 #define PRIV_CHAN_AUSPEX     "chan:auspex"
 #define PRIV_CHAN_ADMIN      "chan:admin"
@@ -30,7 +32,7 @@
 #define PRIV_SERVER_AUSPEX   "general:auspex"
 #define PRIV_VIEWPRIVS       "general:viewprivs"
 #define PRIV_FLOOD           "general:flood"
-#define PRIV_HELPER	     "general:helper"
+#define PRIV_HELPER          "general:helper"
 #define PRIV_METADATA        "general:metadata"
 #define PRIV_ADMIN           "general:admin"
 /* operserv */

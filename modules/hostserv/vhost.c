@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Allows setting a vhost on an account
@@ -9,11 +11,13 @@
 #include "atheme.h"
 #include "hostserv.h"
 
+static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target) = NULL;
+
 DECLARE_MODULE_V1
 (
 	"hostserv/vhost", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
 static void hs_cmd_vhost(sourceinfo_t *si, int parc, char *parv[]);
@@ -26,6 +30,8 @@ void _modinit(module_t *m)
 {
 	service_named_bind_command("hostserv", &hs_vhost);
 	service_named_bind_command("hostserv", &hs_listvhost);
+
+	allow_vhost_change = module_locate_symbol("hostserv/main", "allow_vhost_change");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -64,6 +70,10 @@ static void hs_cmd_vhost(sourceinfo_t *si, int parc, char *parv[])
 		do_sethost_all(mu, NULL); // restore user vhost from user host
 		return;
 	}
+
+	/* Check whether the services operator is permitted to add a different vhost for the user. */
+	if (!allow_vhost_change(si, mu))
+		return;
 
 	if (!check_vhost_validity(si, host))
 		return;

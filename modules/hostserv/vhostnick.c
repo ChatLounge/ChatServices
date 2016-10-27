@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Allows setting a vhost on a nick
@@ -9,11 +11,13 @@
 #include "atheme.h"
 #include "hostserv.h"
 
+static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target) = NULL;
+
 DECLARE_MODULE_V1
 (
 	"hostserv/vhostnick", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
 static void hs_cmd_vhostnick(sourceinfo_t *si, int parc, char *parv[]);
@@ -23,6 +27,8 @@ command_t hs_vhostnick = { "VHOSTNICK", N_("Manages per-nick virtual hosts."), P
 void _modinit(module_t *m)
 {
 	service_named_bind_command("hostserv", &hs_vhostnick);
+
+	allow_vhost_change = module_locate_symbol("hostserv/main", "allow_vhost_change");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -55,6 +61,10 @@ static void hs_cmd_vhostnick(sourceinfo_t *si, int parc, char *parv[])
 		command_fail(si, fault_nosuch_target, _("\2%s\2 is not registered."), target);
 		return;
 	}
+
+	/* Check whether the services operator is permitted to add a different vhost for the user. */
+	if (!allow_vhost_change(si, mu))
+		return;
 
 	MOWGLI_ITER_FOREACH(n, mu->nicks.head)
 	{

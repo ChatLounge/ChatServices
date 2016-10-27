@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
+ * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Allows requesting a vhost for a nick/account
@@ -9,11 +11,13 @@
 #include "atheme.h"
 #include "hostserv.h"
 
+static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target) = NULL;
+
 DECLARE_MODULE_V1
 (
 	"hostserv/request", true, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Rizon Development Group <http://www.rizon.net>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
 bool request_per_nick;
@@ -80,6 +84,8 @@ void _modinit(module_t *m)
 	service_named_bind_command("hostserv", &hs_reject);
 	service_named_bind_command("hostserv", &hs_activate);
 	add_bool_conf_item("REQUEST_PER_NICK", &hostsvs->conf_table, 0, &request_per_nick, false);
+
+	allow_vhost_change = module_locate_symbol("hostserv/main", "allow_vhost_change");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -240,6 +246,9 @@ static void hs_cmd_request(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
+	if (!allow_vhost_change(si, si->smu))
+		return;
+
 	if (request_per_nick)
 	{
 		target = si->su != NULL ? si->su->nick : "?";
@@ -333,6 +342,7 @@ static void hs_cmd_activate(sourceinfo_t *si, int parc, char *parv[])
 	char buf[BUFSIZE];
 	hsreq_t *l;
 	mowgli_node_t *n, *tn;
+	myuser_t *target;
 
 	if (!nick)
 	{
@@ -349,7 +359,14 @@ static void hs_cmd_activate(sourceinfo_t *si, int parc, char *parv[])
 		if (!irccasecmp(l->nick, nick))
 		{
 			if ((u = user_find_named(nick)) != NULL)
+			{
+				target = myuser_find(nick);
+
+				if (!allow_vhost_change(si, target))
+					return;
+
 				notice(si->service->nick, u->nick, "[auto memo] Your requested vhost \2%s\2 for nick \2%s\2 has been approved.", l->vhost, nick);
+			}
 			/* VHOSTNICK command below will generate snoop */
 			logcommand(si, CMDLOG_REQUEST, "ACTIVATE: \2%s\2 for \2%s\2", l->vhost, nick);
 			snprintf(buf, BUFSIZE, "%s %s", l->nick, l->vhost);

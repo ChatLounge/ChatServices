@@ -1777,6 +1777,27 @@ hostserv {
 	 */
 	#request_per_nick;
 
+	/* (*)request_time
+	 * Number of days minimum between when users are permitted to use
+	 * the HostServ REQUEST and TAKE commands.  This also restricts whether
+	 * most services operators can set a new vhost on a user.  A services
+	 * operator needs the user:vhost_override and/or general:admin flag
+	 * to avoid this restriction.  It's highly recommended to set this
+	 * to something to prevent users from constantly requesting new vhosts.
+	 * 0 disables these restrictions.
+	 *
+	 * Default is 60 days.
+	 */
+	request_time = 60;
+
+	/* (*)limit_first_request
+	 * If enabled, newly registered accounts will be unable to request
+	 * a vhost setting via REQUEST or TAKE for request_time days since
+	 * account registration.  If disabled, the user can request a vhost
+	 * immediately after registration.
+	 */
+	#limit_first_request;
+
 	/* (*)aliases
 	 * Command aliases for HostServ.
 	 */
@@ -2312,6 +2333,7 @@ operclass "sra" {
 	privs {
 		user:hold;
 		user:regnolimit;
+		user:vhostoverride;
 	};
 
 	privs {

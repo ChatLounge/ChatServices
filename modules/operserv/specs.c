@@ -50,6 +50,7 @@ static struct priv_category nickserv_privs = {
 		{ PRIV_USER_ADMIN, N_("drop accounts, freeze accounts, reset passwords") },
 		{ PRIV_USER_SENDPASS, N_("send passwords") },
 		{ PRIV_USER_VHOST, N_("set vhosts") },
+		{ PRIV_USER_VHOSTOVERRIDE, N_("set new vhosts before cooldown period expires") },
 		{ PRIV_USER_FREGISTER, N_("register accounts on behalf of another user") },
 		{ PRIV_MARK, N_("mark accounts") },
 		{ PRIV_HOLD, N_("hold accounts") },
