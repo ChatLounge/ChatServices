@@ -504,6 +504,19 @@ static void show_enforce(hook_user_req_t *hdata)
 {
 	if (metadata_find(hdata->mu, "private:doenforce"))
 		command_success_nodata(hdata->si, "%s has enabled nick protection", entity(hdata->mu)->name);
+
+	if (!(hdata->mu == hdata->si->smu || has_priv(hdata->si, PRIV_USER_AUSPEX)))
+		return;
+
+	/* Show the default enforce time in case the user does not have a custom enforce time.
+	 * The code is here because enforce may be loaded but set_enforcetime may not be.
+	 * - Ben
+	 */
+	if (!(metadata_find(hdata->mu, "private:enforcetime")))
+	{
+		command_success_nodata(hdata->si, "%s has an enforce grace period of %d second%s.",
+			entity(hdata->mu)->name, nicksvs.enforce_delay, nicksvs.enforce_delay == 1 ? "" : "s");
+	}
 }
 
 static void check_registration(hook_user_register_check_t *hdata)
