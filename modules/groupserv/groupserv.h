@@ -32,6 +32,7 @@ const char * (*mygroup_founder_names)(mygroup_t *mg);
 void (*remove_group_chanacs)(mygroup_t *mg);
 
 const char * (*get_group_item)(const char *str, const char *name);
+const char * (*get_group_template_name)(mygroup_t *mg, unsigned int level);
 unsigned int (*get_group_template_flags)(mygroup_t *mg, const char *name);
 unsigned int (*get_global_group_template_flags)(const char *name);
 
@@ -66,6 +67,7 @@ static inline void use_groupserv_main_symbols(module_t *m)
     MODULE_TRY_REQUEST_SYMBOL(m, groupacs_sourceinfo_flags, "groupserv/main", "groupacs_sourceinfo_flags");
 
     MODULE_TRY_REQUEST_SYMBOL(m, get_group_item, "groupserv/main", "get_group_item");
+    MODULE_TRY_REQUEST_SYMBOL(m, get_group_template_name , "groupserv/main", "get_group_template_name");
     MODULE_TRY_REQUEST_SYMBOL(m, get_group_template_flags, "groupserv/main", "get_group_template_flags");
     MODULE_TRY_REQUEST_SYMBOL(m, get_global_group_template_flags, "groupserv/main", "get_global_group_template_flags");
 

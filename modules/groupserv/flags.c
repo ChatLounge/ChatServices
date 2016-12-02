@@ -68,8 +68,9 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		{
 			ga = n->data;
 
-			command_success_nodata(si, "%-5d %-22s %s", i, ga->mt->name,
-					       gflags_tostr(ga_flags, ga->flags));
+			command_success_nodata(si, "%-5d %-22s %s (%s)", i, ga->mt->name,
+						gflags_tostr(ga_flags, ga->flags),
+						get_group_template_name(mg, ga->flags) == NULL ? "<Custom>" : get_group_template_name(mg, ga->flags));
 
 			i++;
 		}

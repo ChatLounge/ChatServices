@@ -51,6 +51,7 @@ E void groupacs_close(groupacs_t *ga);
 E const char *get_group_item(const char *str, const char *name);
 E unsigned int get_group_template_flags(mygroup_t *mg, const char *name);
 E unsigned int get_global_group_template_flags(const char *name);
+E const char *get_group_template_name(mygroup_t *mg, unsigned int level);
 
 E mowgli_patricia_t *global_group_template_dict;
 
