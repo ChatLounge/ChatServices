@@ -40,6 +40,9 @@ static void ns_cmd_set_accountname(sourceinfo_t *si, int parc, char *parv[])
 {
 	char *newname = parv[0];
 	mynick_t *mn;
+	metadata_t *md;
+	time_t vhosttime;
+	char timevalue[128];
 
 	if (!newname)
 	{
@@ -72,10 +75,33 @@ static void ns_cmd_set_accountname(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
+	md = metadata_find(si->smu, "private:accountname-set");
+
+	if (md == NULL && (si->smu->registered + nicksvs.acct_change_time > CURRTIME))
+	{
+		command_fail(si, fault_noprivs, _("You may not change your account name yet.  You may try again in: %s"),
+			timediff(si->smu->registered + nicksvs.acct_change_time - CURRTIME));
+		return;
+	}
+
+	if (md != NULL)
+		vhosttime = atoi(md->value);
+
+	/* 86,400 seconds per day */
+	if (md != NULL && vhosttime + nicksvs.acct_change_time * 86400 > CURRTIME)
+	{
+		command_fail(si, fault_noprivs, _("You may not change your account name yet.  You may try again in: %s"),
+			timediff(vhosttime + nicksvs.acct_change_time * 86400 - CURRTIME));
+		return;
+	}
+
 	logcommand(si, CMDLOG_REGISTER, "SET:ACCOUNTNAME: \2%s\2", newname);
 	command_success_nodata(si, _("Your account name is now set to \2%s\2."), newname);
 	myuser_rename(si->smu, newname);
-	return;
+
+	snprintf(timevalue, BUFSIZE, "%u", CURRTIME);
+
+	metadata_add(si->smu, "private:accountname-set", timevalue);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

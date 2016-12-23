@@ -69,7 +69,7 @@ struct chansvs_
                                  */
   bool use_admin;               /* Same as use_owner, but for the admin cmode.
                                  */
-  unsigned int flags_req_acct; /* Integer representation of flags_requires_account.
+  unsigned int flags_req_acct;  /* Integer representation of flags_requires_account.
                                  */
 };
 
@@ -93,6 +93,9 @@ struct nicksvs_
   unsigned int enforce_delay;   /* delay for nickname enforce */
   unsigned int maxnicklength;   /* Maximum nick length.  Only needed for dynamic
                                  * enforce prefix.
+                                 */
+  unsigned int acct_change_time;/* Minimum amount of time that must pass before
+                                 * account name changes are permitted.
                                  */
   char         *enforce_prefix; /* prefix for enforcement */
   char         *cracklib_dict; /* cracklib dictionary path */

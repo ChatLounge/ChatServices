@@ -107,6 +107,8 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Maximum number of usernames that can be registered to one email address: %d"), me.maxusers);
 	if (!nicksvs.no_nick_ownership)
 		command_success_nodata(si, _("Maximum number of nicknames that one user can own: %d"), nicksvs.maxnicks);
+	command_success_nodata(si, _("Minimum amount of time before account name changes are permitted: %u day%s"),
+		nicksvs.acct_change_time, nicksvs.acct_change_time == 1 ? "" : "s");
 	command_success_nodata(si, _("===================================="));
 	command_success_nodata(si, _("\02%s Settings\02"), chansvs.nick);
 	command_success_nodata(si, _("===================================="));

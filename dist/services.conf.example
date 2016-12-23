@@ -1098,6 +1098,14 @@ nickserv {
 	 */
 	#maxnicklength = 32;
 
+	/* (*)acct_change_time
+	 * Determines the minimum amount of time in days that must pass before
+	 * users are permitted to change their account names.  Set to 0 to permit
+	 * users to change their account names at any time (NOT RECOMMENDED).
+	 * Defaults to 60 days if not set.
+	 */
+	#acct_change_time = 60;
+
 	/* (*)cracklib_dict
 	 * The location and filename prefix of the cracklib dictionaries
 	 * for use with nickserv/cracklib. This must be provided if you are
