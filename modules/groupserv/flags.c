@@ -10,6 +10,7 @@
 
 #include "atheme.h"
 #include "groupserv.h"
+#include "../hostserv/hostserv.h"
 
 DECLARE_MODULE_V1
 (
@@ -17,6 +18,12 @@ DECLARE_MODULE_V1
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+bool hostserv_loaded = false;
+
+static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target, bool shownotice) = NULL;
+static unsigned int (*get_hostsvs_req_time)(void) = NULL;
+static bool *(*get_hostsvs_limit_first_req)(void) = NULL;
 
 static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -174,7 +181,7 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 			return;
 		}
 	}
-	
+
 	if (!(flags & GA_FOUNDER) && groupacs_find(mg, mt, GA_FOUNDER, false))
 	{
 		if (mygroup_count_flag(mg, GA_FOUNDER) == 1)
@@ -223,6 +230,89 @@ no_founder:
 		return;
 	}
 
+	/* Remove the user's vhost setting, if the user's flags are changed or removed.
+	 * However, change the user's vhost setting, *if* the user is being granted flags that
+	 * match another TEMPLATEVHOST offer, *and* he previously held a group template vhost offer,
+	 * and the vhost cooldown for the user has passed.
+	 */
+	
+	if (isuser(mt) && (get_group_template_vhost_by_flags(mg, oldflags)) != NULL && hostserv_loaded)
+	{
+		mowgli_node_t *o;
+		bool matches = false;
+		myuser_t *mu = myuser_find_by_nick(parv[1]);
+		bool limit_first_req = get_hostsvs_limit_first_req();
+		unsigned int request_time = get_hostsvs_req_time();
+
+		if (flags != 0 && allow_vhost_change(si, mu, false))
+		{
+			MOWGLI_ITER_FOREACH(n, mu->nicks.head)
+			{
+				char templatevhost[128];
+				metadata_t *md;
+
+				if ((md = metadata_find(mt, "private:usercloak")) == NULL)
+					break;
+
+				mowgli_strlcpy(templatevhost, get_group_template_vhost_by_flags(mg, oldflags), BUFSIZE);
+
+				if (strstr(templatevhost, "$account"))
+						replace(templatevhost, BUFSIZE, "$account", entity(mt)->name);
+
+				if (!strcasecmp(md->value, templatevhost))
+				{
+					if (!has_priv(si, PRIV_USER_VHOSTOVERRIDE) && !has_priv(si, PRIV_ADMIN))
+					{
+						metadata_t *md_vhosttime = metadata_find(mu, "private:usercloak-timestamp");
+
+						/* 86,400 seconds per day */
+						if (limit_first_req && md_vhosttime == NULL && (CURRTIME - mu->registered > (request_time * 86400)))
+							break;
+
+						time_t vhosttime = atoi(md_vhosttime->value);
+
+						if (vhosttime + (request_time * 86400) > CURRTIME)
+							break;
+					}
+
+					// Check if the new flags have a vhost offer.
+
+					if (get_group_template_vhost_by_flags(mg, flags))
+					{
+						char newtemplatevhost[128];
+						mowgli_strlcpy(newtemplatevhost, get_group_template_vhost_by_flags(mg, flags), BUFSIZE);
+
+						if (strstr(newtemplatevhost, "$account"))
+							replace(newtemplatevhost, BUFSIZE, "$account", entity(mt)->name);
+
+						hs_sethost_all(mu, newtemplatevhost, get_source_name(si));
+						do_sethost_all(mu, newtemplatevhost);
+						// Send notice/memo to affected user.
+						logcommand(si, CMDLOG_ADMIN, "VHOST:CHANGE: from \2%s\2 to \2%s\2 on \2%s\2 by virtue of flags change on: \2%s\2",
+							templatevhost,
+							newtemplatevhost,
+							entity(mt)->name,
+							entity(mg)->name);
+
+						matches = true;
+						break;
+					}
+				}
+
+				if (matches)
+					break;
+			}
+		}
+
+		if (!matches)
+		{
+			hs_sethost_all(mu, NULL, get_source_name(si));
+			// Send notice/memo to affected user.
+			logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
+			do_sethost_all(mu, NULL); // restore user vhost from user host
+		}
+	}
+
 	MOWGLI_ITER_FOREACH(n, entity(mg)->chanacs.head)
 	{
 		chanacs_t *ca = n->data;
@@ -234,15 +324,34 @@ no_founder:
 		hook_call_channel_acl_change(&(hook_channel_acl_req_t){ .ca = ca });
 	}
 
-	command_success_nodata(si, _("\2%s\2 now has flags \2%s\2 on \2%s\2."), mt->name, gflags_tostr(ga_flags, ga->flags), entity(mg)->name);
-
-	/* XXX */
-	logcommand(si, CMDLOG_SET, "FLAGS: \2%s\2 now has flags \2%s\2 on \2%s\2", mt->name, gflags_tostr(ga_flags,  ga->flags), entity(mg)->name);
+	if (get_group_template_vhost_by_flags(mg, ga->flags))
+	{
+		logcommand(si, CMDLOG_SET, "FLAGS: \2%s\2 now has flags \2%s\2 (TEMPLATE: \2%s\2) on \2%s\2", mt->name, gflags_tostr(ga_flags,  ga->flags),
+			get_group_template_name(mg, ga->flags), entity(mg)->name);
+		command_success_nodata(si, _("\2%s\2 now has flags \2%s\2 (TEMPLATE: \2%s\2) on: \2%s\2"),
+			mt->name, gflags_tostr(ga_flags, ga->flags),
+			get_group_template_name(mg, ga->flags), entity(mg)->name);
+	}
+	else
+	{
+		logcommand(si, CMDLOG_SET, "FLAGS: \2%s\2 now has flags \2%s\2 on \2%s\2", mt->name, gflags_tostr(ga_flags,  ga->flags), entity(mg)->name);
+		command_success_nodata(si, _("\2%s\2 now has flags \2%s\2 on: \2%s\2"), mt->name, gflags_tostr(ga_flags, ga->flags), entity(mg)->name);
+	}
 }
 
 void _modinit(module_t *m)
 {
 	use_groupserv_main_symbols(m);
+
+	if (module_request("hostserv/main"))
+	{
+		allow_vhost_change = module_locate_symbol("hostserv/main", "allow_vhost_change");
+		get_hostsvs_req_time = module_locate_symbol("hostserv/main", "get_hostsvs_req_time");
+		get_hostsvs_limit_first_req = module_locate_symbol("hostserv/main", "get_hostsvs_limit_first_req");
+		hostserv_loaded = true;
+	}
+	else
+		hostserv_loaded = false;
 
 	service_named_bind_command("groupserv", &gs_flags);
 }

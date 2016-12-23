@@ -59,7 +59,7 @@ bool get_hostsvs_limit_first_req(void)
  * Side Effects: None
  * Output: True if permitted, otherwise false.
  */
-bool allow_vhost_change(sourceinfo_t *si, myuser_t *target)
+bool allow_vhost_change(sourceinfo_t *si, myuser_t *target, bool shownotice)
 {
 	metadata_t *md_vhosttime;
 	time_t vhosttime;
@@ -73,8 +73,9 @@ bool allow_vhost_change(sourceinfo_t *si, myuser_t *target)
 		/* 86,400 seconds per day */
 		if (limit_first_req && md_vhosttime == NULL && (CURRTIME - target->registered > (request_time * 86400)))
 		{
-			command_fail(si, fault_noprivs, _("Users may only get new vhosts every %u days.  %s remaining for: %s"),
-				request_time, timediff(target->registered + request_time * 86400 - CURRTIME), entity(target)->name);
+			if (shownotice)
+				command_fail(si, fault_noprivs, _("Users may only get new vhosts every %u days.  %s remaining for: %s"),
+					request_time, timediff(target->registered + request_time * 86400 - CURRTIME), entity(target)->name);
 			return false;
 		}
 
@@ -82,11 +83,14 @@ bool allow_vhost_change(sourceinfo_t *si, myuser_t *target)
 
 		if (vhosttime + (request_time * 86400) > CURRTIME)
 		{
-			command_fail(si, fault_noprivs, _("Users may only get new vhosts every %u days.  %s remaining for: %s"),
-				request_time, timediff(vhosttime + request_time * 86400 - CURRTIME), entity(target)->name);
+			if (shownotice)
+				command_fail(si, fault_noprivs, _("Users may only get new vhosts every %u days.  %s remaining for: %s"),
+					request_time, timediff(vhosttime + request_time * 86400 - CURRTIME), entity(target)->name);
 			return false;
 		}
 	}
+
+	return true;
 };
 
 void _modinit(module_t *m)

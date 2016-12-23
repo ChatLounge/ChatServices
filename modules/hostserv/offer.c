@@ -12,7 +12,7 @@
 #include "hostserv.h"
 #include "../groupserv/groupserv.h"
 
-static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target) = NULL;
+static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target, bool shownotice) = NULL;
 
 DECLARE_MODULE_V1
 (
@@ -58,7 +58,9 @@ void _modinit(module_t *m)
 	hook_add_db_write(write_hsofferdb);
 	db_register_type_handler("HO", db_h_ho);
 
- 	service_named_bind_command("hostserv", &hs_offer);
+	use_groupserv_main_symbols(m);
+
+	service_named_bind_command("hostserv", &hs_offer);
 	service_named_bind_command("hostserv", &hs_unoffer);
 	service_named_bind_command("hostserv", &hs_offerlist);
 	service_named_bind_command("hostserv", &hs_take);
@@ -273,7 +275,9 @@ static void hs_cmd_take(sourceinfo_t *si, int parc, char *parv[])
 {
 	char *host = parv[0];
 	hsoffered_t *l;
-	mowgli_node_t *n;
+	mowgli_node_t *n, *o;
+	mowgli_list_t *ml;
+	char templatevhost[128], templatevhost2[128];
 
 	if (!host)
 	{
@@ -294,7 +298,7 @@ static void hs_cmd_take(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!allow_vhost_change(si, si->smu))
+	if (!allow_vhost_change(si, si->smu, true))
 		return;
 
 	MOWGLI_ITER_FOREACH(n, hs_offeredlist.head)
@@ -322,6 +326,41 @@ static void hs_cmd_take(sourceinfo_t *si, int parc, char *parv[])
 		}
 	}
 
+	// Code for group template-based vhost offers.
+
+	ml = myentity_get_membership_list(entity(si->smu));
+
+	if (si->smu != NULL && MOWGLI_LIST_LENGTH(ml) != 0)
+	{
+		MOWGLI_ITER_FOREACH(o, ml->head)
+		{
+			groupacs_t *ga = o->data;
+
+			if (ga->mt != entity(si->smu))
+				continue;
+
+			if ((ga->flags & GA_BAN))
+				continue;
+
+			if (!irccasecmp(get_group_template_vhost_by_flags(ga->mg, ga->flags), host))
+			{
+				if (strstr(host, "$account"))
+				replace(host, BUFSIZE, "$account", entity(si->smu)->name);
+
+				if (!check_vhost_validity(si, host))
+					return;
+
+				logcommand(si, CMDLOG_GET, "TAKE: \2%s\2 for \2%s\2 (template \2%s\2 from group: \2%s\2)", host, entity(si->smu)->name, get_group_template_vhost_by_flags(ga->mg, ga->flags), entity(ga->mg)->name);
+
+				command_success_nodata(si, _("You have taken vhost \2%s\2."), host);
+				hs_sethost_all(si->smu, host, get_source_name(si));
+				do_sethost_all(si->smu, host);
+
+				return;
+			}
+		}
+	}
+
 	command_success_nodata(si, _("vhost \2%s\2 not found in vhost offer database."), host);
 }
 
@@ -329,9 +368,13 @@ static void hs_cmd_take(sourceinfo_t *si, int parc, char *parv[])
 static void hs_cmd_offerlist(sourceinfo_t *si, int parc, char *parv[])
 {
 	hsoffered_t *l;
-	mowgli_node_t *n;
+	mowgli_list_t *ml;
+	mowgli_node_t *n, *o;
 	char buf[BUFSIZE];
 	struct tm tm;
+	unsigned int count = 0;
+
+	ml = myentity_get_membership_list(entity(si->smu));
 
 	MOWGLI_ITER_FOREACH(n, hs_offeredlist.head)
 	{
@@ -351,6 +394,49 @@ static void hs_cmd_offerlist(sourceinfo_t *si, int parc, char *parv[])
 			command_success_nodata(si, "vhost:\2%s\2, creator:\2%s\2 (%s)",
 						l->vhost, l->creator, buf);
 	}
+
+	if (si->smu != NULL && MOWGLI_LIST_LENGTH(ml) != 0)
+	{
+		//command_success_nodata(si, _("V-Hosts available from group template memberships:"));
+
+		MOWGLI_ITER_FOREACH(o, ml->head)
+		{
+			groupacs_t *ga = o->data;
+
+			if (ga->mt != entity(si->smu))
+				continue;
+
+			if ((ga->flags & GA_BAN))
+				continue;
+
+			if (get_group_template_vhost_by_flags(ga->mg, ga->flags) == NULL)
+				continue;
+
+			count++;
+
+			//command_success_nodata(si, _("vhost:\2%s\2, group: \2%s\2"), get_group_template_vhost_by_flags(ga->mg, ga->flags), entity(ga->mg)->name);
+		}
+		
+		if (count > 0)
+		{
+			command_success_nodata(si, _("V-Hosts available from group template memberships:"));
+		}
+
+		MOWGLI_ITER_FOREACH(o, ml->head)
+		{
+			groupacs_t *ga = o->data;
+
+			if (ga->mt != entity(si->smu))
+				continue;
+
+			if ((ga->flags & GA_BAN))
+				continue;
+
+			if (get_group_template_vhost_by_flags(ga->mg, ga->flags) != NULL)
+				command_success_nodata(si, _("vhost:\2%s\2, group: \2%s\2"), get_group_template_vhost_by_flags(ga->mg, ga->flags), entity(ga->mg)->name);
+		}
+	}
+
 	command_success_nodata(si, "End of list.");
 	logcommand(si, CMDLOG_GET, "OFFERLIST");
 }

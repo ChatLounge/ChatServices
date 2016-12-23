@@ -11,7 +11,7 @@
 #include "atheme.h"
 #include "hostserv.h"
 
-static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target) = NULL;
+static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target, bool shownotice) = NULL;
 
 DECLARE_MODULE_V1
 (
@@ -237,8 +237,8 @@ static void hs_cmd_request(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if ((unsigned int)(CURRTIME - ratelimit_firsttime) > config_options.ratelimit_period)
-		ratelimit_count = 0, ratelimit_firsttime = CURRTIME;
+	//if ((unsigned int)(CURRTIME - ratelimit_firsttime) > config_options.ratelimit_period)
+	//	ratelimit_count = 0, ratelimit_firsttime = CURRTIME;
 
 	if (metadata_find(si->smu, "private:restrict:setter"))
 	{
@@ -246,7 +246,7 @@ static void hs_cmd_request(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!allow_vhost_change(si, si->smu))
+	if (!allow_vhost_change(si, si->smu, true))
 		return;
 
 	if (request_per_nick)
@@ -362,7 +362,7 @@ static void hs_cmd_activate(sourceinfo_t *si, int parc, char *parv[])
 			{
 				target = myuser_find(nick);
 
-				if (!allow_vhost_change(si, target))
+				if (!allow_vhost_change(si, target, true))
 					return;
 
 				notice(si->service->nick, u->nick, "[auto memo] Your requested vhost \2%s\2 for nick \2%s\2 has been approved.", l->vhost, nick);

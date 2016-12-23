@@ -36,6 +36,11 @@ const char * (*get_group_template_name)(mygroup_t *mg, unsigned int level);
 unsigned int (*get_group_template_flags)(mygroup_t *mg, const char *name);
 unsigned int (*get_global_group_template_flags)(const char *name);
 
+const char * (*get_group_template_vhost)(mygroup_t *mg, const char *name);
+const char * (*get_group_template_vhost_by_flags)(mygroup_t *mg, unsigned int level);
+time_t (*get_group_template_vhost_expiry)(mygroup_t *mg, const char *name);
+time_t * (*get_group_template_vhost_expiry_by_flags)(mygroup_t *mg, unsigned int level);
+
 void * (*gflags_make_bitmasks)(const char *string, unsigned int *addflags, unsigned int *removeflags);
 unsigned int (*allow_gflags)(mygroup_t *mg, unsigned int theirflags);
 char * (*bitmask_to_gflags)(unsigned int flags);
@@ -70,6 +75,11 @@ static inline void use_groupserv_main_symbols(module_t *m)
     MODULE_TRY_REQUEST_SYMBOL(m, get_group_template_name , "groupserv/main", "get_group_template_name");
     MODULE_TRY_REQUEST_SYMBOL(m, get_group_template_flags, "groupserv/main", "get_group_template_flags");
     MODULE_TRY_REQUEST_SYMBOL(m, get_global_group_template_flags, "groupserv/main", "get_global_group_template_flags");
+
+    MODULE_TRY_REQUEST_SYMBOL(m, get_group_template_vhost, "groupserv/main", "get_group_template_vhost");
+    MODULE_TRY_REQUEST_SYMBOL(m, get_group_template_vhost_by_flags, "groupserv/main", "get_group_template_vhost_by_flags");
+    MODULE_TRY_REQUEST_SYMBOL(m, get_group_template_vhost_expiry, "groupserv/main", "get_group_template_vhost_expiry");
+	MODULE_TRY_REQUEST_SYMBOL(m, get_group_template_vhost_expiry_by_flags, "groupserv/main", "get_group_template_vhost_expiry_by_flags");
 
     MODULE_TRY_REQUEST_SYMBOL(m, gs_flags_parser, "groupserv/main", "gs_flags_parser");
     MODULE_TRY_REQUEST_SYMBOL(m, myentity_get_membership_list, "groupserv/main", "myentity_get_membership_list");

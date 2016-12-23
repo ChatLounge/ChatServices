@@ -5,7 +5,7 @@
 
 PLUGIN = main$(PLUGIN_SUFFIX)
 
-SRCS = main.c database.c groupserv.c hooks.c validation.c template.c
+SRCS = main.c database.c groupserv.c hooks.c validation.c template.c templatevhost.c
 
 include ../../../extra.mk
 include ../../../buildsys.mk

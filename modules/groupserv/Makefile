@@ -37,6 +37,7 @@ BASE_SRCS =             \
 	set_url.c           \
 	taxonomy.c          \
 	template.c          \
+	templatevhost.c     \
 
 SRCS = ${BASE_SRCS} ${EXTRA_SRCS}
 

@@ -11,7 +11,7 @@
 #include "atheme.h"
 #include "hostserv.h"
 
-static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target) = NULL;
+static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target, bool shownotice) = NULL;
 
 DECLARE_MODULE_V1
 (
@@ -72,7 +72,7 @@ static void hs_cmd_vhost(sourceinfo_t *si, int parc, char *parv[])
 	}
 
 	/* Check whether the services operator is permitted to add a different vhost for the user. */
-	if (!allow_vhost_change(si, mu))
+	if (!allow_vhost_change(si, mu, true))
 		return;
 
 	if (!check_vhost_validity(si, host))
