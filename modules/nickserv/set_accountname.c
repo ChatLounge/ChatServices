@@ -24,6 +24,7 @@ mowgli_patricia_t **ns_set_cmdtree;
 static void ns_cmd_set_accountname(sourceinfo_t *si, int parc, char *parv[]);
 
 static unsigned int (*get_hostsvs_req_time)(void) = NULL;
+static char *(*update_vhost_on_account_name_change)(myuser_t *mu, const char *newname) = NULL;
 
 bool hostserv_loaded = false;
 
@@ -36,6 +37,15 @@ void _modinit(module_t *m)
 	if (module_request("hostserv/main"))
 	{
 		get_hostsvs_req_time = module_locate_symbol("hostserv/main", "get_hostsvs_req_time");
+
+		hostserv_loaded = true;
+	}
+	else
+		hostserv_loaded = false;
+
+	if (module_request("hostserv/offer"))
+	{
+		update_vhost_on_account_name_change = module_locate_symbol("hostserv/offer", "update_vhost_on_account_name_change");
 
 		hostserv_loaded = true;
 	}
@@ -58,6 +68,7 @@ static void ns_cmd_set_accountname(sourceinfo_t *si, int parc, char *parv[])
 	metadata_t *md;
 	time_t acctnamesettime;
 	time_t vhosttime;
+	char *newvhost;
 	char timevalue[128];
 
 	if (!newname)
@@ -125,6 +136,10 @@ static void ns_cmd_set_accountname(sourceinfo_t *si, int parc, char *parv[])
 
 	logcommand(si, CMDLOG_REGISTER, "SET:ACCOUNTNAME: \2%s\2", newname);
 	command_success_nodata(si, _("Your account name is now set to \2%s\2."), newname);
+
+	if (hostserv_loaded && (newvhost = update_vhost_on_account_name_change(si->smu, newname)) != NULL)
+		command_success_nodata(si, _("As a result of your account name change, your vhost has been changed to: %s"), newvhost);
+
 	myuser_rename(si->smu, newname);
 
 	snprintf(timevalue, BUFSIZE, "%u", CURRTIME);

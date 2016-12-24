@@ -270,6 +270,97 @@ static bool myuser_is_in_group(myuser_t *mu, myentity_t *mt)
 	return false;
 }
 
+/* update_vhost_on_account_name_change:
+ *
+ *     This function checks if the user has an existing vhost that
+ * uses the $account token.  If it does, update the vhost to show
+ * the new account name.  Intended to be used by nickserv/set_accountname.
+ *
+ * Inputs: myuser_t *mu: User who's vhost is being changed.
+ *         const char *newname: New account name.
+ * Outputs: Returns the new vhost if a change occurred, NULL otherwise.
+ * Side Effects: User's vhost may be updated, depending.
+ */
+const char *update_vhost_on_account_name_change(myuser_t *mu, const char *newname)
+{
+	groupacs_t *ga;
+	hsoffered_t *l;
+	mowgli_node_t *n;
+	mowgli_list_t *ml;
+	metadata_t *md;
+	char vhoststring[128];
+	static char newvhoststring[128];
+
+	if (mu == NULL)
+		return NULL;
+
+	if (newname == NULL)
+		return NULL;
+
+	if ((md = metadata_find(mu, "private:usercloak")) == NULL)
+		return NULL;
+
+	MOWGLI_ITER_FOREACH(n, hs_offeredlist.head)
+	{
+		l = n->data;
+
+		if (l->group != NULL && !myuser_is_in_group(mu, l->group))
+			continue;
+
+		if (!strstr(l->vhost, "$account"))
+			continue;
+
+		mowgli_strlcpy(vhoststring, l->vhost, sizeof vhoststring);
+		replace(vhoststring, BUFSIZE, "$account", entity(mu)->name);
+
+		if (!strcmp(vhoststring, md->value))
+		{
+			mowgli_strlcpy(newvhoststring, l->vhost, sizeof newvhoststring);
+			replace(newvhoststring, BUFSIZE, "$account", newname);
+
+			hs_sethost_all(mu, newvhoststring, newname);
+			do_sethost_all(mu, newvhoststring);
+
+			return newvhoststring;
+		}
+	}
+
+	ml = myentity_get_membership_list(entity(mu));
+
+	if (MOWGLI_LIST_LENGTH(ml) == 0)
+		return false;
+
+	MOWGLI_ITER_FOREACH(n, ml->head)
+	{
+		ga = n->data;
+
+		if (ga->mt != entity(mu))
+			continue;
+
+		if ((ga->flags & GA_BAN))
+			continue;
+
+		if (!strstr(get_group_template_vhost_by_flags(ga->mg, ga->flags), "$account"))
+			continue;
+
+		mowgli_strlcpy(vhoststring, get_group_template_vhost_by_flags(ga->mg, ga->flags), sizeof vhoststring);
+		replace(vhoststring, BUFSIZE, "$account", entity(mu)->name);
+
+		if (!strcmp(vhoststring, md->value))
+		{
+			mowgli_strlcpy(newvhoststring, get_group_template_vhost_by_flags(ga->mg, ga->flags), sizeof newvhoststring);
+			replace(newvhoststring, BUFSIZE, "$account", newname);
+
+			hs_sethost_all(mu, newvhoststring, newname);
+			do_sethost_all(mu, newvhoststring);
+
+			return newvhoststring;
+		}
+	}
+
+	return NULL;
+}
+
 /* TAKE <vhost> */
 static void hs_cmd_take(sourceinfo_t *si, int parc, char *parv[])
 {
