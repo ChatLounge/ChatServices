@@ -1789,7 +1789,7 @@ hostserv {
 	 * Number of days minimum between when users are permitted to use
 	 * the HostServ REQUEST and TAKE commands.  This also restricts whether
 	 * most services operators can set a new vhost on a user.  A services
-	 * operator needs the user:vhost_override and/or general:admin flag
+	 * operator needs the user:vhostoverride and/or general:admin flag
 	 * to avoid this restriction.  It's highly recommended to set this
 	 * to something to prevent users from constantly requesting new vhosts.
 	 * 0 disables these restrictions.
