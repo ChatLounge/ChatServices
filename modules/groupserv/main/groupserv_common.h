@@ -12,17 +12,18 @@
 typedef struct groupserv_config_ groupserv_config_t;
 
 struct groupserv_config_ {
-    unsigned int maxgroups;
-    unsigned int maxgroupacs;
-    bool enable_open_groups;
+	unsigned int maxgroups;
+	unsigned int maxgroupacs;
+	bool enable_open_groups;
 	bool no_leveled_flags;
-    char *join_flags;
+	char *join_flags;
 };
 
 #define MG_REGNOLIMIT		0x00000001
 #define MG_ACSNOLIMIT		0x00000002
-#define MG_OPEN			0x00000004
+#define MG_OPEN				0x00000004
 #define MG_PUBLIC			0x00000008
+#define MG_PUBACL			0x00000010
 
 typedef struct mygroup_ mygroup_t;
 
@@ -46,8 +47,7 @@ struct mygroup_ {
 #define GA_BAN			0x00000040
 #define GA_INVITE		0x00000080
 #define GA_ACLVIEW		0x00000100
-#define GA_PUBACL		0x00000200
-#define GA_ALL			(GA_FLAGS | GA_CHANACS | GA_MEMOS | GA_SET | GA_VHOST | GA_INVITE | GA_ACLVIEW | GA_PUBACL)
+#define GA_ALL			(GA_FLAGS | GA_CHANACS | GA_MEMOS | GA_SET | GA_VHOST | GA_INVITE | GA_ACLVIEW)
 #define GA_ALL_OLD		(GA_FLAGS | GA_CHANACS | GA_MEMOS | GA_SET | GA_VHOST | GA_INVITE)
 #define GA_ALL_ALL		(GA_ALL | GA_BAN)
 

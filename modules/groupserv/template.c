@@ -85,7 +85,7 @@ static void gs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 
 	if (!target)
 	{
-		if (!(mg->flags & GA_PUBACL) && !groupacs_sourceinfo_has_flag(mg, si, GA_ACLVIEW))
+		if (!(mg->flags & MG_PUBACL) && !groupacs_sourceinfo_has_flag(mg, si, GA_ACLVIEW))
 		{
 			if (has_priv(si, PRIV_GROUP_AUSPEX))
 				operoverride = true;

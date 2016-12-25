@@ -79,9 +79,8 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 	if (!target)
 	{
 		/* No template name specified, so list the current settings. */
-		/* Redo this section to adapt it for one metadata line per vhost offer. */
 
-		if (!(mg->flags & GA_PUBACL) && !groupacs_sourceinfo_has_flag(mg, si, GA_ACLVIEW))
+		if (!(mg->flags & MG_PUBACL) && !groupacs_sourceinfo_has_flag(mg, si, GA_ACLVIEW))
 		{
 			if (has_priv(si, PRIV_GROUP_AUSPEX))
 				operoverride = true;

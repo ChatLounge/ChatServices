@@ -30,6 +30,7 @@ struct gflags mg_flags[] = {
 	{ 'a', MG_ACSNOLIMIT },
 	{ 'o', MG_OPEN },
 	{ 'p', MG_PUBLIC },
+	{ 'P', MG_PUBACL },
 	{ 0, 0 }
 };
 
@@ -295,10 +296,15 @@ unsigned int myentity_count_group_flag(myentity_t *mt, unsigned int flagset)
 unsigned int gs_flags_parser(char *flagstring, bool allow_minus, unsigned int flags)
 {
 	char *c;
-	unsigned int dir = 0;
+	volatile unsigned int dir = 0;
 
 	/* XXX: this sucks. :< */
 	c = flagstring;
+
+	/* If prefixed with an equals sign, disregard the existing flags. */
+	if (strchr(c, '='))
+		flags = 0;
+
 	while (*c)
 	{
 		switch(*c)

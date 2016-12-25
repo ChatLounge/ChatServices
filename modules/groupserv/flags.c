@@ -124,21 +124,14 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		flags = ga->flags;
 
 	oldflags = flags;
-	if (strchr(parv[2], '+') || strchr(parv[2], '-') || strchr(parv[2], '=') || strchr(parv[2], '!'))
-	{
-		flags = gs_flags_parser(parv[2], 1, flags);
-		if (flags == 0)
-		{
-			command_fail(si, fault_badparams, _("Invalid flags specified."));
-			return;
-		}
-	}
+	if (strchr(parv[2], '+') || strchr(parv[2], '-') || strchr(parv[2], '='))
+		flags = gs_flags_parser(parv[2], true, flags);
 	else
 	{
 		flags = get_group_template_flags(mg, parv[2]);
 		if (flags == 0)
 		{
-			command_fail(si, fault_badparams, _("Invalid template name."));
+			command_fail(si, fault_badparams, _("Invalid template name on the group: %s"), parv[0]);
 			return;
 		}
 	}
