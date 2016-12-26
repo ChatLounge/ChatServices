@@ -723,6 +723,7 @@ loadmodule "modules/statserv/server";
  * SET GROUPNAME command                        modules/groupserv/set_groupname
  * SET JOINFLAGS command                        modules/groupserv/set_joinflags
  * SET OPEN command                             modules/groupserv/set_open
+ * SET PUBACL command                           modules/groupserv/set_pubacl
  * SET PUBLIC command                           modules/groupserv/set_public
  * SET URL command                              modules/groupserv/set_url
  *
@@ -748,6 +749,7 @@ loadmodule "modules/groupserv/set_email";
 loadmodule "modules/groupserv/set_groupname";
 loadmodule "modules/groupserv/set_joinflags";
 loadmodule "modules/groupserv/set_open";
+loadmodule "modules/groupserv/set_pubacl";
 loadmodule "modules/groupserv/set_public";
 loadmodule "modules/groupserv/set_url";
 

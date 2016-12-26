@@ -4,7 +4,7 @@
  *     (http://www.chatlounge.net/)
  * Rights to this code are documented in doc/LICENSE.
  *
- * This file contains routines to handle the GroupServ HELP command.
+ * This file contains routines to handle the GroupServ FLAGS command.
  *
  */
 
@@ -27,7 +27,51 @@ static bool *(*get_hostsvs_limit_first_req)(void) = NULL;
 
 static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[]);
 
-command_t gs_flags = { "FLAGS", N_("Sets flags on a user in a group."), AC_AUTHENTICATED, 3, gs_cmd_flags, { .path = "groupserv/flags" } };
+command_t gs_flags = { "FLAGS", N_("Sets flags on a user in a group."), AC_NONE, 3, gs_cmd_flags, { .path = "groupserv/flags" } };
+
+/* show_group_flags
+ *
+ *     Just show the group's ACL.
+ *
+ * Inputs: sourceinfo_t *si: Show the output to this user.
+ *         mygroup_t *mg: Show the ACL list for this group.
+ *         bool operoverride: Is the user viewing this by virtue
+ *                            of services oper override?
+ * Outputs: None
+ * Side Effects: Show the output to *si.
+ *
+ */
+static void show_group_flags(sourceinfo_t *si, mygroup_t *mg, bool operoverride)
+{
+	mowgli_node_t *n;
+	groupacs_t *ga;
+
+	int i = 1;
+
+	command_success_nodata(si, _("Entry Account                Flags"));
+	command_success_nodata(si, "----- ---------------------- -----");
+
+	MOWGLI_ITER_FOREACH(n, mg->acs.head)
+	{
+		ga = n->data;
+
+		command_success_nodata(si, "%-5d %-22s %s (%s)", i, ga->mt->name,
+					gflags_tostr(ga_flags, ga->flags),
+					get_group_template_name(mg, ga->flags) == NULL ? "<Custom>" : get_group_template_name(mg, ga->flags));
+
+		i++;
+	}
+
+	command_success_nodata(si, "----- ---------------------- -----");
+	command_success_nodata(si, _("End of \2%s\2 FLAGS listing."), entity(mg)->name);
+
+	if (operoverride)
+		logcommand(si, CMDLOG_ADMIN, "FLAGS: \2%s\2 (oper override)", entity(mg)->name);
+	else
+		logcommand(si, CMDLOG_GET, "FLAGS: \2%s\2", entity(mg)->name);
+
+	return;
+}
 
 static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 {
@@ -40,6 +84,12 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	char *c;
 	bool operoverride = false;
 
+	if (si->smu == NULL && parv[1])
+	{
+		command_fail(si, fault_noprivs, _("You are not logged in."));
+		return;
+	}
+
 	if (!parv[0])
 	{
 		command_fail(si, fault_needmoreparams, STR_INSUFFICIENT_PARAMS, "FLAGS");
@@ -50,6 +100,12 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	if ((mg = mygroup_find(parv[0])) == NULL)
 	{
 		command_fail(si, fault_nosuch_target, _("The group \2%s\2 does not exist."), parv[0]);
+		return;
+	}
+
+	if (!groupacs_sourceinfo_has_flag(mg, si, GA_ACLVIEW) && mg->flags & MG_PUBACL)
+	{
+		show_group_flags(si, mg, false);
 		return;
 	}
 
@@ -66,29 +122,7 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 
 	if (!parv[1])
 	{
-		int i = 1;
-
-		command_success_nodata(si, _("Entry Account                Flags"));
-		command_success_nodata(si, "----- ---------------------- -----");
-
-		MOWGLI_ITER_FOREACH(n, mg->acs.head)
-		{
-			ga = n->data;
-
-			command_success_nodata(si, "%-5d %-22s %s (%s)", i, ga->mt->name,
-						gflags_tostr(ga_flags, ga->flags),
-						get_group_template_name(mg, ga->flags) == NULL ? "<Custom>" : get_group_template_name(mg, ga->flags));
-
-			i++;
-		}
-
-		command_success_nodata(si, "----- ---------------------- -----");
-		command_success_nodata(si, _("End of \2%s\2 FLAGS listing."), parv[0]);
-
-		if (operoverride)
-			logcommand(si, CMDLOG_ADMIN, "FLAGS: \2%s\2 (oper override)", parv[0]);
-		else
-			logcommand(si, CMDLOG_GET, "FLAGS: \2%s\2", parv[0]);
+		show_group_flags(si, mg, operoverride);
 
 		return;
 	}

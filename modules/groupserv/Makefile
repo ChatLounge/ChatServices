@@ -33,6 +33,7 @@ BASE_SRCS =             \
 	set_groupname.c     \
 	set_joinflags.c     \
 	set_open.c          \
+	set_pubacl.c        \
 	set_public.c        \
 	set_url.c           \
 	taxonomy.c          \

@@ -1,0 +1,14 @@
+#if soper
+Command provided by: groupserv/set_pubacl
+#endif
+Help for SET PUBACL:
+
+SET PUBACL, when enabled, permits any and all users to view
+the FLAGS, TEMPLATE, and TEMPLATEVHOST lists for the group.
+Otherwise, the ability to view the flags list (holding flag
++A) is required.
+
+Syntax: SET <!group> PUBACL <ON|OFF>
+
+Examples:
+    /msg &nick& SET !TestGroup PUBACL ON

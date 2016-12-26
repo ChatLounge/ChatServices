@@ -82,6 +82,14 @@ static void gs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		mowgli_strlcat(buf, "OPEN", BUFSIZE);
 	}
 
+	if (mg->flags & MG_PUBACL)
+	{
+		if (*buf)
+			mowgli_strlcat(buf, " ", BUFSIZE);
+
+		mowgli_strlcat(buf, "PUBACL", BUFSIZE);
+	}
+
 	if (mg->flags & MG_PUBLIC)
 	{
 		if (*buf)
