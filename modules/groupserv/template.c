@@ -190,6 +190,22 @@ static void gs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 				command_fail(si, fault_badparams, _("No valid flags given."));
 				return;
 			}
+
+			/* Prevent adding +b to group templates.  Rationale:
+			 *
+			 * +b serves no purpose outside of public groups anyone can join.
+			 * However, adding a template with +b could be used for griefing
+			 * other users who are using a group template-specific vhost offer,
+			 * which would be visible in all channels.
+			 *
+			 * Maybe implement the restriction in TEMPLATEVHOST instead?
+			 * - Ben
+			 */
+			if (addflags & GA_BAN)
+			{
+				command_fail(si, fault_badparams, _("You may not add +b to group templates."));
+				return;
+			}
 		}
 		else
 		{
