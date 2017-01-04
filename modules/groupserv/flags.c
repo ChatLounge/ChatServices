@@ -237,9 +237,34 @@ no_founder:
 	}
 	else if (ga != NULL)
 	{
+		metadata_t *md;
+
 		groupacs_delete(mg, mt);
 		command_success_nodata(si, _("\2%s\2 has been removed from \2%s\2."), mt->name, entity(mg)->name);
 		logcommand(si, CMDLOG_SET, "FLAGS:REMOVE: \2%s\2 on \2%s\2", mt->name, entity(mg)->name);
+
+		if (isuser(mt) && hostserv_loaded &&
+			(get_group_template_vhost_by_flags(mg, oldflags)) != NULL &&
+			(md = metadata_find(mt, "private:usercloak")) != NULL)
+		{
+			char templatevhost[128];
+
+			myuser_t *mu = myuser_find_by_nick(parv[1]);
+
+			mowgli_strlcpy(templatevhost, get_group_template_vhost_by_flags(mg, oldflags), BUFSIZE);
+
+			if (strstr(templatevhost, "$account"))
+				replace(templatevhost, BUFSIZE, "$account", entity(mt)->name);
+
+			if (!strcasecmp(md->value, templatevhost))
+			{
+				hs_sethost_all(mu, NULL, get_source_name(si));
+				// Send notice/memo to affected user.
+				logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
+				do_sethost_all(mu, NULL); // restore user vhost from user host
+			}
+		}
+
 		return;
 	}
 	else if (flags != 0)
@@ -294,12 +319,24 @@ no_founder:
 
 						/* 86,400 seconds per day */
 						if (limit_first_req && md_vhosttime == NULL && (CURRTIME - mu->registered > (request_time * 86400)))
+						{
+							hs_sethost_all(mu, NULL, get_source_name(si));
+							// Send notice/memo to affected user.
+							logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
+							do_sethost_all(mu, NULL); // restore user vhost from user host
 							break;
+						}
 
 						time_t vhosttime = atoi(md_vhosttime->value);
 
 						if (vhosttime + (request_time * 86400) > CURRTIME)
+						{
+							hs_sethost_all(mu, NULL, get_source_name(si));
+							// Send notice/memo to affected user.
+							logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
+							do_sethost_all(mu, NULL); // restore user vhost from user host
 							break;
+						}
 					}
 
 					// Check if the new flags have a vhost offer.
@@ -331,13 +368,13 @@ no_founder:
 			}
 		}
 
-		if (!matches)
-		{
-			hs_sethost_all(mu, NULL, get_source_name(si));
-			// Send notice/memo to affected user.
-			logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
-			do_sethost_all(mu, NULL); // restore user vhost from user host
-		}
+		//if (!matches)
+		//{
+		//	hs_sethost_all(mu, NULL, get_source_name(si));
+		//	// Send notice/memo to affected user.
+		//	logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
+		//	do_sethost_all(mu, NULL); // restore user vhost from user host
+		//}
 	}
 
 	MOWGLI_ITER_FOREACH(n, entity(mg)->chanacs.head)
