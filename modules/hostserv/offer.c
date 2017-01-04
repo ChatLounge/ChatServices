@@ -452,7 +452,7 @@ static void hs_cmd_take(sourceinfo_t *si, int parc, char *parv[])
 		}
 	}
 
-	command_success_nodata(si, _("vhost \2%s\2 not found in vhost offer database."), host);
+	command_success_nodata(si, _("Vhost \2%s\2 not found in your vhost offer list."), host);
 }
 
 /* OFFERLIST */
