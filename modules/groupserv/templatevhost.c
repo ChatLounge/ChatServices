@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net/)
  *
  *     Provides the TEMPLATEVHOST command for GroupServ.  (Un)set
@@ -21,6 +21,12 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
+bool hostserv_loaded = false;
+
+static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target, bool shownotice) = NULL;
+static unsigned int (*get_hostsvs_req_time)(void) = NULL;
+static bool *(*get_hostsvs_limit_first_req)(void) = NULL;
+
 static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[]);
 
 command_t gs_templatevhost = { "TEMPLATEVHOST", N_("Manipulates available vhosts to group members based on template."),
@@ -29,6 +35,16 @@ command_t gs_templatevhost = { "TEMPLATEVHOST", N_("Manipulates available vhosts
 void _modinit(module_t *m)
 {
 	use_groupserv_main_symbols(m);
+
+	if (module_request("hostserv/main"))
+	{
+		allow_vhost_change = module_locate_symbol("hostserv/main", "allow_vhost_change");
+		get_hostsvs_req_time = module_locate_symbol("hostserv/main", "get_hostsvs_req_time");
+		get_hostsvs_limit_first_req = module_locate_symbol("hostserv/main", "get_hostsvs_limit_first_req");
+		hostserv_loaded = true;
+	}
+	else
+		hostserv_loaded = false;
 
 	service_named_bind_command("groupserv", &gs_templatevhost);
 }
@@ -56,6 +72,8 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 	char templatevhostmetadataname[128];
 	char *templatevhostold;
 	char templatename[128];
+	bool limit_first_req = get_hostsvs_limit_first_req();
+	unsigned int request_time = get_hostsvs_req_time();
 
 	if (!group)
 	{
@@ -247,8 +265,7 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 			return;
 		}
 
-		// Code to remove any matching vhost settings for users; if so, remove them.
-		// Probably only run this loop if the target user has a vhost at all?
+		/* Remove any matching vhost settings for users; if so, remove them. */
 		MOWGLI_ITER_FOREACH(n, mg->acs.head)
 		{
 			ga = n->data;
@@ -290,10 +307,10 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 	{
 		char vhoststring[300];
 
-		// Code to check for GA_SET or oper override.
+		/* Check for GA_SET, GA_FOUNDER, or oper override. */
 		if (!groupacs_sourceinfo_has_flag(mg, si, GA_SET) && !groupacs_sourceinfo_has_flag(mg, si, GA_FOUNDER))
 		{
-			if (has_priv(si, PRIV_GROUP_ADMIN))
+			if (has_priv(si, PRIV_ADMIN) || has_priv(si, PRIV_GROUP_ADMIN) || has_priv(si, PRIV_USER_VHOSTOVERRIDE))
 				operoverride = true;
 			else
 			{
@@ -323,7 +340,66 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 
 		snprintf(vhoststring, BUFSIZE, "%s|%u", vhost, (unsigned int)CURRTIME);
 
-		// Code to update existing users to the new vhost setting.
+		/* Update existing users to the new vhost setting, if the user had an old matching vhost. */
+		MOWGLI_ITER_FOREACH(n, mg->acs.head)
+		{
+			ga = n->data;
+			md2 = metadata_find(ga->mt, "private:usercloak");
+
+			if (md2 == NULL)
+				continue;
+
+			char usertemplatevhost[128];
+
+			if (get_group_template_vhost_by_flags(mg, ga->flags) == NULL)
+				continue;
+
+			myuser_t *mu = myuser_find_by_nick(entity(ga->mt)->name);
+
+			mowgli_strlcpy(usertemplatevhost, get_group_template_vhost_by_flags(mg, ga->flags), BUFSIZE);
+
+			if (strstr(usertemplatevhost, "$account"))
+				replace(usertemplatevhost, BUFSIZE, "$account", entity(ga->mt)->name);
+
+			if (!strcasecmp(usertemplatevhost, (char *)md2->value))
+			{
+				char newusertemplatevhost[128];
+
+				metadata_t *md_vhosttime = metadata_find(mu, "private:usercloak-timestamp");
+
+				/* 86,400 seconds per day */
+				if (limit_first_req && md_vhosttime == NULL && (CURRTIME - mu->registered > (request_time * 86400)))
+				{
+					hs_sethost_all(mu, NULL, get_source_name(si));
+					// Send notice/memo to affected user.
+					logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early template vhost offer change on: \2%s\2", entity(ga->mt)->name, entity(mg)->name);
+					do_sethost_all(mu, NULL); // restore user vhost from user host
+					continue;
+				}
+
+				time_t vhosttime = atoi(md_vhosttime->value);
+
+				if (vhosttime + (request_time * 86400) > CURRTIME)
+				{
+					hs_sethost_all(mu, NULL, get_source_name(si));
+					// Send notice/memo to affected user.
+					logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early template vhost offer change on: \2%s\2", entity(ga->mt)->name, entity(mg)->name);
+					do_sethost_all(mu, NULL); // restore user vhost from user host
+					continue;
+				}
+
+				mowgli_strlcpy(newusertemplatevhost, vhost, BUFSIZE);
+
+				if (strstr(newusertemplatevhost, "$account"))
+					replace(newusertemplatevhost, BUFSIZE, "$account", entity(ga->mt)->name);
+
+				hs_sethost_all(mu, newusertemplatevhost, get_source_name(si));
+				// Send notice/memo to affected users (one per cycle).
+				do_sethost_all(mu, newusertemplatevhost);
+				logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 because the template vhost offer for \2%s\2 on \2%s\2 has been removed.",
+					entity(ga->mt)->name, target, entity(mg)->name);
+			}
+		}
 
 		if (md == NULL)
 		{
