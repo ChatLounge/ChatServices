@@ -1,0 +1,56 @@
+#if soper
+Command provided by: groupserv/templatevhost
+#endif
+Help for TEMPLATEVHOST:
+
+The TEMPLATEVHOST command permits group management to grant
+vhost offers to group members, based on matching flags
+template.  In order for group members to use them, the
+vhost offer must first be offered.  Then the group member
+must accept the new vhost offer via HostServ TAKE.
+
+GroupServ flag +A is required to view the current template
+offers list.  GroupServ flags +s and/or +F are required to
+change or remove any template vhost offers.
+
+If a template vhost offer is changed, all users with the
+old vhost offer setting will be moved over to the new
+setting.
+
+If a template vhost offer is removed, all users with the
+vhost offer will lose it and have it removed.
+
+IMPORTANT: The vhost change frequency rules still apply.
+If the offer is changed while any affected users are not
+eligible to accept another vhost, those users will not be
+automatically moved to the new setting.  They will instead
+have their vhost removed.  It's strongly recommended to
+view the offer list as it will show when affected users
+have last had their vhost settings changed to see which
+users, if any will lose them.
+
+To add a vhost offer, specify the template name and the
+vhost mask.  $account will be replaced by the account name
+of the user, when the user accepts it.
+
+To change a vhost offer, issue the same command as if you
+were adding one.
+
+To remove a vhost offer, specify the template name without
+a vhost offer mask.
+
+Syntax: TEMPLATEVHOST !group [template [vhost/offer/here/$account]]
+
+Examples:
+  List vhost offers for the group:
+    /msg &nick& TEMPLATE !group
+  Add new vhost offer:
+    /msg &nick& TEMPLATE !group user Group/User/$account
+  Add new vhost offer:
+    /msg &nick& TEMPLATE !group moderator Group/Moderator/$account
+  Change, if previously added:
+    /msg &nick& TEMPLATE !group moderator Group/Mod/$account
+  Add new vhost offer:
+    /msg &nick& TEMPLATE !group management Group/Management/$account
+  Remove old vhost offer:
+    /msg &nick& TEMPLATE !group obsoletetemplate
