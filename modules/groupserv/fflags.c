@@ -21,7 +21,6 @@ DECLARE_MODULE_V1
 
 bool hostserv_loaded = false;
 
-static bool *(*allow_vhost_change)(sourceinfo_t *si, myuser_t *target, bool shownotice) = NULL;
 static unsigned int (*get_hostsvs_req_time)(void) = NULL;
 static bool *(*get_hostsvs_limit_first_req)(void) = NULL;
 
@@ -272,7 +271,6 @@ void _modinit(module_t *m)
 
 	if (module_request("hostserv/main"))
 	{
-		allow_vhost_change = module_locate_symbol("hostserv/main", "allow_vhost_change");
 		get_hostsvs_req_time = module_locate_symbol("hostserv/main", "get_hostsvs_req_time");
 		get_hostsvs_limit_first_req = module_locate_symbol("hostserv/main", "get_hostsvs_limit_first_req");
 		hostserv_loaded = true;
