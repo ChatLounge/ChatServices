@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net/)
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -158,6 +158,7 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		flags = ga->flags;
 
 	oldflags = flags;
+
 	if (strchr(parv[2], '+') || strchr(parv[2], '-') || strchr(parv[2], '='))
 		flags = gs_flags_parser(parv[2], true, flags);
 	else
@@ -165,7 +166,7 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		flags = get_group_template_flags(mg, parv[2]);
 		if (flags == 0)
 		{
-			command_fail(si, fault_badparams, _("Invalid template name on the group: %s"), parv[0]);
+			command_fail(si, fault_badparams, _("Invalid template name on the group: %s"), entity(mg)->name);
 			return;
 		}
 	}
@@ -296,85 +297,74 @@ no_founder:
 		bool limit_first_req = get_hostsvs_limit_first_req();
 		unsigned int request_time = get_hostsvs_req_time();
 
-		if (flags != 0 && allow_vhost_change(si, mu, false))
+		MOWGLI_ITER_FOREACH(n, mu->nicks.head)
 		{
-			MOWGLI_ITER_FOREACH(n, mu->nicks.head)
+			char templatevhost[128];
+			metadata_t *md;
+
+			if ((md = metadata_find(mt, "private:usercloak")) == NULL)
+				break;
+
+			mowgli_strlcpy(templatevhost, get_group_template_vhost_by_flags(mg, oldflags), BUFSIZE);
+
+			if (strstr(templatevhost, "$account"))
+					replace(templatevhost, BUFSIZE, "$account", entity(mt)->name);
+
+			if (!strcasecmp(md->value, templatevhost))
 			{
-				char templatevhost[128];
-				metadata_t *md;
-
-				if ((md = metadata_find(mt, "private:usercloak")) == NULL)
-					break;
-
-				mowgli_strlcpy(templatevhost, get_group_template_vhost_by_flags(mg, oldflags), BUFSIZE);
-
-				if (strstr(templatevhost, "$account"))
-						replace(templatevhost, BUFSIZE, "$account", entity(mt)->name);
-
-				if (!strcasecmp(md->value, templatevhost))
+				if (!has_priv(si, PRIV_USER_VHOSTOVERRIDE) && !has_priv(si, PRIV_GROUP_ADMIN) && !has_priv(si, PRIV_ADMIN))
 				{
-					if (!has_priv(si, PRIV_USER_VHOSTOVERRIDE) && !has_priv(si, PRIV_ADMIN))
+					metadata_t *md_vhosttime = metadata_find(mu, "private:usercloak-timestamp");
+
+					/* 86,400 seconds per day */
+					if (limit_first_req && md_vhosttime == NULL && (CURRTIME - mu->registered > (request_time * 86400)))
 					{
-						metadata_t *md_vhosttime = metadata_find(mu, "private:usercloak-timestamp");
-
-						/* 86,400 seconds per day */
-						if (limit_first_req && md_vhosttime == NULL && (CURRTIME - mu->registered > (request_time * 86400)))
-						{
-							hs_sethost_all(mu, NULL, get_source_name(si));
-							// Send notice/memo to affected user.
-							logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
-							do_sethost_all(mu, NULL); // restore user vhost from user host
-							break;
-						}
-
-						time_t vhosttime = atoi(md_vhosttime->value);
-
-						if (vhosttime + (request_time * 86400) > CURRTIME)
-						{
-							hs_sethost_all(mu, NULL, get_source_name(si));
-							// Send notice/memo to affected user.
-							logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
-							do_sethost_all(mu, NULL); // restore user vhost from user host
-							break;
-						}
+						hs_sethost_all(mu, NULL, get_source_name(si));
+						// Send notice/memo to affected user.
+						logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
+						do_sethost_all(mu, NULL); // restore user vhost from user host
+						break;
 					}
 
-					// Check if the new flags have a vhost offer.
+					time_t vhosttime = atoi(md_vhosttime->value);
 
-					if (get_group_template_vhost_by_flags(mg, flags))
+					if (vhosttime + (request_time * 86400) > CURRTIME)
 					{
-						char newtemplatevhost[128];
-						mowgli_strlcpy(newtemplatevhost, get_group_template_vhost_by_flags(mg, flags), BUFSIZE);
-
-						if (strstr(newtemplatevhost, "$account"))
-							replace(newtemplatevhost, BUFSIZE, "$account", entity(mt)->name);
-
-						hs_sethost_all(mu, newtemplatevhost, get_source_name(si));
-						do_sethost_all(mu, newtemplatevhost);
+						hs_sethost_all(mu, NULL, get_source_name(si));
 						// Send notice/memo to affected user.
-						logcommand(si, CMDLOG_ADMIN, "VHOST:CHANGE: from \2%s\2 to \2%s\2 on \2%s\2 by virtue of flags change on: \2%s\2",
-							templatevhost,
-							newtemplatevhost,
-							entity(mt)->name,
-							entity(mg)->name);
-
-						matches = true;
+						logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
+						do_sethost_all(mu, NULL); // restore user vhost from user host
 						break;
 					}
 				}
 
-				if (matches)
-					break;
-			}
-		}
+				// Check if the new flags have a vhost offer.
 
-		//if (!matches)
-		//{
-		//	hs_sethost_all(mu, NULL, get_source_name(si));
-		//	// Send notice/memo to affected user.
-		//	logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
-		//	do_sethost_all(mu, NULL); // restore user vhost from user host
-		//}
+				if (get_group_template_vhost_by_flags(mg, flags))
+				{
+					char newtemplatevhost[128];
+					mowgli_strlcpy(newtemplatevhost, get_group_template_vhost_by_flags(mg, flags), BUFSIZE);
+
+					if (strstr(newtemplatevhost, "$account"))
+						replace(newtemplatevhost, BUFSIZE, "$account", entity(mt)->name);
+
+					hs_sethost_all(mu, newtemplatevhost, get_source_name(si));
+					do_sethost_all(mu, newtemplatevhost);
+					// Send notice/memo to affected user.
+					logcommand(si, CMDLOG_ADMIN, "VHOST:CHANGE: from \2%s\2 to \2%s\2 on \2%s\2 by virtue of flags change on: \2%s\2",
+						templatevhost,
+						newtemplatevhost,
+						entity(mt)->name,
+						entity(mg)->name);
+
+					matches = true;
+					break;
+				}
+			}
+
+			if (matches)
+				break;
+		}
 	}
 
 	MOWGLI_ITER_FOREACH(n, entity(mg)->chanacs.head)
