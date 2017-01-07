@@ -8,4 +8,9 @@ name to any nick registered to your account.
 Your account name is used in various places as
 a name for you.
 
+Note: You may be restricted in how often you may
+change your account name.  If you aren't yet eligible
+to change your account name, you will receive an error
+message that will tell you how much longer you must wait.
+
 Syntax: SET ACCOUNTNAME <nick>
