@@ -29,13 +29,13 @@ static void osinfo_hook(sourceinfo_t *si)
 
 	command_success_nodata(si, _("\02%s Settings\02"), hostsvs->nick);
 	command_success_nodata(si, _("===================================="));
-	command_success_nodata(si, _("Are users limited in how many times they may utilize TAKE? %s"), hostsvs_req_time ? "Yes" : "No");
+	command_success_nodata(si, _("Are users limited in how many times they may change vhost settings: %s"), hostsvs_req_time ? "Yes" : "No");
 	if (hostsvs_req_time)
 	{
-		command_success_nodata(si, _("TAKE frequency restriction applies to first request: %s"), hostsvs_limit_first_req ? "Yes" : "No");
-		command_success_nodata(si, _("How often users are permitted to use TAKE: %u day%s"), hostsvs_req_time, hostsvs_req_time == 1 ? "" : "s");
-		//command_success_nodata(si, _("\02NOTE:\02 This also limits how often group management"));
-		//command_success_nodata(si, _("      can change the assigned vhost on each template."));
+		command_success_nodata(si, _("Vhost change frequency restriction applies to first request: %s"), hostsvs_limit_first_req ? "Yes" : "No");
+		command_success_nodata(si, _("How often users are permitted to change vhost settings: %u day%s"), hostsvs_req_time, hostsvs_req_time == 1 ? "" : "s");
+		command_success_nodata(si, _("\02NOTE:\02 This also limits how often group management"));
+		command_success_nodata(si, _("      can change the assigned vhost on each template."));
 	}
 	command_success_nodata(si, _("===================================="));
 };
