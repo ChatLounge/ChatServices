@@ -33,7 +33,7 @@ static void osinfo_hook(sourceinfo_t *si)
 	if (hostsvs_req_time)
 	{
 		command_success_nodata(si, _("Vhost change frequency restriction applies to first request: %s"), hostsvs_limit_first_req ? "Yes" : "No");
-		command_success_nodata(si, _("How often users are permitted to change vhost settings: %u day%s"), hostsvs_req_time, hostsvs_req_time == 1 ? "" : "s");
+		command_success_nodata(si, _("Minimum time users must wait to change vhost settings: %u day%s"), hostsvs_req_time, hostsvs_req_time == 1 ? "" : "s");
 		command_success_nodata(si, _("\02NOTE:\02 This also limits how often group management"));
 		command_success_nodata(si, _("      can change the assigned vhost on each template."));
 	}
