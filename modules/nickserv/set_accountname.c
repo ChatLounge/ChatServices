@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -26,31 +26,11 @@ static void ns_cmd_set_accountname(sourceinfo_t *si, int parc, char *parv[]);
 static unsigned int (*get_hostsvs_req_time)(void) = NULL;
 static char *(*update_vhost_on_account_name_change)(myuser_t *mu, const char *newname) = NULL;
 
-bool hostserv_loaded = false;
-
 command_t ns_set_accountname = { "ACCOUNTNAME", N_("Changes your account name."), AC_NONE, 1, ns_cmd_set_accountname, { .path = "nickserv/set_accountname" } };
 
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
-
-	if (module_request("hostserv/main"))
-	{
-		get_hostsvs_req_time = module_locate_symbol("hostserv/main", "get_hostsvs_req_time");
-
-		hostserv_loaded = true;
-	}
-	else
-		hostserv_loaded = false;
-
-	if (module_request("hostserv/offer"))
-	{
-		update_vhost_on_account_name_change = module_locate_symbol("hostserv/offer", "update_vhost_on_account_name_change");
-
-		hostserv_loaded = true;
-	}
-	else
-		hostserv_loaded = false;
 
 	command_add(&ns_set_accountname, *ns_set_cmdtree);
 }
@@ -122,23 +102,33 @@ static void ns_cmd_set_accountname(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	md = metadata_find(si->smu, "private:usercloak-timestamp");
+	get_hostsvs_req_time = module_locate_symbol("hostserv/main", "get_hostsvs_req_time");
 
-	if (md != NULL)
-		vhosttime = atoi(md->value);
-
-	if (hostserv_loaded && md != NULL && vhosttime + (get_hostsvs_req_time() * 86400) > CURRTIME)
+	if (get_hostsvs_req_time != NULL)
 	{
-		command_fail(si, fault_noprivs, _("You may not change your account name yet, because you have changed your vhost recently.  You may try again in: %s"),
-			timediff(vhosttime + get_hostsvs_req_time() * 86400 - CURRTIME));
-		return;
+		md = metadata_find(si->smu, "private:usercloak-timestamp");
+
+		if (md != NULL)
+			vhosttime = atoi(md->value);
+
+		if (md != NULL && vhosttime + (get_hostsvs_req_time() * 86400) > CURRTIME)
+		{
+			command_fail(si, fault_noprivs, _("You may not change your account name yet, because you have changed your vhost recently.  You may try again in: %s"),
+				timediff(vhosttime + get_hostsvs_req_time() * 86400 - CURRTIME));
+			return;
+		}
 	}
 
 	logcommand(si, CMDLOG_REGISTER, "SET:ACCOUNTNAME: \2%s\2", newname);
 	command_success_nodata(si, _("Your account name is now set to \2%s\2."), newname);
 
-	if (hostserv_loaded && (newvhost = update_vhost_on_account_name_change(si->smu, newname)) != NULL)
-		command_success_nodata(si, _("As a result of your account name change, your vhost has been changed to: %s"), newvhost);
+	update_vhost_on_account_name_change = module_locate_symbol("hostserv/offer", "update_vhost_on_account_name_change");
+
+	if (update_vhost_on_account_name_change != NULL)
+	{
+		if ((newvhost = update_vhost_on_account_name_change(si->smu, newname)) != NULL)
+			command_success_nodata(si, _("As a result of your account name change, your vhost has been changed to: %s"), newvhost);
+	}
 
 	myuser_rename(si->smu, newname);
 

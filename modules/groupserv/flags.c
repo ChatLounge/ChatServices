@@ -19,8 +19,6 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
-bool hostserv_loaded = false;
-
 static unsigned int (*get_hostsvs_req_time)(void) = NULL;
 static bool *(*get_hostsvs_limit_first_req)(void) = NULL;
 
@@ -243,7 +241,7 @@ no_founder:
 		command_success_nodata(si, _("\2%s\2 has been removed from \2%s\2."), mt->name, entity(mg)->name);
 		logcommand(si, CMDLOG_SET, "FLAGS:REMOVE: \2%s\2 on \2%s\2", mt->name, entity(mg)->name);
 
-		if (isuser(mt) && hostserv_loaded &&
+		if (isuser(mt) && module_locate_symbol("hostserv/main", "get_hostsvs_limit_first_req") &&
 			(get_group_template_vhost_by_flags(mg, oldflags)) != NULL &&
 			(md = metadata_find(mt, "private:usercloak")) != NULL)
 		{
@@ -287,82 +285,88 @@ no_founder:
 	 * match another TEMPLATEVHOST offer, *and* he previously held a group template vhost offer,
 	 * and the vhost cooldown for the user has passed.
 	 */
-	
-	if (isuser(mt) && (get_group_template_vhost_by_flags(mg, oldflags)) != NULL && hostserv_loaded)
+
+	get_hostsvs_req_time = module_locate_symbol("hostserv/main", "get_hostsvs_req_time");
+	get_hostsvs_limit_first_req = module_locate_symbol("hostserv/main", "get_hostsvs_limit_first_req");
+
+	if (get_hostsvs_req_time != NULL && get_hostsvs_limit_first_req != NULL)
 	{
-		mowgli_node_t *o;
-		bool matches = false;
-		myuser_t *mu = myuser_find_by_nick(parv[1]);
-		bool limit_first_req = get_hostsvs_limit_first_req();
-		unsigned int request_time = get_hostsvs_req_time();
-
-		MOWGLI_ITER_FOREACH(n, mu->nicks.head)
+		if (isuser(mt) && (get_group_template_vhost_by_flags(mg, oldflags)) != NULL)
 		{
-			char templatevhost[128];
-			metadata_t *md;
+			mowgli_node_t *o;
+			bool matches = false;
+			myuser_t *mu = myuser_find_by_nick(parv[1]);
+			bool limit_first_req = get_hostsvs_limit_first_req();
+			unsigned int request_time = get_hostsvs_req_time();
 
-			if ((md = metadata_find(mt, "private:usercloak")) == NULL)
-				break;
-
-			mowgli_strlcpy(templatevhost, get_group_template_vhost_by_flags(mg, oldflags), BUFSIZE);
-
-			if (strstr(templatevhost, "$account"))
-					replace(templatevhost, BUFSIZE, "$account", entity(mt)->name);
-
-			if (!strcasecmp(md->value, templatevhost))
+			MOWGLI_ITER_FOREACH(n, mu->nicks.head)
 			{
-				if (!has_priv(si, PRIV_USER_VHOSTOVERRIDE) && !has_priv(si, PRIV_GROUP_ADMIN) && !has_priv(si, PRIV_ADMIN))
-				{
-					metadata_t *md_vhosttime = metadata_find(mu, "private:usercloak-timestamp");
+				char templatevhost[128];
+				metadata_t *md;
 
-					/* 86,400 seconds per day */
-					if (limit_first_req && md_vhosttime == NULL && (CURRTIME - mu->registered > (request_time * 86400)))
-					{
-						hs_sethost_all(mu, NULL, get_source_name(si));
-						// Send notice/memo to affected user.
-						logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
-						do_sethost_all(mu, NULL); // restore user vhost from user host
-						break;
-					}
-
-					time_t vhosttime = atoi(md_vhosttime->value);
-
-					if (vhosttime + (request_time * 86400) > CURRTIME)
-					{
-						hs_sethost_all(mu, NULL, get_source_name(si));
-						// Send notice/memo to affected user.
-						logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
-						do_sethost_all(mu, NULL); // restore user vhost from user host
-						break;
-					}
-				}
-
-				// Check if the new flags have a vhost offer.
-
-				if (get_group_template_vhost_by_flags(mg, flags))
-				{
-					char newtemplatevhost[128];
-					mowgli_strlcpy(newtemplatevhost, get_group_template_vhost_by_flags(mg, flags), BUFSIZE);
-
-					if (strstr(newtemplatevhost, "$account"))
-						replace(newtemplatevhost, BUFSIZE, "$account", entity(mt)->name);
-
-					hs_sethost_all(mu, newtemplatevhost, get_source_name(si));
-					do_sethost_all(mu, newtemplatevhost);
-					// Send notice/memo to affected user.
-					logcommand(si, CMDLOG_ADMIN, "VHOST:CHANGE: from \2%s\2 to \2%s\2 on \2%s\2 by virtue of flags change on: \2%s\2",
-						templatevhost,
-						newtemplatevhost,
-						entity(mt)->name,
-						entity(mg)->name);
-
-					matches = true;
+				if ((md = metadata_find(mt, "private:usercloak")) == NULL)
 					break;
-				}
-			}
 
-			if (matches)
-				break;
+				mowgli_strlcpy(templatevhost, get_group_template_vhost_by_flags(mg, oldflags), BUFSIZE);
+
+				if (strstr(templatevhost, "$account"))
+						replace(templatevhost, BUFSIZE, "$account", entity(mt)->name);
+
+				if (!strcasecmp(md->value, templatevhost))
+				{
+					if (!has_priv(si, PRIV_USER_VHOSTOVERRIDE) && !has_priv(si, PRIV_GROUP_ADMIN) && !has_priv(si, PRIV_ADMIN))
+					{
+						metadata_t *md_vhosttime = metadata_find(mu, "private:usercloak-timestamp");
+
+						/* 86,400 seconds per day */
+						if (limit_first_req && md_vhosttime == NULL && (CURRTIME - mu->registered > (request_time * 86400)))
+						{
+							hs_sethost_all(mu, NULL, get_source_name(si));
+							// Send notice/memo to affected user.
+							logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
+							do_sethost_all(mu, NULL); // restore user vhost from user host
+							break;
+						}
+
+						time_t vhosttime = atoi(md_vhosttime->value);
+
+						if (vhosttime + (request_time * 86400) > CURRTIME)
+						{
+							hs_sethost_all(mu, NULL, get_source_name(si));
+							// Send notice/memo to affected user.
+							logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2 by virtue of early flags change on: \2%s\2", entity(mt)->name, entity(mg)->name);
+							do_sethost_all(mu, NULL); // restore user vhost from user host
+							break;
+						}
+					}
+
+					// Check if the new flags have a vhost offer.
+
+					if (get_group_template_vhost_by_flags(mg, flags))
+					{
+						char newtemplatevhost[128];
+						mowgli_strlcpy(newtemplatevhost, get_group_template_vhost_by_flags(mg, flags), BUFSIZE);
+
+						if (strstr(newtemplatevhost, "$account"))
+							replace(newtemplatevhost, BUFSIZE, "$account", entity(mt)->name);
+
+						hs_sethost_all(mu, newtemplatevhost, get_source_name(si));
+						do_sethost_all(mu, newtemplatevhost);
+						// Send notice/memo to affected user.
+						logcommand(si, CMDLOG_ADMIN, "VHOST:CHANGE: from \2%s\2 to \2%s\2 on \2%s\2 by virtue of flags change on: \2%s\2",
+							templatevhost,
+							newtemplatevhost,
+							entity(mt)->name,
+							entity(mg)->name);
+
+						matches = true;
+						break;
+					}
+				}
+
+				if (matches)
+					break;
+			}
 		}
 	}
 
@@ -395,15 +399,6 @@ no_founder:
 void _modinit(module_t *m)
 {
 	use_groupserv_main_symbols(m);
-
-	if (module_request("hostserv/main"))
-	{
-		get_hostsvs_req_time = module_locate_symbol("hostserv/main", "get_hostsvs_req_time");
-		get_hostsvs_limit_first_req = module_locate_symbol("hostserv/main", "get_hostsvs_limit_first_req");
-		hostserv_loaded = true;
-	}
-	else
-		hostserv_loaded = false;
 
 	service_named_bind_command("groupserv", &gs_flags);
 }
