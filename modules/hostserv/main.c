@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -53,7 +53,7 @@ bool get_hostsvs_limit_first_req(void)
 /* allow_vhost_change:
  *
  *     Determines whether the source is permitted to change the
- * services-ased vhost for the target user.
+ * services-based vhost for the target user.
  *
  * Inputs: si - User executing the command.  target - target user
  * Side Effects: None
@@ -70,13 +70,31 @@ bool allow_vhost_change(sourceinfo_t *si, myuser_t *target, bool shownotice)
 	{
 		md_vhosttime = metadata_find(target, "private:usercloak-timestamp");
 
-		/* 86,400 seconds per day */
-		if (limit_first_req && md_vhosttime == NULL && (CURRTIME - target->registered > (request_time * 86400)))
+		if (md_vhosttime == NULL)
 		{
-			if (shownotice)
-				command_fail(si, fault_noprivs, _("Users may only get new vhosts every %u days.  %s remaining for: %s"),
-					request_time, timediff(target->registered + request_time * 86400 - CURRTIME), entity(target)->name);
-			return false;
+			/* If first request isn't limited, always return true. */
+			if (!limit_first_req)
+				return true;
+
+			/* If here, limit_first_req must be true, and the user must have never held a vhost before. */
+			/* 86,400 seconds per day */
+			if (CURRTIME - target->registered < (request_time * 86400))
+			{
+				if (shownotice)
+				{
+					if (si->smu == target)
+						command_fail(si, fault_noprivs, _("New users must wait %u days before getting a new vhost setting.  %s remaining."),
+							request_time, timediff(target->registered + request_time * 86400 - CURRTIME));
+					else
+						command_fail(si, fault_noprivs, _("New users must wait %u days before getting a new vhost setting.  %s remaining for: %s"),
+							request_time, timediff(target->registered + request_time * 86400 - CURRTIME),
+							entity(target)->name);
+				}
+
+				return false;
+			}
+			else
+				return true;
 		}
 
 		vhosttime = atoi(md_vhosttime->value);
@@ -84,8 +102,15 @@ bool allow_vhost_change(sourceinfo_t *si, myuser_t *target, bool shownotice)
 		if (vhosttime + (request_time * 86400) > CURRTIME)
 		{
 			if (shownotice)
-				command_fail(si, fault_noprivs, _("Users may only get new vhosts every %u days.  %s remaining for: %s"),
-					request_time, timediff(vhosttime + request_time * 86400 - CURRTIME), entity(target)->name);
+			{
+				if (si->smu == target)
+					command_fail(si, fault_noprivs, _("You may only get new vhosts every %u days.  %s remaining."),
+						request_time, timediff(vhosttime + request_time * 86400 - CURRTIME));
+				else
+					command_fail(si, fault_noprivs, _("Users may only get new vhosts every %u days.  %s remaining for: %s"),
+						request_time, timediff(vhosttime + request_time * 86400 - CURRTIME), entity(target)->name);
+			}
+
 			return false;
 		}
 	}
