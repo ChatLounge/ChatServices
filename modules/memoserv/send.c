@@ -18,14 +18,24 @@ DECLARE_MODULE_V1
 static void ms_cmd_send(sourceinfo_t *si, int parc, char *parv[]);
 static unsigned int *maxmemos;
 
+static bool *(*send_user_memo)(sourceinfo_t *si, myuser_t *target,
+	const char *memotext, bool verbose, unsigned int status) = NULL;
 
 command_t ms_send = { "SEND", N_("Sends a memo to a user."),
                         AC_AUTHENTICATED, 2, ms_cmd_send, { .path = "memoserv/send" } };
 
 void _modinit(module_t *m)
 {
-        service_named_bind_command("memoserv", &ms_send);
-        MODULE_TRY_REQUEST_SYMBOL(m, maxmemos, "memoserv/main", "maxmemos");
+	service_named_bind_command("memoserv", &ms_send);
+	MODULE_TRY_REQUEST_SYMBOL(m, maxmemos, "memoserv/main", "maxmemos");
+
+	if (module_request("memoserv/main"))
+		send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo");
+	else
+	{
+		m->mflags = MODTYPE_FAIL;
+		return;
+	}
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -103,7 +113,6 @@ static void ms_cmd_send(sourceinfo_t *si, int parc, char *parv[])
 		{
 			command_fail(si, fault_nosuch_target,
 				"\2%s\2 is not registered.", target);
-
 			return;
 		}
 
@@ -115,7 +124,6 @@ static void ms_cmd_send(sourceinfo_t *si, int parc, char *parv[])
 		{
 			command_fail(si, fault_noprivs,
 				"\2%s\2 does not wish to receive memos.", target);
-
 			return;
 		}
 
@@ -127,67 +135,8 @@ static void ms_cmd_send(sourceinfo_t *si, int parc, char *parv[])
 			return;
 		}
 
-
-		/* Make sure we're not on ignore */
-		MOWGLI_ITER_FOREACH(n, tmu->memo_ignores.head)
-		{
-			mynick_t *mn;
-			myuser_t *mu;
-
-			if (nicksvs.no_nick_ownership)
-				mu = myuser_find((const char *)n->data);
-			else
-			{
-				mn = mynick_find((const char *)n->data);
-				mu = mn != NULL ? mn->owner : NULL;
-			}
-			if (mu == si->smu)
-			{
-				logcommand(si, CMDLOG_SET, "failed SEND to \2%s\2 (on ignore list)", entity(tmu)->name);
-				command_success_nodata(si, _("The memo has been successfully sent to \2%s\2."), target);
-				return;
-			}
-		}
-		logcommand(si, CMDLOG_SET, "SEND: to \2%s\2", entity(tmu)->name);
-
-		/* Malloc and populate struct */
-		memo = smalloc(sizeof(mymemo_t));
-		memo->sent = CURRTIME;
-		memo->status = 0;
-		mowgli_strlcpy(memo->sender,entity(si->smu)->name,NICKLEN);
-		mowgli_strlcpy(memo->text,m,MEMOLEN);
-
-		/* Create a linked list node and add to memos */
-		n = mowgli_node_create();
-		mowgli_node_add(memo, n, &tmu->memos);
-		tmu->memoct_new++;
-
-		/* Should we email this? */
-	        if (tmu->flags & MU_EMAILMEMOS)
-		{
-			sendemail(si->su, tmu, EMAIL_MEMO, tmu->email, memo->text);
-	        }
-
-		/* Note: do not disclose other nicks they're logged in with
-		 * -- jilles
-		 *
-		 * Actually, I don't see the point in this at all. If they want this information,
-		 * they should use WHOIS. --nenolod
-		 */
-		tu = user_find_named(target);
-		if (tu != NULL && tu->myuser == tmu)
-			command_success_nodata(si, _("%s is currently online, and you may talk directly, by sending a private message."), target);
-
-		/* Is the user online? If so, tell them about the new memo. */
-		if (si->su == NULL || !irccasecmp(si->su->nick, entity(si->smu)->name))
-			myuser_notice(memoserv->nick, tmu, "You have a new memo from %s (%zu).", entity(si->smu)->name, MOWGLI_LIST_LENGTH(&tmu->memos));
-		else
-			myuser_notice(memoserv->nick, tmu, "You have a new memo from %s (nick: %s) (%zu).", entity(si->smu)->name, si->su->nick, MOWGLI_LIST_LENGTH(&tmu->memos));
-		myuser_notice(memoserv->nick, tmu, _("To read it, type /%s%s READ %zu"),
-					ircd->uses_rcommand ? "" : "msg ", memoserv->disp, MOWGLI_LIST_LENGTH(&tmu->memos));
-
-		/* Tell user memo sent */
-		command_success_nodata(si, _("The memo has been successfully sent to \2%s\2."), target);
+		if (send_user_memo(si, tmu, m, true, 0))
+			logcommand(si, CMDLOG_SET, "SEND: to \2%s\2", entity(tmu)->name);
 	}
 	else if (*target == '#')
 	{

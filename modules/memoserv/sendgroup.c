@@ -18,14 +18,25 @@ DECLARE_MODULE_V1
 
 static void ms_cmd_sendgroup(sourceinfo_t *si, int parc, char *parv[]);
 
+static bool *(*send_user_memo)(sourceinfo_t *si, myuser_t *target,
+	const char *memotext, bool verbose, unsigned int status) = NULL;
+
 command_t ms_sendgroup = { "SENDGROUP", N_("Sends a memo to all members on a group."),
                            AC_AUTHENTICATED, 2, ms_cmd_sendgroup, { .path = "memoserv/sendgroup" } };
 static unsigned int *maxmemos;
 
 void _modinit(module_t *m)
 {
-        service_named_bind_command("memoserv", &ms_sendgroup);
-        MODULE_TRY_REQUEST_SYMBOL(m, maxmemos, "memoserv/main", "maxmemos");
+	service_named_bind_command("memoserv", &ms_sendgroup);
+	MODULE_TRY_REQUEST_SYMBOL(m, maxmemos, "memoserv/main", "maxmemos");
+
+	if (module_request("memoserv/main"))
+		send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo");
+	else
+	{
+		m->mflags = MODTYPE_FAIL;
+		return;
+	}
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -113,66 +124,8 @@ static void ms_cmd_sendgroup(sourceinfo_t *si, int parc, char *parv[])
 
 		tried++;
 
-		/* Does the user allow memos? --pfish */
-		if (tmu->flags & MU_NOMEMO)
-			continue;
-
-		/* Check to make sure target inbox not full */
-		if (tmu->memos.count >= *maxmemos)
-			continue;
-
-		/* As in SEND to a single user, make ignore fail silently */
-		sent++;
-
-		/* Make sure we're not on ignore */
-		ignored = false;
-		MOWGLI_ITER_FOREACH(n, tmu->memo_ignores.head)
-		{
-			mynick_t *mn;
-			myuser_t *mu;
-
-			if (nicksvs.no_nick_ownership)
-				mu = myuser_find((const char *)n->data);
-			else
-			{
-				mn = mynick_find((const char *)n->data);
-				mu = mn != NULL ? mn->owner : NULL;
-			}
-			if (mu == si->smu)
-				ignored = true;
-		}
-		if (ignored)
-			continue;
-
-		/* Malloc and populate struct */
-		memo = smalloc(sizeof(mymemo_t));
-		memo->sent = CURRTIME;
-		memo->status = MEMO_CHANNEL;
-		mowgli_strlcpy(memo->sender,entity(si->smu)->name,NICKLEN);
-		snprintf(memo->text, MEMOLEN, "%s %s", entity(mg)->name, m);
-
-		/* Create a linked list node and add to memos */
-		n = mowgli_node_create();
-		mowgli_node_add(memo, n, &tmu->memos);
-		tmu->memoct_new++;
-
-		/* Should we email this? */
-		if (tmu->flags & MU_EMAILMEMOS)
-		{
-			sendemail(si->su, tmu, EMAIL_MEMO, tmu->email, memo->text);
-		}
-
-		memoserv = service_find("memoserv");
-		if (memoserv == NULL)
-			memoserv = si->service;
-
-		/* Is the user online? If so, tell them about the new memo. */
-		if (si->su == NULL || !irccasecmp(si->su->nick, entity(si->smu)->name))
-			myuser_notice(memoserv->nick, tmu, "You have a new memo from %s (%zu).", entity(si->smu)->name, MOWGLI_LIST_LENGTH(&tmu->memos));
-		else
-			myuser_notice(memoserv->nick, tmu, "You have a new memo from %s (nick: %s) (%zu).", entity(si->smu)->name, si->su->nick, MOWGLI_LIST_LENGTH(&tmu->memos));
-		myuser_notice(memoserv->nick, tmu, _("To read it, type /%s%s READ %zu"),
-					ircd->uses_rcommand ? "" : "msg ", memoserv->disp, MOWGLI_LIST_LENGTH(&tmu->memos));
+		if (send_user_memo(si, tmu, m, false, MEMO_CHANNEL))
+			sent++;
 	}
 
 	/* Tell user memo sent, return */
