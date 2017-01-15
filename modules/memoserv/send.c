@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the Memoserv SEND function
@@ -12,14 +14,14 @@ DECLARE_MODULE_V1
 (
 	"memoserv/send", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
 static void ms_cmd_send(sourceinfo_t *si, int parc, char *parv[]);
 static unsigned int *maxmemos;
 
 static bool *(*send_user_memo)(sourceinfo_t *si, myuser_t *target,
-	const char *memotext, bool verbose, unsigned int status) = NULL;
+	const char *memotext, bool verbose, unsigned int status, bool senduseremail) = NULL;
 
 command_t ms_send = { "SEND", N_("Sends a memo to a user."),
                         AC_AUTHENTICATED, 2, ms_cmd_send, { .path = "memoserv/send" } };
@@ -135,7 +137,7 @@ static void ms_cmd_send(sourceinfo_t *si, int parc, char *parv[])
 			return;
 		}
 
-		if (send_user_memo(si, tmu, m, true, 0))
+		if (send_user_memo(si, tmu, m, true, 0, true))
 			logcommand(si, CMDLOG_SET, "SEND: to \2%s\2", entity(tmu)->name);
 	}
 	else if (*target == '#')

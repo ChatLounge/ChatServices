@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
  * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains the main() routine.
@@ -94,6 +95,8 @@ static void on_user_away(user_t *u)
  *   const char *memotext - Memo contents.
  *   bool verbose - Mention if the memos were successfully sent.
  *   unsigned int status - Memo type.  Use 0 (for regular) or MEMO_CHANNEL - See account.h .
+ *   bool senduseremail - Send an e-mail if the user has that enabled.
+ *       Normally you want to enable this.
  *
  * Output:
  *   Returns true if successful or if an ignore is triggered.  Otherwise, false.
@@ -102,7 +105,7 @@ static void on_user_away(user_t *u)
  *   Sends a memo to the target user, if possible.
  */
 bool send_user_memo(sourceinfo_t *si, myuser_t *target,
-	const char *memotext, bool verbose, unsigned int status)
+	const char *memotext, bool verbose, unsigned int status, bool senduseremail)
 {
 	mymemo_t *memo;
 	mowgli_node_t *n, *o;
@@ -192,7 +195,7 @@ bool send_user_memo(sourceinfo_t *si, myuser_t *target,
 	target->memoct_new++;
 
 	/* Should we email this? */
-	if (target->flags & MU_EMAILMEMOS)
+	if (senduseremail && target->flags & MU_EMAILMEMOS)
 		sendemail(si->su, target, EMAIL_MEMO, target->email, memo->text);
 
 	/* Advise users they could possibly PM the target as he's online.
