@@ -44,7 +44,8 @@ BASE_SRCS =			\
 	set_core.c	\
 	set_accountname.c \
 	set_email.c	\
-	set_emailmemos.c  \
+	set_emailmemos.c	\
+	set_emailnotify.c	\
 	set_enforcetime.c	\
 	set_hidemail.c	\
 	set_language.c	\
@@ -53,6 +54,8 @@ BASE_SRCS =			\
 	set_nogreet.c   \
 	set_nomemo.c	\
 	set_noop.c	\
+	set_notifyacl.c	\
+	set_notifyset.c	\
 	set_password.c	\
 	set_privmsg.c	\
 	set_private.c	\

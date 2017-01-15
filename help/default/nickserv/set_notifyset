@@ -1,0 +1,19 @@
+#if soper
+Command provided by: nickserv/set_notifyset
+#endif
+Help for SET NOTIFYSET:
+
+If enabled, get notified whenever your group or
+channel settings in channels where you're on the ACL
+changes.
+
+The notification will come in the form of a private
+notice, as well as a memo, if possible.
+
+NOTE: Whether you will in fact get a notification
+    depends on the settings of the channel.
+
+Syntax: SET NOTIFYSET [ON|OFF]
+
+Example:
+    /msg &nick& SET NOTIFYSET ON

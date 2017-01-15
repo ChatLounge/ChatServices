@@ -1,0 +1,20 @@
+#if soper
+Command provided by: nickserv/set_notifyacl
+#endif
+Help for SET NOTIFYACL:
+
+If enabled, get notified whenever your group or
+channel access in channels where you're on the ACL
+changes, or depending on channel or group settings,
+whether other access entries in the channel or
+group are changed.  This also includes being added
+to new channels as well as being removed from
+existing ones.
+
+The notification will come in the form of a private
+notice, as well as a memo, if possible.
+
+Syntax: SET NOTIFYACL [ON|OFF]
+
+Example:
+    /msg &nick& SET NOTIFYACL ON

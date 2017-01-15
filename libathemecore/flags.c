@@ -70,6 +70,9 @@ struct gflags mu_flags[] = {
 	{ 'r', MU_REGNOLIMIT },
 	{ 'N', MU_NEVERGROUP },
 	{ 'A', MU_STRICTACCESS },
+	{ 'a', MU_NOTIFYACL },
+	{ 'S', MU_NOTIFYSET },
+	{ 'e', MU_EMAILNOTIFY },
 	{ 0, 0 },
 };
 

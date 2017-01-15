@@ -1,0 +1,13 @@
+#if soper
+Command provided by: nickserv/set_emailnotify
+#endif
+Help for SET EMAILNOTIFY:
+
+If enabled, memos that result from channel or
+group access control list changes will also be
+sent as e-mails.
+
+Syntax: SET EMAILNOTIFY [ON|OFF]
+
+Example:
+    /msg &nick& SET EMAILNOTIFY ON

@@ -117,6 +117,9 @@ struct myuser_
 #define MU_NEVERGROUP   0x00020000
 #define MU_PENDINGLOGIN 0x00040000
 #define MU_STRICTACCESS 0x00080000
+#define MU_NOTIFYACL    0x00100000
+#define MU_NOTIFYSET    0x00200000
+#define MU_EMAILNOTIFY  0x00400000
 
 /* memoserv rate limiting parameters */
 #define MEMO_MAX_NUM   5

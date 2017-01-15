@@ -297,6 +297,13 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 		strcat(buf, "EMailMemos");
 	}
+	if (MU_EMAILNOTIFY & mu->flags)
+	{
+		if (*buf)
+			strcat(buf, ", ");
+
+		strcat(buf, "EMailNotify");
+	}
 	if (MU_HIDEMAIL & mu->flags)
 	{
 		if (*buf)
@@ -345,6 +352,20 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 			strcat(buf, ", ");
 
 		strcat(buf, "NoOp");
+	}
+	if (MU_NOTIFYACL & mu->flags)
+	{
+		if (*buf)
+			strcat(buf, ", ");
+
+		strcat(buf, "NotifyAcl");
+	}
+	if (MU_NOTIFYSET & mu->flags)
+	{
+		if (*buf)
+			strcat(buf, ", ");
+
+		strcat(buf, "NotifySet");
 	}
 	if (use_account_private && MU_PRIVATE & mu->flags)
 	{
