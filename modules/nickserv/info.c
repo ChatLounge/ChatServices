@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005-2006 William Pitcock, et al.
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/info", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
 static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[]);
