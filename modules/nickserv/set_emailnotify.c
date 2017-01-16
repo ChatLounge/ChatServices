@@ -14,7 +14,7 @@
 
 DECLARE_MODULE_V1
 (
-	"nickserv/set_noop", false, _modinit, _moddeinit,
+	"nickserv/set_emailnotify", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
