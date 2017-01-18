@@ -76,7 +76,7 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	mygroup_t *mg;
 	myentity_t *mt;
 	groupacs_t *ga;
-	unsigned int flags = 0, oldflags = 0;
+	unsigned int flags = 0, oldflags = 0, addflags = 0, removeflags = 0;
 	unsigned int dir = 0;
 	char *c;
 	bool operoverride = false;
@@ -238,8 +238,21 @@ no_founder:
 		metadata_t *md;
 
 		groupacs_delete(mg, mt);
-		command_success_nodata(si, _("\2%s\2 has been removed from \2%s\2."), mt->name, entity(mg)->name);
-		logcommand(si, CMDLOG_SET, "FLAGS:REMOVE: \2%s\2 on \2%s\2", mt->name, entity(mg)->name);
+
+		addflags = flags;
+		removeflags = GA_ALL_ALL & ~addflags;
+		addflags &= ~oldflags;
+		removeflags &= oldflags & ~addflags;
+
+		command_success_nodata(si, _("Set flags \2%s\2 on \2%s\2 which has removed \2%s\2 from: \2%s\2"),
+			bitmask_to_gflags2(addflags, removeflags),
+			mt->name, mt->name, entity(mg)->name);
+		logcommand(si, CMDLOG_SET, "FLAGS:REMOVE: Set flags \2%s\2 on \2%s\2 on \2%s\2",
+			bitmask_to_gflags2(addflags, removeflags),
+			mt->name, entity(mg)->name);
+
+		if (isuser(mt))
+			notify_target_acl_change(si, user(mt), mg, bitmask_to_gflags2(addflags, removeflags), ga->flags);
 
 		if (isuser(mt) && module_locate_symbol("hostserv/main", "get_hostsvs_limit_first_req") &&
 			(get_group_template_vhost_by_flags(mg, oldflags)) != NULL &&
@@ -370,6 +383,11 @@ no_founder:
 		}
 	}
 
+	addflags = flags;
+	removeflags = GA_ALL_ALL & ~addflags;
+	addflags &= ~oldflags;
+	removeflags &= oldflags & ~addflags;
+
 	MOWGLI_ITER_FOREACH(n, entity(mg)->chanacs.head)
 	{
 		chanacs_t *ca = n->data;
@@ -383,16 +401,27 @@ no_founder:
 
 	if (get_group_template_vhost_by_flags(mg, ga->flags))
 	{
-		logcommand(si, CMDLOG_SET, "FLAGS: \2%s\2 now has flags \2%s\2 (TEMPLATE: \2%s\2) on \2%s\2", mt->name, gflags_tostr(ga_flags,  ga->flags),
+		logcommand(si, CMDLOG_SET, "FLAGS: Set flags \2%s\2 on \2%s\2 who now has flags \2%s\2 (TEMPLATE: \2%s\2) on \2%s\2",
+			bitmask_to_gflags2(addflags, removeflags),
+			mt->name, gflags_tostr(ga_flags,  ga->flags),
 			get_group_template_name(mg, ga->flags), entity(mg)->name);
-		command_success_nodata(si, _("\2%s\2 now has flags \2%s\2 (TEMPLATE: \2%s\2) on: \2%s\2"),
+		command_success_nodata(si, _("Set flags \2%s\2 on \2%s\2 who now has flags \2%s\2 (TEMPLATE: \2%s\2) on: \2%s\2"),
+			bitmask_to_gflags2(addflags, removeflags),
 			mt->name, gflags_tostr(ga_flags, ga->flags),
 			get_group_template_name(mg, ga->flags), entity(mg)->name);
+		if (isuser(mt))
+			notify_target_acl_change(si, user(mt), mg, bitmask_to_gflags2(addflags, removeflags), ga->flags);
 	}
 	else
 	{
-		logcommand(si, CMDLOG_SET, "FLAGS: \2%s\2 now has flags \2%s\2 on \2%s\2", mt->name, gflags_tostr(ga_flags,  ga->flags), entity(mg)->name);
-		command_success_nodata(si, _("\2%s\2 now has flags \2%s\2 on: \2%s\2"), mt->name, gflags_tostr(ga_flags, ga->flags), entity(mg)->name);
+		logcommand(si, CMDLOG_SET, "FLAGS: Set flags \2%s\2 on \2%s\2 who now has flags \2%s\2 on \2%s\2",
+			bitmask_to_gflags2(addflags, removeflags),
+			mt->name, gflags_tostr(ga_flags,  ga->flags), entity(mg)->name);
+		command_success_nodata(si, _("Set flags \2%s\2 on \2%s\2 who now has flags \2%s\2 on: \2%s\2"),
+			bitmask_to_gflags2(addflags, removeflags),
+			mt->name, gflags_tostr(ga_flags, ga->flags), entity(mg)->name);
+		if (isuser(mt))
+			notify_target_acl_change(si, user(mt), mg, bitmask_to_gflags2(addflags, removeflags), ga->flags);
 	}
 }
 

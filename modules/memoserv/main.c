@@ -235,7 +235,8 @@ bool send_user_memo(sourceinfo_t *si, myuser_t *target,
 		MOWGLI_LIST_LENGTH(&target->memos));
 
 	/* Tell user memo sent */
-	command_success_nodata(si, _("The memo has been successfully sent to: \2%s\2"), entity(target)->name);
+	if (verbose)
+		command_success_nodata(si, _("The memo has been successfully sent to: \2%s\2"), entity(target)->name);
 
 	return true;
 }

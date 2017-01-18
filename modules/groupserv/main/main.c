@@ -1,6 +1,6 @@
 /* groupserv - group services
  * Copyright (c) 2010 Atheme Development Group
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net/)
  */
 
@@ -11,10 +11,13 @@ DECLARE_MODULE_V1
 (
 	"groupserv/main", MODULE_UNLOAD_CAPABILITY_RELOAD_ONLY, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 service_t *groupsvs;
+
+bool *(*send_user_memo)(sourceinfo_t *si, myuser_t *target,
+	const char *memotext, bool verbose, unsigned int status, bool senduseremail) = NULL;
 
 typedef struct {
 	int version;
@@ -43,6 +46,54 @@ static int g_gi_templates(mowgli_config_file_entry_t *ge)
 	}
 
 	return 0;
+}
+
+/* notify_target_acl_change: Tells the target user about the new flags in a channel,
+ *     both in the form of a notice (if possible) and a memo (if possible).
+ *
+ * Inputs: myuser_t *smu - Source user
+ *         myuser_t *tmu - Target user
+ *         mygroup_t *mg - Group where the change is taking place.
+ *         const char *flagstr - Flag string used to perform the change.
+ *         unsigned int flags - current flags on the target user.
+ * Outputs: None
+ * Side Effects: Send a notice and/or memo to the target user, if possible.
+ */
+void notify_target_acl_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg,
+	const char *flagstr, unsigned int flags)
+{
+	char text[256];
+	char text2[300];
+
+	if (si->smu == NULL || tmu == NULL || mg == NULL || flagstr == NULL)
+		return;
+
+	if (!(tmu->flags & MU_NOTIFYACL))
+		return;
+
+	if (flags == 0)
+		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 and removed you from: \2%s\2",
+			entity(si->smu)->name, flagstr, entity(mg)->name);
+	else if (get_group_template_name(mg, flags))
+		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on you in \2%s\2 where you now have the flags: \2%s\2 (TEMPLATE: \2%s\2)",
+			entity(si->smu)->name, flagstr, entity(mg)->name, gflags_tostr(ga_flags, flags),
+			get_group_template_name(mg, flags));
+	else
+		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on you in \2%s\2 where you now have the flags: \2%s\2",
+			entity(si->smu)->name, flagstr, entity(mg)->name, gflags_tostr(ga_flags, flags));
+
+	if (MOWGLI_LIST_LENGTH(&tmu->logins) > 0)
+		myuser_notice(groupsvs->nick, tmu, text);
+
+	if ((send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) == NULL)
+		return;
+
+	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", groupsvs->nick, text);
+
+	if (tmu->flags & MU_NOTIFYACL)
+		send_user_memo(si, tmu, text2, false, MEMO_CHANNEL, tmu->flags & MU_EMAILNOTIFY);
+
+	return;
 }
 
 void _modinit(module_t *m)

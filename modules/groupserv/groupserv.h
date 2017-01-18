@@ -4,7 +4,7 @@
  * that need to access group functionality.
  *
  * Copyright (C) 2010 Atheme Development Group
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net/)
  */
 
@@ -51,6 +51,8 @@ void (*groupacs_close)(groupacs_t *ga);
 
 void (*show_global_group_template_flags)(sourceinfo_t *si);
 
+void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *flagstr, unsigned int flags);
+
 struct gflags *ga_flags;
 
 groupserv_config_t *gs_config;
@@ -92,6 +94,9 @@ static inline void use_groupserv_main_symbols(module_t *m)
     MODULE_TRY_REQUEST_SYMBOL(m, groupacs_modify, "groupserv/main", "groupacs_modify");
     MODULE_TRY_REQUEST_SYMBOL(m, groupacs_modify_simple, "groupserv/main", "groupacs_modify_simple");
     MODULE_TRY_REQUEST_SYMBOL(m, groupacs_close, "groupserv/main", "groupacs_close");
+    //MODULE_TRY_REQUEST_SYMBOL(m, show_global_group_template_flags, "groupserv/main", "show_global_group_template_flags");
+
+    MODULE_TRY_REQUEST_SYMBOL(m, notify_target_acl_change, "groupserv/main", "notify_target_acl_change");
 
     MODULE_TRY_REQUEST_SYMBOL(m, ga_flags, "groupserv/main", "ga_flags");
     MODULE_TRY_REQUEST_SYMBOL(m, gs_config, "groupserv/main", "gs_config");
