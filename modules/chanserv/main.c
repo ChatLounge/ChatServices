@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -17,8 +17,11 @@ DECLARE_MODULE_V1
 (
 	"chanserv/main", true, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+bool *(*send_user_memo)(sourceinfo_t *si, myuser_t *target,
+	const char *memotext, bool verbose, unsigned int status, bool senduseremail) = NULL;
 
 static void cs_join(hook_channel_joinpart_t *hdata);
 static void cs_part(hook_channel_joinpart_t *hdata);
@@ -939,6 +942,53 @@ static void cs_leave_empty(void *unused)
 			part(mc->chan->name, chansvs.nick);
 		}
 	}
+}
+
+/* notify_target_acl_change: Tells the target user about the new flags in a channel,
+ *     both in the form of a notice (if possible) and a memo (if possible).
+ *
+ * Inputs: myuser_t *smu - Source user
+ *         myuser_t *tmu - Target user
+ *         mychan_t *mc - Channel where the change is taking place.
+ *         const char *flagstr - Flag string used to perform the change.
+ *         unsigned int flags - current flags on the target user.
+ * Outputs: None
+ * Side Effects: Send a notice and/or memo to the target user, if possible.
+ */
+void notify_target_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags)
+{
+	char text[256], text2[300];
+
+	if (si->smu == NULL || tmu == NULL || mc == NULL || flagstr == NULL)
+		return;
+
+	if (!(tmu->flags & MU_NOTIFYACL))
+		return;
+
+	if (flags == 0)
+		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 and removed you from: \2%s\2",
+			entity(si->smu)->name, flagstr, mc->name);
+	else if (get_template_name(mc, flags))
+		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on you in \2%s\2 where you now have the flags: \2%s\2 (TEMPLATE: \2%s\2)",
+			entity(si->smu)->name, flagstr, mc->name, bitmask_to_flags(flags),
+			get_template_name(mc, flags));
+	else
+		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on you in \2%s\2 where you now have the flags: \2%s\2",
+			entity(si->smu)->name, flagstr, mc->name, bitmask_to_flags(flags));
+
+	if (MOWGLI_LIST_LENGTH(&tmu->logins) > 0)
+		myuser_notice(chansvs.nick, tmu, text);
+
+	if ((send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) == NULL)
+		return;
+
+	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", chansvs.nick, text);
+
+	if (tmu->flags & MU_NOTIFYACL)
+		send_user_memo(si, tmu, text2, false, MEMO_CHANNEL, tmu->flags & MU_EMAILNOTIFY);
+
+	return;
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

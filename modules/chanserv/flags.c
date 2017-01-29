@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005-2007 William Pitcock, et al.
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -15,8 +15,11 @@ DECLARE_MODULE_V1
 (
 	"chanserv/flags", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
 
 static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -26,6 +29,9 @@ command_t cs_flags = { "FLAGS", N_("Manipulates specific permissions on a channe
 void _modinit(module_t *m)
 {
 	service_named_bind_command("chanserv", &cs_flags);
+
+	if (module_request("chanserv/main"))
+		notify_target_acl_change = module_locate_symbol("chanserv/main", "notify_target_acl_change");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -201,7 +207,6 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	 * ...so it was removed again. ~ToBeFree
 	 */
 
-	{
 		myentity_t *mt;
 
 		if (!si->smu)
@@ -471,6 +476,11 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 				verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) on: \2%s\2",
 					get_source_name(si), flagstr, oldtemplate, newtemplate, target);
 		}
+
+	if (isuser(mt))
+	{
+		myuser_t *tmu = myuser_find(target);
+		notify_target_acl_change(si, tmu, mc, flagstr, newlevel);
 	}
 
 	free(target);
