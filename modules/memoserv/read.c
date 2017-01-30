@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2007 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the Memoserv READ function
@@ -12,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"memoserv/read", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 #define MAX_READ_AT_ONCE 5
@@ -141,7 +143,7 @@ static void ms_cmd_read(sourceinfo_t *si, int parc, char *parv[])
 	if (readnew && numread == 0)
 		command_fail(si, fault_nosuch_key, _("You have no new memos."));
 	else if (readnew)
-		command_success_nodata(si, _("Read %d memos."), numread);
+		command_success_nodata(si, _("Read %d memo%s."), numread, numread == 1 ? "" : "s");
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
