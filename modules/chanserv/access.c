@@ -16,6 +16,9 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
+void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
+
 static void cs_cmd_access(sourceinfo_t *si, int parc, char *parv[]);
 static void cs_help_access(sourceinfo_t *si, const char *subcmd);
 
@@ -94,6 +97,9 @@ void _modinit(module_t *m)
 	command_add(&cs_role_add, cs_role_cmds);
 	command_add(&cs_role_set, cs_role_cmds);
 	command_add(&cs_role_del, cs_role_cmds);
+
+	if (module_request("chanserv/main"))
+		notify_target_acl_change = module_locate_symbol("chanserv/main", "notify_target_acl_change");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -809,7 +815,7 @@ static void cs_cmd_access_del(sourceinfo_t *si, int parc, char *parv[])
 	myentity_t *mt;
 	mychan_t *mc;
 	hook_channel_acl_req_t req;
-	unsigned int restrictflags;
+	unsigned int restrictflags, oldflags;
 	const char *channel = parv[0];
 	const char *target = parv[1];
 	const char *role;
@@ -871,6 +877,7 @@ static void cs_cmd_access_del(sourceinfo_t *si, int parc, char *parv[])
 	req.ca = ca;
 	req.oldlevel = ca->level;
 	req.newlevel = 0;
+	oldflags = ca->level;
 
 	restrictflags = chanacs_source_flags(mc, si);
 	if (restrictflags & CA_FOUNDER)
@@ -900,6 +907,19 @@ static void cs_cmd_access_del(sourceinfo_t *si, int parc, char *parv[])
 	verbose(mc, "\2%s\2 deleted \2%s\2 from the access list (had role: \2%s\2).", get_source_name(si), target, role);
 
 	logcommand(si, CMDLOG_SET, "ACCESS:DEL: \2%s\2 from \2%s\2 (had role: \2%s\2)", target, mc->name, role);
+
+	if (isuser(mt))
+	{
+		myuser_t *tmu = myuser_find(mt->name);
+		unsigned int addflags = 0;
+		unsigned int removeflags = ca_all & ~addflags;
+		addflags &= ~oldflags;
+		removeflags &= oldflags & ~addflags;
+
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_target_acl_change(si, tmu, mc, flagstr, 0);
+	}
 }
 
 /*
@@ -1071,6 +1091,19 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 	verbose(mc, "\2%s\2 added \2%s\2 to the access list with the \2%s\2 role.", get_source_name(si), target, newtemplate);
 
 	logcommand(si, CMDLOG_SET, "ACCESS:ADD: \2%s\2 on \2%s\2 as \2%s\2", target, mc->name, newtemplate);
+
+	if (isuser(mt))
+	{
+		myuser_t *tmu = myuser_find(mt->name);
+		//unsigned int addflags = newflags;
+		//unsigned int removeflags = ca_all & ~addflags;
+		//addflags &= ~oldflags;
+		//removeflags &= oldflags & ~addflags;
+
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_target_acl_change(si, tmu, mc, flagstr, newflags);
+	}
 }
 
 /*
@@ -1191,7 +1224,8 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 	{
 		if (mychan_num_founders(mc) >= chansvs.maxfounders)
 		{
-			command_fail(si, fault_noprivs, _("Only %d founders allowed per channel."), chansvs.maxfounders);
+			command_fail(si, fault_noprivs, _("Only %d founder%s allowed per channel."), chansvs.maxfounders,
+				chansvs.maxfounders == 1 ? "" : "s");
 			chanacs_close(ca);
 			return;
 		}
@@ -1243,6 +1277,19 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 
 	logcommand(si, CMDLOG_SET, "ACCESS:SET: \2%s\2 on \2%s\2 from \2%s\2 to \2%s\2", target, mc->name,
 		oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate);
+
+	if (isuser(mt))
+	{
+		myuser_t *tmu = myuser_find(mt->name);
+		//unsigned int addflags = newflags;
+		//unsigned int removeflags = ca_all & ~addflags;
+		//addflags &= ~oldflags;
+		//removeflags &= oldflags & ~addflags;
+
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_target_acl_change(si, tmu, mc, flagstr, newflags);
+	}
 }
 
 /*

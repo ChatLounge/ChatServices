@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2015-2017 ChatLounge IRC Network Development Team
  * Copyright (c) 2005-2007 Atheme Development Group
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -20,6 +20,9 @@ DECLARE_MODULE_V1
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
 
 /* the individual command stuff, now that we've reworked, hardcode ;) --w00t */
 static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *target, unsigned int level, const char *leveldesc, unsigned int restrictflags);
@@ -55,6 +58,9 @@ void _modinit(module_t *m)
 		service_named_bind_command("chanserv", &cs_hop);
 	service_named_bind_command("chanserv", &cs_vop);
 	service_named_bind_command("chanserv", &cs_forcexop);
+
+	if (module_request("chanserv/main"))
+		notify_target_acl_change = module_locate_symbol("chanserv/main", "notify_target_acl_change");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -392,12 +398,26 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 		command_success_nodata(si, _("\2%s\2 has been added to the %s list for \2%s\2."), mt->name, leveldesc, mc->name);
 		verbose(mc, "\2%s\2 added \2%s\2 to the %s list.", get_source_name(si), mt->name, leveldesc);
 	}
+
+	if (isuser(mt))
+	{
+		myuser_t *tmu = myuser_find(mt->name);
+		unsigned int addflags = get_template_flags(mc, leveldesc);
+		unsigned int removeflags = ca_all & ~addflags;
+		addflags &= ~oldflags;
+		removeflags &= oldflags & ~addflags;
+
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_target_acl_change(si, tmu, mc, flagstr, get_template_flags(mc, leveldesc));
+	}
 }
 
 static void cs_xop_do_del(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *target, unsigned int level, const char *leveldesc)
 {
 	chanacs_t *ca;
 	hook_channel_acl_req_t req;
+	unsigned int oldflags;
 
 	/* let's finally make this sane.. --w00t */
 	if (!mt)
@@ -440,6 +460,7 @@ static void cs_xop_do_del(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 
 	req.ca = ca;
 	req.oldlevel = ca->level;
+	oldflags = ca->level;
 
 	ca->level = 0;
 
@@ -451,6 +472,19 @@ static void cs_xop_do_del(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 	command_success_nodata(si, _("\2%s\2 has been removed from the %s list for \2%s\2."), mt->name, leveldesc, mc->name);
 	logcommand(si, CMDLOG_SET, "DEL: \2%s\2 \2%s\2 from \2%s\2", mc->name, leveldesc, mt->name);
 	verbose(mc, "\2%s\2 removed \2%s\2 from the %s list.", get_source_name(si), mt->name, leveldesc);
+
+	if (isuser(mt))
+	{
+		myuser_t *tmu = myuser_find(mt->name);
+		unsigned int addflags = 0;
+		unsigned int removeflags = ca_all & ~addflags;
+		addflags &= ~oldflags;
+		removeflags &= oldflags & ~addflags;
+
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_target_acl_change(si, tmu, mc, flagstr, 0);
+	}
 }
 
 
