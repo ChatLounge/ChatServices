@@ -480,7 +480,10 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	if (isuser(mt))
 	{
 		myuser_t *tmu = myuser_find(target);
-		notify_target_acl_change(si, tmu, mc, flagstr, newlevel);
+
+		char flagstr2[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		mowgli_strlcpy(flagstr2, flagstr, 54);
+		notify_target_acl_change(si, tmu, mc, flagstr2, newlevel);
 	}
 
 	free(target);
