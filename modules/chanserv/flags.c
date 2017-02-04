@@ -207,98 +207,24 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	 * ...so it was removed again. ~ToBeFree
 	 */
 
-		myentity_t *mt;
+	myentity_t *mt;
 
-		if (!si->smu)
+	if (!si->smu)
+	{
+		command_fail(si, fault_noprivs, _("You are not logged in."));
+		return;
+	}
+
+	if (!flagstr)
+	{
+		if (!(mc->flags & MC_PUBACL) && !chanacs_source_has_flag(mc, si, CA_ACLVIEW))
 		{
-			command_fail(si, fault_noprivs, _("You are not logged in."));
+			command_fail(si, fault_noprivs, _("You are not authorized to execute this command."));
 			return;
 		}
-
-		if (!flagstr)
-		{
-			if (!(mc->flags & MC_PUBACL) && !chanacs_source_has_flag(mc, si, CA_ACLVIEW))
-			{
-				command_fail(si, fault_noprivs, _("You are not authorized to execute this command."));
-				return;
-			}
-			if (validhostmask(target))
-				ca = chanacs_find_host_literal(mc, target, 0);
-			else
-			{
-				if (!(mt = myentity_find_ext(target)))
-				{
-					command_fail(si, fault_nosuch_target, _("\2%s\2 is not registered."), target);
-					return;
-				}
-				free(target);
-				target = sstrdup(mt->name);
-				ca = chanacs_find_literal(mc, mt, 0);
-			}
-			if (ca != NULL)
-			{
-				str1 = bitmask_to_flags2(ca->level, 0);
-				command_success_string(si, str1, _("Flags for \2%s\2 in \2%s\2 are \2%s\2."),
-						target, channel,
-						str1);
-			}
-			else
-				command_success_string(si, "", _("No flags for \2%s\2 in \2%s\2."),
-						target, channel);
-			logcommand(si, CMDLOG_GET, "FLAGS: \2%s\2 on \2%s\2", mc->name, target);
-			return;
-		}
-
-		/* founder may always set flags -- jilles */
-		restrictflags = chanacs_source_flags(mc, si);
-		if (restrictflags & CA_FOUNDER)
-			restrictflags = ca_all;
+		if (validhostmask(target))
+			ca = chanacs_find_host_literal(mc, target, 0);
 		else
-		{
-			if (!(restrictflags & CA_FLAGS))
-			{
-				/* allow a user to remove their own access
-				 * even without +f */
-				if (restrictflags & CA_AKICK ||
-						si->smu == NULL ||
-						irccasecmp(target, entity(si->smu)->name) ||
-						strcmp(flagstr, "-*"))
-				{
-					command_fail(si, fault_noprivs, _("You are not authorized to execute this command."));
-					return;
-				}
-			}
-			if (irccasecmp(target, entity(si->smu)->name))
-				restrictflags = allow_flags(mc, restrictflags);
-			else
-				restrictflags |= allow_flags(mc, restrictflags);
-		}
-
-		if (*flagstr == '+' || *flagstr == '-' || *flagstr == '=')
-		{
-			flags_make_bitmasks(flagstr, &addflags, &removeflags);
-			if (addflags == 0 && removeflags == 0)
-			{
-				command_fail(si, fault_badparams, _("No valid flags given, use /%s%s HELP FLAGS for a list"), ircd->uses_rcommand ? "" : "msg ", chansvs.me->disp);
-				return;
-			}
-		}
-		else
-		{
-			addflags = get_template_flags(mc, flagstr);
-			if (addflags == 0)
-			{
-				/* Hack -- jilles */
-				if (*target == '+' || *target == '-' || *target == '=')
-					command_fail(si, fault_badparams, _("Usage: FLAGS %s [target] [flags]"), mc->name);
-				else
-					command_fail(si, fault_badparams, _("Invalid template name given, use /%s%s TEMPLATE %s for a list"), ircd->uses_rcommand ? "" : "msg ", chansvs.me->disp, mc->name);
-				return;
-			}
-			removeflags = ca_all & ~addflags;
-		}
-
-		if (!validhostmask(target))
 		{
 			if (!(mt = myentity_find_ext(target)))
 			{
@@ -307,175 +233,249 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 			}
 			free(target);
 			target = sstrdup(mt->name);
-
-			ca = chanacs_open(mc, mt, NULL, true, entity(si->smu));
-
-			if (ca->level & CA_FOUNDER && removeflags & CA_FLAGS && !(removeflags & CA_FOUNDER))
-			{
-				command_fail(si, fault_noprivs, _("You may not remove a founder's +f access."));
-				return;
-			}
-			if (ca->level & CA_FOUNDER && removeflags & CA_FOUNDER && mychan_num_founders(mc) == 1)
-			{
-				command_fail(si, fault_noprivs, _("You may not remove the last founder."));
-				return;
-			}
-			if (!(ca->level & CA_FOUNDER) && addflags & CA_FOUNDER)
-			{
-				if (mychan_num_founders(mc) >= chansvs.maxfounders)
-				{
-					/* One is not plural. */
-					if (chansvs.maxfounders == 1) {
-						command_fail(si, fault_noprivs, _("Only 1 founder allowed per channel."));
-					}
-					else {
-						command_fail(si, fault_noprivs, _("Only %d founders allowed per channel."), chansvs.maxfounders);
-					}
-					chanacs_close(ca);
-					return;
-				}
-				if (!myentity_can_register_channel(mt))
-				{
-					command_fail(si, fault_toomany, _("\2%s\2 has too many channels registered."), mt->name);
-					chanacs_close(ca);
-					return;
-				}
-			}
-			if (addflags & CA_FOUNDER)
-				addflags |= CA_FLAGS, removeflags &= ~CA_FLAGS;
-
-			/* If NEVEROP is set, don't allow adding new entries
-			 * except sole +b. Adding flags if the current level
-			 * is +b counts as adding an entry.
-			 * -- jilles */
-			/* XXX: not all entities are users */
-			if (isuser(mt) && (MU_NEVEROP & user(mt)->flags && addflags != CA_AKICK && addflags != 0 && (ca->level == 0 || ca->level == CA_AKICK)))
-			{
-				command_fail(si, fault_noprivs, _("\2%s\2 does not wish to be added to channel access lists (NEVEROP set)."), mt->name);
-				chanacs_close(ca);
-				return;
-			}
-
-			if (ca->level == 0 && chanacs_is_table_full(ca))
-			{
-				command_fail(si, fault_toomany, _("Channel %s access list is full."), mc->name);
-				chanacs_close(ca);
-				return;
-			}
-
-			req.ca = ca;
-			req.oldlevel = ca->level;
-			oldlevel = ca->level;
-
-			if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
-			{
-				command_fail(si, fault_noprivs, _("You are not allowed to set \2%s\2 on \2%s\2 in \2%s\2."), bitmask_to_flags2(addflags, removeflags), mt->name, mc->name);
-				chanacs_close(ca);
-				return;
-			}
-
-			req.newlevel = ca->level;
-			newlevel = ca->level;
-
-			hook_call_channel_acl_change(&req);
-			chanacs_close(ca);
+			ca = chanacs_find_literal(mc, mt, 0);
+		}
+		if (ca != NULL)
+		{
+			str1 = bitmask_to_flags2(ca->level, 0);
+			command_success_string(si, str1, _("Flags for \2%s\2 in \2%s\2 are \2%s\2."),
+					target, channel,
+					str1);
 		}
 		else
+			command_success_string(si, "", _("No flags for \2%s\2 in \2%s\2."),
+					target, channel);
+		logcommand(si, CMDLOG_GET, "FLAGS: \2%s\2 on \2%s\2", mc->name, target);
+		return;
+	}
+
+	/* founder may always set flags -- jilles */
+	restrictflags = chanacs_source_flags(mc, si);
+	if (restrictflags & CA_FOUNDER)
+		restrictflags = ca_all;
+	else
+	{
+		if (!(restrictflags & CA_FLAGS))
 		{
-			if (!target)
+			/* allow a user to remove their own access
+			 * even without +f */
+			if (restrictflags & CA_AKICK ||
+					si->smu == NULL ||
+					irccasecmp(target, entity(si->smu)->name) ||
+					strcmp(flagstr, "-*"))
 			{
-				command_fail(si, fault_needmoreparams, _("Invalid hostmask."));
+				command_fail(si, fault_noprivs, _("You are not authorized to execute this command."));
 				return;
 			}
-
-			if (chansvs.min_non_wildcard_chars_host_acl > 0 &&
-				check_not_enough_non_wildcard_chars(target, (int) chansvs.min_non_wildcard_chars_host_acl, 1) &&
-				(strchr(target, '*') || strchr(target, '?')) &&
-				!has_priv(si, PRIV_AKILL_ANYMASK))
-			{
-				command_fail(si, fault_badparams, _("Invalid nick!user@host: \2%s\2  At least %u non-wildcard characters are required."), target, chansvs.min_non_wildcard_chars_host_acl);
-				return;
-			}
-
-			if (addflags & CA_FOUNDER)
-			{
-				command_fail(si, fault_badparams, _("You may not set founder status on a hostmask."));
-				return;
-			}
-
-			if (addflags & chansvs.flags_req_acct)
-			{
-				command_fail(si, fault_badparams, _("You may not add any of the following flags to hostmasks: %s"),
-					bitmask_to_flags(chansvs.flags_req_acct));
-				return;
-			}
-
-			ca = chanacs_open(mc, NULL, target, true, entity(si->smu));
-			if (ca->level == 0 && chanacs_is_table_full(ca))
-			{
-				command_fail(si, fault_toomany, _("Channel %s access list is full."), mc->name);
-				chanacs_close(ca);
-				return;
-			}
-
-			req.ca = ca;
-			req.oldlevel = ca->level;
-			oldlevel = ca->level;
-
-			if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
-			{
-		                command_fail(si, fault_noprivs, _("You are not allowed to set \2%s\2 on \2%s\2 in \2%s\2."), bitmask_to_flags2(addflags, removeflags), target, mc->name);
-				chanacs_close(ca);
-				return;
-			}
-
-			req.newlevel = ca->level;
-			newlevel = ca->level;
-
-			hook_call_channel_acl_change(&req);
-			chanacs_close(ca);
 		}
+		if (irccasecmp(target, entity(si->smu)->name))
+			restrictflags = allow_flags(mc, restrictflags);
+		else
+			restrictflags |= allow_flags(mc, restrictflags);
+	}
 
-		if ((addflags | removeflags) == 0)
+	if (*flagstr == '+' || *flagstr == '-' || *flagstr == '=')
+	{
+		flags_make_bitmasks(flagstr, &addflags, &removeflags);
+		if (addflags == 0 && removeflags == 0)
 		{
-			command_fail(si, fault_nochange, _("Channel access to \2%s\2 for \2%s\2 unchanged."), channel, target);
+			command_fail(si, fault_badparams, _("No valid flags given, use /%s%s HELP FLAGS for a list"), ircd->uses_rcommand ? "" : "msg ", chansvs.me->disp);
+			return;
+		}
+	}
+	else
+	{
+		addflags = get_template_flags(mc, flagstr);
+		if (addflags == 0)
+		{
+			/* Hack -- jilles */
+			if (*target == '+' || *target == '-' || *target == '=')
+				command_fail(si, fault_badparams, _("Usage: FLAGS %s [target] [flags]"), mc->name);
+			else
+				command_fail(si, fault_badparams, _("Invalid template name given, use /%s%s TEMPLATE %s for a list"), ircd->uses_rcommand ? "" : "msg ", chansvs.me->disp, mc->name);
+			return;
+		}
+		removeflags = ca_all & ~addflags;
+	}
+
+	if (!validhostmask(target))
+	{
+		if (!(mt = myentity_find_ext(target)))
+		{
+			command_fail(si, fault_nosuch_target, _("\2%s\2 is not registered."), target);
+			return;
+		}
+		free(target);
+		target = sstrdup(mt->name);
+
+		ca = chanacs_open(mc, mt, NULL, true, entity(si->smu));
+
+		if (ca->level & CA_FOUNDER && removeflags & CA_FLAGS && !(removeflags & CA_FOUNDER))
+		{
+			command_fail(si, fault_noprivs, _("You may not remove a founder's +f access."));
+			return;
+		}
+		if (ca->level & CA_FOUNDER && removeflags & CA_FOUNDER && mychan_num_founders(mc) == 1)
+		{
+			command_fail(si, fault_noprivs, _("You may not remove the last founder."));
+			return;
+		}
+		if (!(ca->level & CA_FOUNDER) && addflags & CA_FOUNDER)
+		{
+			if (mychan_num_founders(mc) >= chansvs.maxfounders)
+			{
+				/* One is not plural. */
+				if (chansvs.maxfounders == 1) {
+					command_fail(si, fault_noprivs, _("Only 1 founder allowed per channel."));
+				}
+				else {
+					command_fail(si, fault_noprivs, _("Only %d founders allowed per channel."), chansvs.maxfounders);
+				}
+				chanacs_close(ca);
+				return;
+			}
+			if (!myentity_can_register_channel(mt))
+			{
+				command_fail(si, fault_toomany, _("\2%s\2 has too many channels registered."), mt->name);
+				chanacs_close(ca);
+				return;
+			}
+		}
+		if (addflags & CA_FOUNDER)
+			addflags |= CA_FLAGS, removeflags &= ~CA_FLAGS;
+
+		/* If NEVEROP is set, don't allow adding new entries
+		 * except sole +b. Adding flags if the current level
+		 * is +b counts as adding an entry.
+		 * -- jilles */
+		/* XXX: not all entities are users */
+		if (isuser(mt) && (MU_NEVEROP & user(mt)->flags && addflags != CA_AKICK && addflags != 0 && (ca->level == 0 || ca->level == CA_AKICK)))
+		{
+			command_fail(si, fault_noprivs, _("\2%s\2 does not wish to be added to channel access lists (NEVEROP set)."), mt->name);
+			chanacs_close(ca);
 			return;
 		}
 
-		if (oldlevel != 0)
-			oldtemplate = get_template_name(mc, oldlevel);
-
-		if (newlevel != 0)
-			newtemplate = get_template_name(mc, newlevel);
-
-		flagstr = bitmask_to_flags2(addflags, removeflags);
-		command_success_nodata(si, _("Flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) were set on \2%s\2 in \2%s\2."),
-			flagstr,
-			oldtemplate == NULL ? "<No template>" : oldtemplate,
-			newtemplate == NULL ? "<No template>" : newtemplate,
-			target, channel);
-		logcommand(si, CMDLOG_SET, "FLAGS: \2%s\2 \2%s\2 \2%s\2 (Old template: \2%s\2 New template: \2%s\2)",
-			mc->name, target, flagstr,
-			oldtemplate == NULL ? "<No template>" : oldtemplate,
-			newtemplate == NULL ? "<No template>" : newtemplate);
-
-		if (oldtemplate == NULL)
+		if (ca->level == 0 && chanacs_is_table_full(ca))
 		{
-			if (newtemplate == NULL)
-				verbose(mc, "\2%s\2 set flags \2%s\2 on: \2%s\2", get_source_name(si), flagstr, target);
-			else
-				verbose(mc, "\2%s\2 set flags \2%s\2 (New template: \2%s\2) on: \2%s\2",
-					get_source_name(si), flagstr, newtemplate, target);
+			command_fail(si, fault_toomany, _("Channel %s access list is full."), mc->name);
+			chanacs_close(ca);
+			return;
 		}
+
+		req.ca = ca;
+		req.oldlevel = ca->level;
+		oldlevel = ca->level;
+
+		if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
+		{
+			command_fail(si, fault_noprivs, _("You are not allowed to set \2%s\2 on \2%s\2 in \2%s\2."), bitmask_to_flags2(addflags, removeflags), mt->name, mc->name);
+			chanacs_close(ca);
+			return;
+		}
+
+		req.newlevel = ca->level;
+		newlevel = ca->level;
+
+		hook_call_channel_acl_change(&req);
+		chanacs_close(ca);
+	}
+	else
+	{
+		if (!target)
+		{
+			command_fail(si, fault_needmoreparams, _("Invalid hostmask."));
+			return;
+		}
+
+		if (chansvs.min_non_wildcard_chars_host_acl > 0 &&
+			check_not_enough_non_wildcard_chars(target, (int) chansvs.min_non_wildcard_chars_host_acl, 1) &&
+			(strchr(target, '*') || strchr(target, '?')) &&
+			!has_priv(si, PRIV_AKILL_ANYMASK))
+		{
+			command_fail(si, fault_badparams, _("Invalid nick!user@host: \2%s\2  At least %u non-wildcard characters are required."), target, chansvs.min_non_wildcard_chars_host_acl);
+			return;
+		}
+
+		if (addflags & CA_FOUNDER)
+		{
+			command_fail(si, fault_badparams, _("You may not set founder status on a hostmask."));
+			return;
+		}
+
+		if (addflags & chansvs.flags_req_acct)
+		{
+			command_fail(si, fault_badparams, _("You may not add any of the following flags to hostmasks: %s"),
+				bitmask_to_flags(chansvs.flags_req_acct));
+			return;
+		}
+
+		ca = chanacs_open(mc, NULL, target, true, entity(si->smu));
+		if (ca->level == 0 && chanacs_is_table_full(ca))
+		{
+			command_fail(si, fault_toomany, _("Channel %s access list is full."), mc->name);
+			chanacs_close(ca);
+			return;
+		}
+
+		req.ca = ca;
+		req.oldlevel = ca->level;
+		oldlevel = ca->level;
+
+		if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
+		{
+					command_fail(si, fault_noprivs, _("You are not allowed to set \2%s\2 on \2%s\2 in \2%s\2."), bitmask_to_flags2(addflags, removeflags), target, mc->name);
+			chanacs_close(ca);
+			return;
+		}
+
+		req.newlevel = ca->level;
+		newlevel = ca->level;
+
+		hook_call_channel_acl_change(&req);
+		chanacs_close(ca);
+	}
+
+	if ((addflags | removeflags) == 0)
+	{
+		command_fail(si, fault_nochange, _("Channel access to \2%s\2 for \2%s\2 unchanged."), channel, target);
+		return;
+	}
+
+	if (oldlevel != 0)
+		oldtemplate = get_template_name(mc, oldlevel);
+
+	if (newlevel != 0)
+		newtemplate = get_template_name(mc, newlevel);
+
+	flagstr = bitmask_to_flags2(addflags, removeflags);
+	command_success_nodata(si, _("Flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) were set on \2%s\2 in \2%s\2."),
+		flagstr,
+		oldtemplate == NULL ? "<No template>" : oldtemplate,
+		newtemplate == NULL ? "<No template>" : newtemplate,
+		target, channel);
+	logcommand(si, CMDLOG_SET, "FLAGS: \2%s\2 \2%s\2 \2%s\2 (Old template: \2%s\2 New template: \2%s\2)",
+		mc->name, target, flagstr,
+		oldtemplate == NULL ? "<No template>" : oldtemplate,
+		newtemplate == NULL ? "<No template>" : newtemplate);
+
+	if (oldtemplate == NULL)
+	{
+		if (newtemplate == NULL)
+			verbose(mc, "\2%s\2 set flags \2%s\2 on: \2%s\2", get_source_name(si), flagstr, target);
 		else
-		{
-			if (newtemplate == NULL)
-				verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2) on: \2%s\2",
-					get_source_name(si), flagstr, oldtemplate, target);
-			else
-				verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) on: \2%s\2",
-					get_source_name(si), flagstr, oldtemplate, newtemplate, target);
-		}
+			verbose(mc, "\2%s\2 set flags \2%s\2 (New template: \2%s\2) on: \2%s\2",
+				get_source_name(si), flagstr, newtemplate, target);
+	}
+	else
+	{
+		if (newtemplate == NULL)
+			verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2) on: \2%s\2",
+				get_source_name(si), flagstr, oldtemplate, target);
+		else
+			verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) on: \2%s\2",
+				get_source_name(si), flagstr, oldtemplate, newtemplate, target);
+	}
 
 	if (isuser(mt))
 	{
