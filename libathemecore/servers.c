@@ -1,8 +1,9 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of minimalist IRC services
  * servers.c: Server and network state tracking.
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -196,14 +197,16 @@ static void server_delete_serv(server_t *s)
 	}
 
 	if (s->sid)
-		slog(me.connected ? LG_NETWORK : LG_DEBUG, "server_delete(): %s (%s), uplink %s (%d users)",
+		slog(me.connected ? LG_NETWORK : LG_DEBUG, "server_delete(): %s (%s), uplink %s (%d user%s)",
 				s->name, s->sid,
 				s->uplink != NULL ? s->uplink->name : "<none>",
-				s->users);
+				s->users,
+				s->users == 1 ? "" : "s");
 	else
-		slog(me.connected ? LG_NETWORK : LG_DEBUG, "server_delete(): %s, uplink %s (%d users)",
+		slog(me.connected ? LG_NETWORK : LG_DEBUG, "server_delete(): %s, uplink %s (%d user%s)",
 				s->name, s->uplink != NULL ? s->uplink->name : "<none>",
-				s->users);
+				s->users,
+				s->users == 1 ? "" : "s");
 
 	hook_call_server_delete((&(hook_server_delete_t){ .s = s }));
 
