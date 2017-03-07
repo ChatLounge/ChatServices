@@ -3,8 +3,8 @@
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
- * When enabled, get notified when your channel or group settings change, if your a channel owner
- * or part of management.
+ *     When enabled, get notified when your channel or group settings change,
+ * if you're a channel owner or a part of channel management.
  *
  */
 
@@ -24,7 +24,7 @@ mowgli_patricia_t **ns_set_cmdtree;
 
 static void ns_cmd_set_notifyset(sourceinfo_t *si, int parc, char *parv[]);
 
-command_t ns_set_notifyset = { "NOTIFYSET", N_("Prevents services from setting modes upon you automatically."), AC_NONE, 1, ns_cmd_set_notifyset, { .path = "nickserv/set_notifyset" } };
+command_t ns_set_notifyset = { "NOTIFYSET", N_("Get notified when your channel or group settings change."), AC_NONE, 1, ns_cmd_set_notifyset, { .path = "nickserv/set_notifyset" } };
 
 static bool has_notifyset(const mynick_t *mn, const void *arg)
 {
