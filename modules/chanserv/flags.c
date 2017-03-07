@@ -18,6 +18,8 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
+void (*notify_channel_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
 void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *flagstr, unsigned int flags) = NULL;
 
@@ -31,7 +33,10 @@ void _modinit(module_t *m)
 	service_named_bind_command("chanserv", &cs_flags);
 
 	if (module_request("chanserv/main"))
+	{
+		notify_channel_acl_change = module_locate_symbol("chanserv/main", "notify_channel_acl_change");
 		notify_target_acl_change = module_locate_symbol("chanserv/main", "notify_target_acl_change");
+	}
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -484,6 +489,7 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		char flagstr2[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
 		mowgli_strlcpy(flagstr2, flagstr, 54);
 		notify_target_acl_change(si, tmu, mc, flagstr2, newlevel);
+		notify_channel_acl_change(si, tmu, mc, flagstr2, newlevel);
 	}
 
 	free(target);

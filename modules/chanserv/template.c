@@ -16,6 +16,11 @@ DECLARE_MODULE_V1
 	"Atheme Development Group <http://www.atheme.org>"
 );
 
+void (*notify_channel_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
+void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
+
 static void list_generic_flags(sourceinfo_t *si);
 
 static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[]);
@@ -25,7 +30,13 @@ command_t cs_flags = { "TEMPLATE", N_("Manipulates predefined sets of flags."),
 
 void _modinit(module_t *m)
 {
-        service_named_bind_command("chanserv", &cs_flags);
+	service_named_bind_command("chanserv", &cs_flags);
+
+	if (module_request("chanserv/main"))
+	{
+		notify_channel_acl_change = module_locate_symbol("chanserv/main", "notify_channel_acl_change");
+		notify_target_acl_change = module_locate_symbol("chanserv/main", "notify_target_acl_change");
+	}
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -383,15 +394,22 @@ static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 				}
 				changes++;
 				chanacs_modify_simple(ca, newflags, ~newflags);
+
+				myuser_t *tmu = myuser_find(ca->entity->name);
+
+				notify_channel_acl_change(si, tmu, mc, flagstr, newflags);
+				notify_target_acl_change(si, tmu, mc, flagstr, newflags);
+
 				chanacs_close(ca);
 			}
 			logcommand(si, CMDLOG_SET, "TEMPLATE: \2%s\2 \2%s\2 !\2%s\2 (\2%d\2 changes)", mc->name, target, flagstr, changes);
 			mowgli_strlcpy(flagstr2, flagstr, sizeof flagstr2);
 			if (changes > 0)
-				verbose(mc, "\2%s\2 set \2%s\2 on %d access entries with flags \2%s\2.", get_source_name(si), flagstr2, changes, bitmask_to_flags(oldflags));
-			command_success_nodata(si, _("%d access entries updated accordingly."), changes);
+				verbose(mc, "\2%s\2 set \2%s\2 on %d access entr%s with flags \2%s\2.", get_source_name(si),
+					flagstr2, changes, changes == 1 ? "y" : "ies",bitmask_to_flags(oldflags));
+			command_success_nodata(si, _("%d access entr%s updated accordingly."), changes, changes == 1 ? "y" : "ies");
 			if (founderskipped)
-				command_success_nodata(si, _("Not updating %d access entries involving founder status. Please do it manually."), founderskipped);
+				command_success_nodata(si, _("Not updating %d access entr%s involving founder status. Please do it manually."), founderskipped, founderskipped == 1 ? "y" : "ies");
 		}
 		else
 			logcommand(si, CMDLOG_SET, "TEMPLATE: \2%s\2 \2%s\2 \2%s\2", mc->name, target, flagstr);

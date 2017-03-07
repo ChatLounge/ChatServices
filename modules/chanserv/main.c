@@ -13,6 +13,8 @@
 #include "template.h"
 #include <limits.h>
 
+#define CHANNEL_HISTORY_LIMIT 1000
+
 DECLARE_MODULE_V1
 (
 	"chanserv/main", true, _modinit, _moddeinit,
@@ -944,8 +946,9 @@ static void cs_leave_empty(void *unused)
 	}
 }
 
-/* notify_target_acl_change: Tells the target user about the new flags in a channel,
- *     both in the form of a notice (if possible) and a memo (if possible).
+/* notify_target_acl_change: Tells the target user about the new flags in a
+ *     channel, both in the form of a notice (if possible) and a memo (if
+ *     possible).
  *
  * Inputs: myuser_t *smu - Source user
  *         myuser_t *tmu - Target user
@@ -989,6 +992,70 @@ void notify_target_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 		send_user_memo(si, tmu, text2, false, MEMO_CHANNEL, tmu->flags & MU_EMAILNOTIFY);
 
 	return;
+}
+
+/* notify_channel_acl_change: Notifes the target channel management about
+ *     the new flags in a channel in the form of a memo (if possible).
+ *
+ * Inputs: myuser_t *smu - Source user
+ *         myuser_t *tmu - Target user
+ *         mychan_t *mc - Channel where the change is taking place.
+ *         const char *flagstr - Flag string used to perform the change.
+ *         unsigned int flags - current flags on the target user.
+ * Outputs: None
+ * Side Effects: Send a notice and/or memo to the target user, if possible.
+ */
+void notify_channel_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags)
+{
+	char text[256], text2[300];
+	chanacs_t *ca;
+	mowgli_node_t *m;
+
+	if (flags == 0)
+		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 and removed \2%s\2 from: \2%s\2",
+			entity(si->smu)->name, flagstr, entity(tmu)->name, mc->name);
+	else if (get_template_name(mc, flags))
+		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on \2%s\2 in \2%s\2 who now has the flags: \2%s\2 (TEMPLATE: \2%s\2)",
+			entity(si->smu)->name, flagstr,
+			mc->name, entity(tmu)->name,
+			bitmask_to_flags(flags),
+			get_template_name(mc, flags));
+	else
+		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on \2%s\2 in \2%s\2 who now has the flags: \2%s\2",
+			entity(si->smu)->name, flagstr,
+			mc->name, entity(tmu)->name,
+			bitmask_to_flags(flags));
+
+	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", chansvs.nick, text);
+
+	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
+	{
+		ca = m->data;
+
+		/* Don't run this for the target, if the target has MU_NOTIFYACL enabled, as this
+		 * should be covered under notify_target_acl_change.  Prevents double notices. */
+		if (ca->entity == entity(tmu) && tmu->flags & MU_NOTIFYACL)
+			continue;
+
+		/* Skip if the entity isn't a NickServ account as this would not make sense.
+		 * ToDo: Make it work for group memos?
+		 */
+		if (!isuser(ca->entity))
+			continue;
+
+		/* Check for +F, +R, and/or +s.  If not, skip.
+		 * ToDo: Have this as default, have channel configuration setting? */
+		if (!(ca->level & CA_FOUNDER || ca->level & CA_RECOVER || ca->level & CA_SET))
+			continue;
+
+		if (user(ca->entity)->flags & MU_NOTIFYACL)
+			myuser_notice(chansvs.nick, user(ca->entity), text);
+
+		if ((send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) != NULL
+			&& user(ca->entity)->flags & MU_NOTIFYACL)
+			send_user_memo(si, user(ca->entity), text2, false, MEMO_CHANNEL, user(ca->entity)->flags & MU_EMAILNOTIFY);
+	}
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

@@ -21,6 +21,8 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
+void (*notify_channel_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
 void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *flagstr, unsigned int flags) = NULL;
 
@@ -60,7 +62,10 @@ void _modinit(module_t *m)
 	service_named_bind_command("chanserv", &cs_forcexop);
 
 	if (module_request("chanserv/main"))
+	{
+		notify_channel_acl_change = module_locate_symbol("chanserv/main", "notify_channel_acl_change");
 		notify_target_acl_change = module_locate_symbol("chanserv/main", "notify_target_acl_change");
+	}
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -407,8 +412,9 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 		addflags &= ~oldflags;
 		removeflags &= oldflags & ~addflags;
 
-		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sign. -> 54
 		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_channel_acl_change(si, tmu, mc, flagstr, get_template_flags(mc, leveldesc));
 		notify_target_acl_change(si, tmu, mc, flagstr, get_template_flags(mc, leveldesc));
 	}
 }
@@ -481,8 +487,9 @@ static void cs_xop_do_del(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 		addflags &= ~oldflags;
 		removeflags &= oldflags & ~addflags;
 
-		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sign. -> 54
 		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_channel_acl_change(si, tmu, mc, flagstr, 0);
 		notify_target_acl_change(si, tmu, mc, flagstr, 0);
 	}
 }

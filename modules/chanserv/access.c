@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 ChatLounge IRC Network Development Team <admin@chatlounge.net>
+ * Copyright (c) 2016 - 2017 ChatLounge IRC Network Development Team <admin@chatlounge.net>
  * Copyright (c) 2010 - 2011 William Pitcock <nenolod@atheme.org>.
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -16,6 +16,8 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
+void (*notify_channel_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
 void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *flagstr, unsigned int flags) = NULL;
 
@@ -99,7 +101,10 @@ void _modinit(module_t *m)
 	command_add(&cs_role_del, cs_role_cmds);
 
 	if (module_request("chanserv/main"))
+	{
+		notify_channel_acl_change = module_locate_symbol("chanserv/main", "notify_channel_acl_change");
 		notify_target_acl_change = module_locate_symbol("chanserv/main", "notify_target_acl_change");
+	}
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -535,14 +540,20 @@ static void update_role_entry(sourceinfo_t *si, mychan_t *mc, const char *role, 
 			req.newlevel = ca->level;
 
 			hook_call_channel_acl_change(&req);
+
+			myuser_t *tmu = myuser_find(ca->entity->name);
+
+			notify_channel_acl_change(si, tmu, mc, flagstr, flags);
+			notify_target_acl_change(si, tmu, mc, flagstr, flags);
+
 			chanacs_close(ca);
 		}
 	}
 
-	logcommand(si, CMDLOG_SET, "ROLE:MOD: \2%s\2 \2%s\2 !\2%s\2 (\2%d\2 changes)", mc->name, role, flagstr, changes);
+	logcommand(si, CMDLOG_SET, "ROLE:MOD: \2%s\2 \2%s\2 !\2%s\2 (\2%d\2 change%s)", mc->name, role, flagstr, changes, changes == 1 ? "" : "s");
 
 	if (changes > 0)
-		command_success_nodata(si, _("%d access entries updated accordingly."), changes);
+		command_success_nodata(si, _("%d access entr%s updated accordingly for %s on: %s"), changes, changes == 1 ? "y" : "ies", role, mc->name);
 }
 
 static unsigned int xflag_apply_batch(unsigned int in, int parc, char *parv[])
@@ -916,8 +927,9 @@ static void cs_cmd_access_del(sourceinfo_t *si, int parc, char *parv[])
 		addflags &= ~oldflags;
 		removeflags &= oldflags & ~addflags;
 
-		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sign. -> 54
 		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_channel_acl_change(si, tmu, mc, flagstr, 0);
 		notify_target_acl_change(si, tmu, mc, flagstr, 0);
 	}
 }
@@ -1100,8 +1112,9 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 		//addflags &= ~oldflags;
 		//removeflags &= oldflags & ~addflags;
 
-		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sign. -> 54
 		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_channel_acl_change(si, tmu, mc, flagstr, newflags);
 		notify_target_acl_change(si, tmu, mc, flagstr, newflags);
 	}
 }
@@ -1286,8 +1299,9 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 		//addflags &= ~oldflags;
 		//removeflags &= oldflags & ~addflags;
 
-		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sign. -> 54
 		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
+		notify_channel_acl_change(si, tmu, mc, flagstr, newflags);
 		notify_target_acl_change(si, tmu, mc, flagstr, newflags);
 	}
 }
