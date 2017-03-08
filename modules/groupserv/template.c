@@ -379,9 +379,14 @@ static void gs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 				}
 				changes++;
 				groupacs_modify_simple(ga, newflags, ~newflags);
+
+				myuser_t *tmu = myuser_find(ga->mt->name);
+
+				notify_target_acl_change(si, tmu, mg, flagstr, newflags);
+
 				groupacs_close(ga);
 			}
-			logcommand(si, CMDLOG_SET, "TEMPLATE: \2%s\2 \2%s\2 !\2%s\2 (\2%d\2 changes)", entity(mg)->name, target, flagstr, changes);
+			logcommand(si, CMDLOG_SET, "TEMPLATE: \2%s\2 \2%s\2 !\2%s\2 (\2%d\2 change%s)", entity(mg)->name, target, flagstr, changes, changes == 1 ? "" : "s");
 			mowgli_strlcpy(flagstr2, flagstr, sizeof flagstr2);
 
 			command_success_nodata(si, _("%d access entr%s updated accordingly."), changes, changes == 1 ? "y" : "ies");
