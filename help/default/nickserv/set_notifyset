@@ -8,7 +8,12 @@ channel settings in channels where you're on the ACL
 changes.
 
 The notification will come in the form of a private
-notice, as well as a memo, if possible.
+#if module memoserv/main
+notice.  If you also want a memo, you must also enable
+NOTIFYMEMO.
+#else
+notice.
+#endif
 
 NOTE: Whether you will in fact get a notification
     depends on the settings of the channel.

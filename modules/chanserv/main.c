@@ -983,13 +983,15 @@ void notify_target_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	if (MOWGLI_LIST_LENGTH(&tmu->logins) > 0)
 		myuser_notice(chansvs.nick, tmu, text);
 
+	if (tmu->flags & MU_NOMEMO || !(tmu->flags & MU_NOTIFYMEMO))
+		return;
+
 	if ((send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) == NULL)
 		return;
 
 	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", chansvs.nick, text);
 
-	if (tmu->flags & MU_NOTIFYACL)
-		send_user_memo(si, tmu, text2, false, MEMO_CHANNEL, tmu->flags & MU_EMAILNOTIFY);
+	send_user_memo(si, tmu, text2, false, MEMO_CHANNEL, tmu->flags & MU_EMAILNOTIFY);
 
 	return;
 }
@@ -1052,8 +1054,8 @@ void notify_channel_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 		if (user(ca->entity)->flags & MU_NOTIFYACL)
 			myuser_notice(chansvs.nick, user(ca->entity), text);
 
-		if ((send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) != NULL
-			&& user(ca->entity)->flags & MU_NOTIFYACL)
+		if (!(user(ca->entity)->flags & MU_NOMEMO) && user(ca->entity)->flags & MU_NOTIFYMEMO && user(ca->entity)->flags & MU_NOTIFYACL &&
+			(send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) != NULL)
 			send_user_memo(si, user(ca->entity), text2, false, MEMO_CHANNEL, user(ca->entity)->flags & MU_EMAILNOTIFY);
 	}
 }

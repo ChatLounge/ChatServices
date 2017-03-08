@@ -1,0 +1,14 @@
+#if soper
+Command provided by: nickserv/set_notifymemo
+#endif
+Help for SET NOTIFYMEMO:
+
+If enabled, receive a memo whenever your group or
+channel settings in channels where you're on the ACL
+changes.  NOTIFYACL and/or NOTIFYSET must also be
+enabled.
+
+Syntax: SET NOTIFYMEMO [ON|OFF]
+
+Example:
+    /msg &nick& SET NOTIFYMEMO ON

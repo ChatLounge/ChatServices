@@ -119,7 +119,8 @@ struct myuser_
 #define MU_STRICTACCESS 0x00080000
 #define MU_NOTIFYACL    0x00100000
 #define MU_NOTIFYSET    0x00200000
-#define MU_EMAILNOTIFY  0x00400000
+#define MU_NOTIFYMEMO   0x00400000
+#define MU_EMAILNOTIFY  0x00800000
 
 /* memoserv rate limiting parameters */
 #define MEMO_MAX_NUM   5

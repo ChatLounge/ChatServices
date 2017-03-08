@@ -12,7 +12,12 @@ to new channels as well as being removed from
 existing ones.
 
 The notification will come in the form of a private
-notice, as well as a memo, if possible.
+#if module memoserv/main
+notice.  If you also want a memo, you must also enable
+NOTIFYMEMO.
+#else
+notice.
+#endif
 
 Syntax: SET NOTIFYACL [ON|OFF]
 

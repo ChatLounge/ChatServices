@@ -360,6 +360,13 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 		strcat(buf, "NotifyAcl");
 	}
+	if (MU_NOTIFYMEMO & mu->flags)
+	{
+		if (*buf)
+			strcat(buf, ", ");
+
+		strcat(buf, "NotifyMemo");
+	}
 	if (MU_NOTIFYSET & mu->flags)
 	{
 		if (*buf)

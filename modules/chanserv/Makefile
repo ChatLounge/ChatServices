@@ -33,6 +33,7 @@ SRCS =					\
 	getkey.c			\
 	halfop.c			\
 	help.c				\
+	history.c			\
 	hold.c				\
 	info.c				\
 	invite.c			\

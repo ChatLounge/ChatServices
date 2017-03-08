@@ -56,6 +56,7 @@ BASE_SRCS =			\
 	set_noop.c	\
 	set_notifyacl.c	\
 	set_notifyset.c	\
+	set_notifymemo.c	\
 	set_password.c	\
 	set_privmsg.c	\
 	set_private.c	\
