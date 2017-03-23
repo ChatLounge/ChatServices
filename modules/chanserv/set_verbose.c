@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2006-2010 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the CService SET VERBOSE command.
@@ -13,8 +15,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/set_verbose", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_set_verbose(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -25,6 +29,9 @@ mowgli_patricia_t **cs_set_cmdtree;
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_set_cmdtree, "chanserv/set_core", "cs_set_cmdtree");
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
 
 	command_add(&cs_set_verbose, *cs_set_cmdtree);
 }
@@ -60,7 +67,7 @@ static void cs_cmd_set_verbose(sourceinfo_t *si, int parc, char *parv[])
 	{
 		if (MC_VERBOSE & mc->flags)
 		{
-			command_fail(si, fault_nochange, _("The \2%s\2 flag is already set for channel \2%s\2."), "VERBOSE", mc->name);
+			command_fail(si, fault_nochange, _("The \2%s\2 flag is already set for channel: \2%s\2"), "VERBOSE", mc->name);
 			return;
 		}
 
@@ -70,7 +77,22 @@ static void cs_cmd_set_verbose(sourceinfo_t *si, int parc, char *parv[])
  		mc->flags |= MC_VERBOSE;
 
 		verbose(mc, "\2%s\2 enabled the VERBOSE flag", get_source_name(si));
-		command_success_nodata(si, _("The \2%s\2 flag has been set for channel \2%s\2."), "VERBOSE", mc->name);
+		command_success_nodata(si, _("The \2%s\2 flag has been set for channel: \2%s\2"), "VERBOSE", mc->name);
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "VERBOSE setting enabled (everyone).");
+
+			add_history_entry(si, mc, desc);
+		}
+
 		return;
 	}
 
@@ -78,7 +100,7 @@ static void cs_cmd_set_verbose(sourceinfo_t *si, int parc, char *parv[])
 	{
 		if (MC_VERBOSE_OPS & mc->flags)
 		{
-			command_fail(si, fault_nochange, _("The \2%s\2 flag is already set for channel \2%s\2."), "VERBOSE_OPS", mc->name);
+			command_fail(si, fault_nochange, _("The \2%s\2 flag is already set for channel: \2%s\2"), "VERBOSE_OPS", mc->name);
 			return;
 		}
 
@@ -96,14 +118,29 @@ static void cs_cmd_set_verbose(sourceinfo_t *si, int parc, char *parv[])
 			verbose(mc, "\2%s\2 enabled the VERBOSE_OPS flag", get_source_name(si));
 		}
 
-		command_success_nodata(si, _("The \2%s\2 flag has been set for channel \2%s\2."), "VERBOSE_OPS", mc->name);
+		command_success_nodata(si, _("The \2%s\2 flag has been set for channel: \2%s\2"), "VERBOSE_OPS", mc->name);
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "VERBOSE setting enabled (channel operators only).");
+
+			add_history_entry(si, mc, desc);
+		}
+
 		return;
 	}
 	else if (!strcasecmp("OFF", parv[1]))
 	{
 		if (!((MC_VERBOSE | MC_VERBOSE_OPS) & mc->flags))
 		{
-			command_fail(si, fault_nochange, _("The \2%s\2 flag is not set for channel \2%s\2."), "VERBOSE", mc->name);
+			command_fail(si, fault_nochange, _("The \2%s\2 flag is not set for channel: \2%s\2"), "VERBOSE", mc->name);
 			return;
 		}
 
@@ -115,7 +152,22 @@ static void cs_cmd_set_verbose(sourceinfo_t *si, int parc, char *parv[])
 			verbose(mc, "\2%s\2 disabled the VERBOSE_OPS flag", get_source_name(si));
 		mc->flags &= ~(MC_VERBOSE | MC_VERBOSE_OPS);
 
-		command_success_nodata(si, _("The \2%s\2 flag has been removed for channel \2%s\2."), "VERBOSE", mc->name);
+		command_success_nodata(si, _("The \2%s\2 flag has been removed for channel: \2%s\2"), "VERBOSE", mc->name);
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "VERBOSE setting disabled.");
+
+			add_history_entry(si, mc, desc);
+		}
+
 		return;
 	}
 	else

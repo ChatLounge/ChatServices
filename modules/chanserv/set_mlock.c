@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2006-2010 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the CService SET MLOCK command.
@@ -13,8 +15,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/set_mlock", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_set_mlock(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -25,6 +29,9 @@ mowgli_patricia_t **cs_set_cmdtree;
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_set_cmdtree, "chanserv/set_core", "cs_set_cmdtree");
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
 
 	command_add(&cs_set_mlock, *cs_set_cmdtree);
 }
@@ -291,16 +298,60 @@ static void cs_cmd_set_mlock(sourceinfo_t *si, int parc, char *parv[])
 
 	if (*modebuf)
 	{
-		command_success_nodata(si, _("The MLOCK for \2%s\2 has been set to \2%s\2."), mc->name, modebuf);
+		command_success_nodata(si, _("The MLOCK for \2%s\2 has been set to: \2%s\2"), mc->name, modebuf);
 		logcommand(si, CMDLOG_SET, "SET:MLOCK: \2%s\2 to \2%s\2", mc->name, modebuf);
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Mode Lock changed to: %s", modebuf);
+
+			add_history_entry(si, mc, desc);
+		}
 	}
 	else
 	{
 		command_success_nodata(si, _("The MLOCK for \2%s\2 has been removed."), mc->name);
 		logcommand(si, CMDLOG_SET, "SET:MLOCK:NONE: \2%s\2", mc->name);
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Mode Lock disabled.", modebuf);
+
+			add_history_entry(si, mc, desc);
+		}
 	}
 	if (changed & ircd->oper_only_modes)
+	{
 		logcommand(si, CMDLOG_SET, _("SET:MLOCK: \2%s\2 to \2%s\2 by \2%s\2"), mc->name, *modebuf != '\0' ? modebuf : "+", get_oper_name(si));
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Mode Lock changed to: %s", modebuf);
+
+			add_history_entry(si, mc, desc);
+		}
+	}
 
 	check_modes(mc, true);
 	if (mc->chan != NULL)

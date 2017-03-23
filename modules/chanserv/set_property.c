@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2006-2010 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the CService SET PROPERTY command.
@@ -13,8 +15,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/set_property", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_set_property(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -25,6 +29,9 @@ mowgli_patricia_t **cs_set_cmdtree;
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_set_cmdtree, "chanserv/set_core", "cs_set_cmdtree");
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
 
 	command_add(&cs_set_property, *cs_set_cmdtree);
 }
@@ -77,13 +84,28 @@ static void cs_cmd_set_property(sourceinfo_t *si, int parc, char *parv[])
 
 		if (!md)
 		{
-			command_fail(si, fault_nochange, _("Metadata entry \2%s\2 was not set."), property);
+			command_fail(si, fault_nochange, _("Metadata entry \2%s\2 was not set on channel: \25s\2"), property, mc->name);
 			return;
 		}
 
 		metadata_delete(mc, property);
 		logcommand(si, CMDLOG_SET, "SET:PROPERTY: \2%s\2 \2%s\2 (deleted)", mc->name, property);
 		command_success_nodata(si, _("Metadata entry \2%s\2 has been deleted."), property);
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Metadata entry \2%s\2 deleted.", property);
+
+			add_history_entry(si, mc, desc);
+		}
+
 		return;
 	}
 
@@ -99,19 +121,33 @@ static void cs_cmd_set_property(sourceinfo_t *si, int parc, char *parv[])
 	if (count >= me.mdlimit)
 	{
 		command_fail(si, fault_toomany, _("Cannot add \2%s\2 to \2%s\2 metadata table, it is full."),
-						property, parv[0]);
+						property, mc->name);
 		return;
 	}
 
 	if (strlen(property) > 32 || strlen(value) > 300 || has_ctrl_chars(property))
 	{
-		command_fail(si, fault_badparams, _("Parameters are too long. Aborting."));
+		command_fail(si, fault_badparams, _("Parameters are too long.  Aborting."));
 		return;
 	}
 
 	metadata_add(mc, property, value);
 	logcommand(si, CMDLOG_SET, "SET:PROPERTY: \2%s\2 on \2%s\2 to \2%s\2", property, mc->name, value);
-	command_success_nodata(si, _("Metadata entry \2%s\2 added."), property);
+	command_success_nodata(si, _("Metadata entry \2%s\2 set on channel: \2%s\2 (Value: %s)"), property, mc->name, value);
+
+	if (add_history_entry == NULL)
+	{
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	}
+
+	if (add_history_entry != NULL)
+	{
+		char desc[350];
+
+		snprintf(desc, sizeof desc, "Metadata entry \2%s\2 set (Value: %s).", property, value);
+
+		add_history_entry(si, mc, desc);
+	}
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

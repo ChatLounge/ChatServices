@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2006-2010 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the CService SET PREFIX command.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/set_prefix", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_set_prefix_config_ready(void *unused);
 static void cs_cmd_set_prefix(sourceinfo_t *si, int parc, char *parv[]);
@@ -25,6 +29,9 @@ mowgli_patricia_t **cs_set_cmdtree;
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_set_cmdtree, "chanserv/set_core", "cs_set_cmdtree");
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
 
 	command_add(&cs_set_prefix, *cs_set_cmdtree);
 
@@ -83,7 +90,22 @@ static void cs_cmd_set_prefix(sourceinfo_t *si, int parc, char *parv[])
 	{
 		metadata_delete(mc, "private:prefix");
 		logcommand(si, CMDLOG_SET, "SET:PREFIX: \2%s\2 reset", mc->name);
-		command_success_nodata(si, _("The fantasy prefix for channel \2%s\2 has been reset."), parv[0]);
+		command_success_nodata(si, _("The fantasy prefix for channel \2%s\2 has been reset."), mc->name);
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Prefix reset to default.");
+
+			add_history_entry(si, mc, desc);
+		}
+
 		return;
 	}
 
@@ -97,8 +119,22 @@ static void cs_cmd_set_prefix(sourceinfo_t *si, int parc, char *parv[])
 
 	metadata_add(mc, "private:prefix", prefix);
 	logcommand(si, CMDLOG_SET, "SET:PREFIX: \2%s\2 \2%s\2", mc->name, prefix);
-	command_success_nodata(si, _("The fantasy prefix for channel \2%s\2 has been set to \2%s\2."),
+	command_success_nodata(si, _("The fantasy prefix for channel \2%s\2 has been set to: \2%s\2"),
                                parv[0], prefix);
+
+	if (add_history_entry == NULL)
+	{
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	}
+
+	if (add_history_entry != NULL)
+	{
+		char desc[350];
+
+		snprintf(desc, sizeof desc, "Prefix changed to: %s", prefix);
+
+		add_history_entry(si, mc, desc);
+	}
 
 }
 
