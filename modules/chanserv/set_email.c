@@ -65,6 +65,21 @@ static void cs_cmd_set_email(sourceinfo_t *si, int parc, char *parv[])
 			metadata_delete(mc, "email");
 			command_success_nodata(si, _("The e-mail address for channel \2%s\2 was deleted."), mc->name);
 			logcommand(si, CMDLOG_SET, "SET:EMAIL:NONE: \2%s\2", mc->name);
+
+			if (add_history_entry == NULL)
+			{
+				add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+			}
+
+			if (add_history_entry != NULL)
+			{
+				char desc[350];
+
+				snprintf(desc, sizeof desc, "E-mail setting removed.");
+
+				add_history_entry(si, mc, desc);
+			}
+
 			return;
 		}
 
