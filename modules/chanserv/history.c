@@ -111,7 +111,7 @@ static void cs_cmd_history(sourceinfo_t *si, int parc, char *parv[])
 			mowgli_strlcat(desc, token, sizeof desc);
 		}
 
-		command_success_nodata(si, _("%u. %-50s (%s ago by %s)"), i, desc, time_ago(atoi(timestamp)), author);
+		command_success_nodata(si, _("%3u. %-50s (%s ago by %s)"), i, desc, time_ago(atoi(timestamp)), author);
 	}
 
 	command_success_nodata(si, _("===================================="));
@@ -121,7 +121,7 @@ static void cs_cmd_history(sourceinfo_t *si, int parc, char *parv[])
 void add_history_entry(sourceinfo_t *si, mychan_t *mc, const char *desc)
 {
 	metadata_t *md;
-	char mdname2[19];
+	char mdname2[20];
 	char mdvalue[400];
 	unsigned int i = 1;
 	unsigned int last = 0; /* Store the number of the last (highest) history entry. */
@@ -162,7 +162,8 @@ void add_history_entry(sourceinfo_t *si, mychan_t *mc, const char *desc)
 
 			snprintf(mdname3, 20, "private:history-%03u", i - 1);
 
-			metadata_add(mc, mdname3, md->value);
+			if (md != NULL)
+				metadata_add(mc, mdname3, md->value);
 		}
 	}
 
