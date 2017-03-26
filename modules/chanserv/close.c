@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2006 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Closing for channels.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/close", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_close(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -134,9 +138,23 @@ static void cs_cmd_close(sourceinfo_t *si, int parc, char *parv[])
 			}
 		}
 
-		wallops("%s closed the channel \2%s\2 (%s).", get_oper_name(si), target, reason);
-		logcommand(si, CMDLOG_ADMIN, "CLOSE:ON: \2%s\2 (reason: \2%s\2)", target, reason);
-		command_success_nodata(si, _("\2%s\2 is now closed."), target);
+		wallops("%s closed the channel: \2%s\2 (%s)", get_oper_name(si), mc->name, reason);
+		logcommand(si, CMDLOG_ADMIN, "CLOSE:ON: \2%s\2 (reason: \2%s\2)", mc->name, reason);
+		command_success_nodata(si, _("\2%s\2 is now closed."), mc->name);
+
+		if (module_locate_symbol("chanserv/history", "add_history_entry"))
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Channel has been temporarily closed.");
+
+			add_history_entry(si, mc, desc);
+		}
 	}
 	else if (!strcasecmp(action, "OFF"))
 	{
@@ -162,9 +180,23 @@ static void cs_cmd_close(sourceinfo_t *si, int parc, char *parv[])
 			check_modes(mc, true);
 		}
 
-		wallops("%s reopened the channel \2%s\2.", get_oper_name(si), target);
-		logcommand(si, CMDLOG_ADMIN, "CLOSE:OFF: \2%s\2", target);
-		command_success_nodata(si, _("\2%s\2 has been reopened."), target);
+		wallops("%s reopened the channel: \2%s\2", get_oper_name(si), mc->name);
+		logcommand(si, CMDLOG_ADMIN, "CLOSE:OFF: \2%s\2", mc->name);
+		command_success_nodata(si, _("\2%s\2 has been reopened."), mc->name);
+
+		if (module_locate_symbol("chanserv/history", "add_history_entry"))
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Channel has been reopened.");
+
+			add_history_entry(si, mc, desc);
+		}
 	}
 	else
 	{

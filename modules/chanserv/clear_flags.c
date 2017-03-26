@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2010 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService CLEAR FLAGS functions.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/clear_flags", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_clear_flags(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -25,7 +29,7 @@ void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_clear_cmds, "chanserv/clear", "cs_clear_cmds");
 
-        command_add(&cs_clear_flags, *cs_clear_cmds);
+	command_add(&cs_clear_flags, *cs_clear_cmds);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -110,10 +114,24 @@ static void cs_cmd_clear_flags(sourceinfo_t *si, int parc, char *parv[])
 	}
 
 	logcommand(si, CMDLOG_DO, "CLEAR:FLAGS: \2%s\2", mc->name);
-	command_success_nodata(si, _("Cleared flags in \2%s\2."), name);
+	command_success_nodata(si, _("Cleared flags in: \2%s\2"), mc->name);
 	if (changes > 0)
 		verbose(mc, "\2%s\2 removed all %d non-founder access entries.",
 				get_source_name(si), changes);
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+	{
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	}
+
+	if (add_history_entry != NULL)
+	{
+		char desc[350];
+
+		snprintf(desc, sizeof desc, "Cleared all flags (removed %d access list entries).", changes);
+
+		add_history_entry(si, mc, desc);
+	}
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

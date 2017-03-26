@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Controls noexpire options for channels.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/hold", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_hold(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -68,6 +72,20 @@ static void cs_cmd_hold(sourceinfo_t *si, int parc, char *parv[])
 		wallops("%s set the HOLD option for the channel \2%s\2.", get_oper_name(si), target);
 		logcommand(si, CMDLOG_ADMIN, "HOLD:ON: \2%s\2", mc->name);
 		command_success_nodata(si, _("\2%s\2 is now held."), target);
+
+		if (module_locate_symbol("chanserv/history", "add_history_entry"))
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Channel has been held and will never expire.");
+
+			add_history_entry(si, mc, desc);
+		}
 	}
 	else if (!strcasecmp(action, "OFF"))
 	{
@@ -82,6 +100,20 @@ static void cs_cmd_hold(sourceinfo_t *si, int parc, char *parv[])
 		wallops("%s removed the HOLD option on the channel \2%s\2.", get_oper_name(si), target);
 		logcommand(si, CMDLOG_ADMIN, "HOLD:OFF: \2%s\2", mc->name);
 		command_success_nodata(si, _("\2%s\2 is no longer held."), target);
+
+		if (module_locate_symbol("chanserv/history", "add_history_entry"))
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Channel is no longer held and is subject to normal channel expiration rules.");
+
+			add_history_entry(si, mc, desc);
+		}
 	}
 	else
 	{

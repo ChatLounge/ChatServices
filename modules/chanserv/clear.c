@@ -1,8 +1,10 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
- * This file contains code for the CService KICK functions.
+ * This file contains code for the CService CLEAR functions.
  *
  */
 
@@ -12,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/clear", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void cs_cmd_clear(sourceinfo_t *si, int parc, char *parv[]);

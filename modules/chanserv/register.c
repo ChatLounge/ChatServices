@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService REGISTER function.
@@ -13,8 +15,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/register", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 unsigned int ratelimit_count = 0;
 time_t ratelimit_firsttime = 0;
@@ -186,6 +190,21 @@ static void cs_cmd_register(sourceinfo_t *si, int parc, char *parv[])
 		modestack_mode_param(si->service->nick, mc->chan, MTYPE_ADD,
 				ircd->protect_mchar[1], CLIENT_NAME(si->su));
 		cu->modes |= CSTATUS_PROTECT;
+	}
+
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+	{
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	}
+
+	if (add_history_entry != NULL)
+	{
+		char desc[350];
+
+		snprintf(desc, sizeof desc, "Channel registered.");
+
+		add_history_entry(si, mc, desc);
 	}
 }
 

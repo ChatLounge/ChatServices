@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2012 William Pitcock <nenolod@dereferenced.org>.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *     <admin@chatlounge.net>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -25,8 +27,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/moderate", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_activate(sourceinfo_t *si, int parc, char *parv[]);
 static void cs_cmd_reject(sourceinfo_t *si, int parc, char *parv[]);
@@ -268,32 +272,46 @@ static void cs_cmd_activate(sourceinfo_t *si, int parc, char *parv[])
 		baked_si.smu = mu;
 		baked_si.service = si->service;
 
-	        hdata.si = &baked_si;
-	        hdata.mc = mc;
-        	hook_call_channel_register(&hdata);
+		hdata.si = &baked_si;
+		hdata.mc = mc;
+		hook_call_channel_register(&hdata);
 
 		if (mc->chan != NULL)
 		{
-		        /* Allow the hook to override this. */
-		        fl = chanacs_source_flags(mc, &baked_si);
-		        cu = chanuser_find(mc->chan, u);
-		        if (cu == NULL)
-	        	        ;
-	        	else if (ircd->uses_owner && fl & CA_USEOWNER && fl & CA_AUTOOP &&
-		                        !(cu->modes & CSTATUS_OWNER))
-        		{
-		                modestack_mode_param(si->service->nick, mc->chan, MTYPE_ADD,
-        	        	                ircd->owner_mchar[1], CLIENT_NAME(si->su));
-        		        cu->modes |= CSTATUS_OWNER;
-		        }
-        		else if (ircd->uses_protect && fl & CA_USEPROTECT && fl & CA_AUTOOP &&
-	        	                !(cu->modes & CSTATUS_PROTECT))
-		        {
-		                modestack_mode_param(si->service->nick, mc->chan, MTYPE_ADD,
-                		                ircd->protect_mchar[1], CLIENT_NAME(si->su));
-        	        	cu->modes |= CSTATUS_PROTECT;
-		        }
+			/* Allow the hook to override this. */
+			fl = chanacs_source_flags(mc, &baked_si);
+			cu = chanuser_find(mc->chan, u);
+			if (cu == NULL)
+				;
+			else if (ircd->uses_owner && fl & CA_USEOWNER && fl & CA_AUTOOP &&
+					!(cu->modes & CSTATUS_OWNER))
+			{
+				modestack_mode_param(si->service->nick, mc->chan, MTYPE_ADD,
+						ircd->owner_mchar[1], CLIENT_NAME(si->su));
+				cu->modes |= CSTATUS_OWNER;
+			}
+			else if (ircd->uses_protect && fl & CA_USEPROTECT && fl & CA_AUTOOP &&
+					!(cu->modes & CSTATUS_PROTECT))
+			{
+				modestack_mode_param(si->service->nick, mc->chan, MTYPE_ADD,
+						ircd->protect_mchar[1], CLIENT_NAME(si->su));
+				cu->modes |= CSTATUS_PROTECT;
+			}
 		}
+	}
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+	{
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	}
+
+	if (add_history_entry != NULL)
+	{
+		char desc[350];
+
+		snprintf(desc, sizeof desc, "Channel registration has been approved.");
+
+		add_history_entry(si, mc, desc);
 	}
 
 	csreq_destroy(cs);

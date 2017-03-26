@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService RECOVER functions.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/recover", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_recover(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -199,6 +203,21 @@ static void cs_cmd_recover(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("Recover complete for \2%s\2, ban exception \2%s\2 added."), mc->chan->name, hostbuf2);
 	else
 		command_success_nodata(si, _("Recover complete for \2%s\2."), mc->chan->name);
+
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+	{
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	}
+
+	if (add_history_entry != NULL)
+	{
+		char desc[350];
+
+		snprintf(desc, sizeof desc, "Channel has been recovered.");
+
+		add_history_entry(si, mc, desc);
+	}
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2015-2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2015-2017 ChatLounge IRC Network Development Team
  * Copyright (c) 2005 William Pitcock, et al.
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService CLEAR EXCEPT function.
@@ -16,6 +17,8 @@ DECLARE_MODULE_V1
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_clear_invex(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -92,5 +95,19 @@ static void cs_cmd_clear_invex(sourceinfo_t *si, int parc, char *parv[])
 			mc->name);
 
 	command_success_nodata(si, _("Cleared channel invite exceptions on \2%s\2 (%d removed)."),
-			parv[0], hits);
+			mc->name, hits);
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+	{
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	}
+
+	if (add_history_entry != NULL)
+	{
+		char desc[350];
+
+		snprintf(desc, sizeof desc, "Cleared all invite exceptions (removed %d).", hits);
+
+		add_history_entry(si, mc, desc);
+	}
 }

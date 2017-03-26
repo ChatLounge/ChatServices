@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the ChanServ CLEAR USERS function.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/clear_users", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_clear_users(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -133,7 +137,21 @@ static void cs_cmd_clear_users(sourceinfo_t *si, int parc, char *parv[])
 
 	logcommand(si, CMDLOG_DO, "CLEAR:USERS: \2%s\2", mc->name);
 
-	command_success_nodata(si, _("Cleared users from \2%s\2."), channel);
+	command_success_nodata(si, _("Cleared users from: \2%s\2"), mc->name);
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+	{
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	}
+
+	if (add_history_entry != NULL)
+	{
+		char desc[350];
+
+		snprintf(desc, sizeof desc, "Cleared all users (masskick).");
+
+		add_history_entry(si, mc, desc);
+	}
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2010 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService CLONE functions.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"chanserv/clone", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 
 static void cs_cmd_clone(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -138,7 +142,26 @@ static void cs_cmd_clone(sourceinfo_t *si, int parc, char *parv[])
 
 	/* I feel like this should log at a higher level... */
 	logcommand(si, CMDLOG_DO, "CLONE: \2%s\2 to \2%s\2", mc->name, mc2->name);
-	command_success_nodata(si, _("Cloned \2%s\2 to \2%s\2."), source, target);
+	command_success_nodata(si, _("Cloned \2%s\2 to: \2%s\2"), source, target);
+
+	if (module_locate_symbol("chanserv/history", "add_history_entry"))
+	{
+		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	}
+
+	if (add_history_entry != NULL)
+	{
+		char desc[350];
+		char desc2[350];
+
+		snprintf(desc, sizeof desc, "Cloned to channel: %s", mc2->name);
+
+		add_history_entry(si, mc, desc);
+
+		snprintf(desc2, sizeof desc2, "Cloned from channel: %s", mc->name);
+
+		add_history_entry(si, mc2, desc2);
+	}
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
