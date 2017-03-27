@@ -29,6 +29,8 @@ DECLARE_MODULE_V1
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
+void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *settingname, const char *setting) = NULL;
 
 static int antiflood_msg_time = 60;
 static int antiflood_msg_count = 10;
@@ -446,6 +448,8 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 			add_history_entry(si, mc, desc);
 		}
 
+		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "OFF");
+
 		return;
 	}
 	else if (!strcasecmp(parv[1], "ON"))
@@ -475,6 +479,8 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 			add_history_entry(si, mc, desc);
 		}
 
+		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "Default");
+
 		return;
 	}
 	else if (!strcasecmp(parv[1], "QUIET"))
@@ -499,6 +505,8 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 			add_history_entry(si, mc, desc);
 		}
 
+		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "QUIET");
+
 		return;
 	}
 	else if (!strcasecmp(parv[1], "KICKBAN"))
@@ -522,6 +530,8 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 
 			add_history_entry(si, mc, desc);
 		}
+
+		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "KICKBAN");
 
 		return;
 	}
@@ -548,6 +558,8 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 
 				add_history_entry(si, mc, desc);
 			}
+
+			notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "AKILL");
 
 			return;
 		}
@@ -598,6 +610,9 @@ _modinit(module_t *m)
 		if (place_quietmask == NULL)
 			antiflood_enforce_method = ANTIFLOOD_ENFORCE_KICKBAN;
 	}
+
+	if (module_request("chanserv/main"))
+		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
 
 	hook_add_event("channel_message");
 	hook_add_channel_message(on_channel_message);

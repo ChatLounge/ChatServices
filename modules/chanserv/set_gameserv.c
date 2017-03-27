@@ -19,6 +19,8 @@ DECLARE_MODULE_V1
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
+void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *settingname, const char *setting) = NULL;
 
 static void cs_cmd_set_gameserv(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -32,6 +34,9 @@ void _modinit(module_t *m)
 
 	if (module_locate_symbol("chanserv/history", "add_history_entry"))
 		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+
+	if (module_request("chanserv/main"))
+		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
 
 	command_add(&cs_set_gameserv, *cs_set_cmdtree);
 }
@@ -112,6 +117,12 @@ static void cs_cmd_set_gameserv(sourceinfo_t *si, int parc, char *parv[])
 			add_history_entry(si, mc, desc);
 		}
 
+		notify_channel_set_change(si, si->smu, mc, "GAMESERV",
+			!strcasecmp("OFF", val) ? "Disabled" :
+			!strcasecmp("OP", val) ? "Channel Operators Only" :
+			!strcasecmp("VOICE", val) ? "Voiced Users and Channel Operators" :
+			"Enabled");
+
 		return;
 	}
 	else
@@ -127,6 +138,22 @@ static void cs_cmd_set_gameserv(sourceinfo_t *si, int parc, char *parv[])
 		metadata_delete(mc, "gameserv");
 
 		command_success_nodata(si, _("\2%s\2 has been disabled for \2%s\2."), "GAMESERV", mc->name);
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "GAMESERV setting set to: %s", "OFF");
+
+			add_history_entry(si, mc, desc);
+		}
+
+		notify_channel_set_change(si, si->smu, mc, "GAMESERV", "Disabled");
 	}
 }
 

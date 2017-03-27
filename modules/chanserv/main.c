@@ -1051,7 +1051,58 @@ void notify_channel_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 		if (!(ca->level & CA_FOUNDER || ca->level & CA_RECOVER || ca->level & CA_SET))
 			continue;
 
-		if (user(ca->entity)->flags & MU_NOTIFYACL)
+		/* Send the notice to everyone but the source. */
+		if (si->smu != user(ca->entity) && user(ca->entity)->flags & MU_NOTIFYACL)
+			myuser_notice(chansvs.nick, user(ca->entity), text);
+
+		if (!(user(ca->entity)->flags & MU_NOMEMO) && user(ca->entity)->flags & MU_NOTIFYMEMO && user(ca->entity)->flags & MU_NOTIFYACL &&
+			(send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) != NULL)
+			send_user_memo(si, user(ca->entity), text2, false, MEMO_CHANNEL, user(ca->entity)->flags & MU_EMAILNOTIFY);
+	}
+}
+
+/* notify_channel_set_change: Notifes the target channel management about
+ *     the new settings in a channel in the form of a memo (if possible).
+ *
+ * Inputs: myuser_t *smu - Source user
+ *         myuser_t *tmu - Target user
+ *         mychan_t *mc - Channel where the change is taking place.
+ *         const char *settingname - Name of the setting changed.
+ *         const char *setting - Actual setting.. usually "ON" or "OFF" but some settings have other options.
+ * Outputs: None
+ * Side Effects: Send a notice and/or memo to the target user, if possible.
+ */
+void notify_channel_set_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *settingname, const char *setting)
+{
+	char text[256], text2[300];
+	chanacs_t *ca;
+	mowgli_node_t *m;
+
+	snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on channel \2%s\2 to: \2%s\2",
+		entity(tmu)->name, settingname, mc->name, setting);
+
+	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", chansvs.nick, text);
+
+	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
+	{
+		ca = m->data;
+
+		/* Skip if the entity isn't a NickServ account.  ToDo: Make it work for group memos? */
+		if (!isuser(ca->entity))
+			continue;
+
+		/* Don't send a duplicate notification to the source user. */
+		//if (si->smu == tmu)
+			//continue;
+
+		/* Check for +F, +R, and/or +s.  If not, skip.
+		 * ToDo: Have this as default, have channel configuration setting? */
+		if (!(ca->level & CA_FOUNDER || ca->level & CA_RECOVER || ca->level & CA_SET))
+			continue;
+
+		/* Send the notice to everyone but the source. */
+		if (si->smu != user(ca->entity) && user(ca->entity)->flags & MU_NOTIFYACL)
 			myuser_notice(chansvs.nick, user(ca->entity), text);
 
 		if (!(user(ca->entity)->flags & MU_NOMEMO) && user(ca->entity)->flags & MU_NOTIFYMEMO && user(ca->entity)->flags & MU_NOTIFYACL &&

@@ -19,6 +19,8 @@ DECLARE_MODULE_V1
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
+void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *settingname, const char *setting) = NULL;
 
 static void cs_set_guard_config_ready(void *unused);
 
@@ -34,6 +36,9 @@ void _modinit(module_t *m)
 
 	if (module_locate_symbol("chanserv/history", "add_history_entry"))
 		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+
+	if (module_request("chanserv/main"))
+		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
 
 	command_add(&cs_set_guard, *cs_set_cmdtree);
 
@@ -115,6 +120,8 @@ static void cs_cmd_set_guard(sourceinfo_t *si, int parc, char *parv[])
 			add_history_entry(si, mc, desc);
 		}
 
+		notify_channel_set_change(si, si->smu, mc, "GUARD", "ON");
+
 		return;
 	}
 	else if (!strcasecmp("OFF", parv[1]))
@@ -147,6 +154,8 @@ static void cs_cmd_set_guard(sourceinfo_t *si, int parc, char *parv[])
 
 			add_history_entry(si, mc, desc);
 		}
+
+		notify_channel_set_change(si, si->smu, mc, "GUARD", "OFF");
 
 		return;
 	}

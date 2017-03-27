@@ -19,6 +19,8 @@ DECLARE_MODULE_V1
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
+void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *settingname, const char *setting) = NULL;
 
 static void cs_cmd_set_property(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -32,6 +34,9 @@ void _modinit(module_t *m)
 
 	if (module_locate_symbol("chanserv/history", "add_history_entry"))
 		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+
+	if (module_request("chanserv/main"))
+		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
 
 	command_add(&cs_set_property, *cs_set_cmdtree);
 }
@@ -106,6 +111,12 @@ static void cs_cmd_set_property(sourceinfo_t *si, int parc, char *parv[])
 			add_history_entry(si, mc, desc);
 		}
 
+		char metadatadesc[100];
+
+		snprintf(metadatadesc, sizeof metadatadesc, "metadata entry %s", property);
+
+		notify_channel_set_change(si, si->smu, mc, metadatadesc, "Deleted");
+
 		return;
 	}
 
@@ -148,6 +159,12 @@ static void cs_cmd_set_property(sourceinfo_t *si, int parc, char *parv[])
 
 		add_history_entry(si, mc, desc);
 	}
+
+	char metadatadesc[100];
+
+	snprintf(metadatadesc, sizeof metadatadesc, "metadata entry %s", property);
+
+	notify_channel_set_change(si, si->smu, mc, metadatadesc, value);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

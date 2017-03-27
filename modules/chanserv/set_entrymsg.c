@@ -19,6 +19,8 @@ DECLARE_MODULE_V1
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
+void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *settingname, const char *setting) = NULL;
 
 static void cs_cmd_set_entrymsg(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -32,6 +34,9 @@ void _modinit(module_t *m)
 
 	if (module_locate_symbol("chanserv/history", "add_history_entry"))
 		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+
+	if (module_request("chanserv/main"))
+		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
 
 	command_add(&cs_set_entrymsg, *cs_set_cmdtree);
 }
@@ -71,6 +76,23 @@ static void cs_cmd_set_entrymsg(sourceinfo_t *si, int parc, char *parv[])
 		}
 
 		command_fail(si, fault_nochange, _("The entry message for \2%s\2 was not set."), parv[0]);
+
+		if (add_history_entry == NULL)
+		{
+			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+		}
+
+		if (add_history_entry != NULL)
+		{
+			char desc[350];
+
+			snprintf(desc, sizeof desc, "Entry message cleared/disabled.");
+
+			add_history_entry(si, mc, desc);
+		}
+
+		notify_channel_set_change(si, si->smu, mc, "ENTRYMSG", "Disabled");
+
 		return;
 	}
 
@@ -96,6 +118,8 @@ static void cs_cmd_set_entrymsg(sourceinfo_t *si, int parc, char *parv[])
 
 		add_history_entry(si, mc, desc);
 	}
+
+	notify_channel_set_change(si, si->smu, mc, "ENTRYMSG", parv[1]);
 
 }
 
