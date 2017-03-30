@@ -22,6 +22,7 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
+void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 bool *(*send_user_memo)(sourceinfo_t *si, myuser_t *target,
 	const char *memotext, bool verbose, unsigned int status, bool senduseremail) = NULL;
 
@@ -1075,14 +1076,21 @@ void notify_channel_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 void notify_channel_set_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *settingname, const char *setting)
 {
-	char text[256], text2[300];
+	char text[256], text1[256], text2[300];
 	chanacs_t *ca;
 	mowgli_node_t *m;
 
 	snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on channel \2%s\2 to: \2%s\2",
 		entity(tmu)->name, settingname, mc->name, setting);
 
+	snprintf(text1, sizeof text1, "\2%s\2 setting changed to: \2%s\2", settingname, setting);
+
 	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", chansvs.nick, text);
+
+	add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+	
+	if (add_history_entry != NULL)
+		add_history_entry(si, mc, text1);
 
 	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
 	{

@@ -18,7 +18,6 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
-void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *settingname, const char *setting) = NULL;
 
@@ -31,9 +30,6 @@ mowgli_patricia_t **cs_set_cmdtree;
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_set_cmdtree, "chanserv/set_core", "cs_set_cmdtree");
-
-	if (module_locate_symbol("chanserv/history", "add_history_entry"))
-		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
 
 	if (module_request("chanserv/main"))
 		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
@@ -74,20 +70,6 @@ static void cs_cmd_set_url(sourceinfo_t *si, int parc, char *parv[])
 			logcommand(si, CMDLOG_SET, "SET:URL:NONE: \2%s\2", mc->name);
 			command_success_nodata(si, _("The URL for \2%s\2 has been cleared."), mc->name);
 
-			if (add_history_entry == NULL)
-			{
-				add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-			}
-
-			if (add_history_entry != NULL)
-			{
-				char desc[350];
-
-				snprintf(desc, sizeof desc, "URL setting removed.");
-
-				add_history_entry(si, mc, desc);
-			}
-
 			notify_channel_set_change(si, si->smu, mc, "URL", "Cleared");
 
 			return;
@@ -102,20 +84,6 @@ static void cs_cmd_set_url(sourceinfo_t *si, int parc, char *parv[])
 
 	logcommand(si, CMDLOG_SET, "SET:URL: \2%s\2 \2%s\2", mc->name, url);
 	command_success_nodata(si, _("The URL of \2%s\2 has been set to: \2%s\2"), mc->name, url);
-
-	if (add_history_entry == NULL)
-	{
-		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-	}
-
-	if (add_history_entry != NULL)
-	{
-		char desc[350];
-
-		snprintf(desc, sizeof desc, "URL set to: %s", url);
-
-		add_history_entry(si, mc, desc);
-	}
 
 	notify_channel_set_change(si, si->smu, mc, "URL", url);
 }

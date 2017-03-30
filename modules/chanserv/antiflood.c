@@ -28,7 +28,6 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
-void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *settingname, const char *setting) = NULL;
 
@@ -434,20 +433,6 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_SET, "ANTIFLOOD:NONE: \2%s\2",  mc->name);
 		command_success_nodata(si, _("Flood protection turned off for \2%s\2."), mc->name);
 
-		if (module_locate_symbol("chanserv/history", "add_history_entry"))
-		{
-			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-		}
-
-		if (add_history_entry != NULL)
-		{
-			char desc[350];
-
-			snprintf(desc, sizeof desc, "Flood protection disabled.");
-
-			add_history_entry(si, mc, desc);
-		}
-
 		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "OFF");
 
 		return;
@@ -465,20 +450,6 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_SET, "ANTIFLOOD: %s (%s)",  mc->name, "DEFAULT");
 		command_success_nodata(si, _("Flood protection turned on for \2%s\2 with default settings."), mc->name);
 
-		if (module_locate_symbol("chanserv/history", "add_history_entry"))
-		{
-			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-		}
-
-		if (add_history_entry != NULL)
-		{
-			char desc[350];
-
-			snprintf(desc, sizeof desc, "Flood protection enabled (default).");
-
-			add_history_entry(si, mc, desc);
-		}
-
 		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "Default");
 
 		return;
@@ -491,20 +462,6 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_SET, "ANTIFLOOD: %s (%s)",  mc->name, "QUIET");
 		command_success_nodata(si, _("Flood protection turned on for \2%s\2 with \2%s\2 action."), mc->name, "QUIET");
 
-		if (module_locate_symbol("chanserv/history", "add_history_entry"))
-		{
-			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-		}
-
-		if (add_history_entry != NULL)
-		{
-			char desc[350];
-
-			snprintf(desc, sizeof desc, "Flood protection enabled (quiet).");
-
-			add_history_entry(si, mc, desc);
-		}
-
 		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "QUIET");
 
 		return;
@@ -516,20 +473,6 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 
 		logcommand(si, CMDLOG_SET, "ANTIFLOOD: %s (%s)",  mc->name, "KICKBAN");
 		command_success_nodata(si, _("Flood protection turned on for \2%s\2 with \2%s\2 action."), mc->name, "KICKBAN");
-
-		if (module_locate_symbol("chanserv/history", "add_history_entry"))
-		{
-			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-		}
-
-		if (add_history_entry != NULL)
-		{
-			char desc[350];
-
-			snprintf(desc, sizeof desc, "Flood protection enabled (kickban).");
-
-			add_history_entry(si, mc, desc);
-		}
 
 		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "KICKBAN");
 
@@ -544,20 +487,6 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 
 			logcommand(si, CMDLOG_SET, "ANTIFLOOD: %s (%s)",  mc->name, "AKILL");
 			command_success_nodata(si, _("Flood protection turned on for \2%s\2 with \2%s\2 action."), mc->name, "AKILL");
-
-			if (module_locate_symbol("chanserv/history", "add_history_entry"))
-			{
-				add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-			}
-
-			if (add_history_entry != NULL)
-			{
-				char desc[350];
-
-				snprintf(desc, sizeof desc, "Flood protection enabled (akill).");
-
-				add_history_entry(si, mc, desc);
-			}
 
 			notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "AKILL");
 

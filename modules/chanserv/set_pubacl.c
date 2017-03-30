@@ -17,7 +17,6 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
-void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
 void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *settingname, const char *setting) = NULL;
 
@@ -30,9 +29,6 @@ mowgli_patricia_t **cs_set_cmdtree;
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_set_cmdtree, "chanserv/set_core", "cs_set_cmdtree");
-
-	if (module_locate_symbol("chanserv/history", "add_history_entry"))
-		add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
 
 	if (module_request("chanserv/main"))
 		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
@@ -81,20 +77,6 @@ static void cs_cmd_set_pubacl(sourceinfo_t *si, int parc, char *parv[])
 
 		command_success_nodata(si, _("The \2%s\2 flag has been set for channel: \2%s\2"), "PUBACL", mc->name);
 
-		if (add_history_entry == NULL)
-		{
-			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-		}
-
-		if (add_history_entry != NULL)
-		{
-			char desc[350];
-
-			snprintf(desc, sizeof desc, "PUBACL setting enabled.");
-
-			add_history_entry(si, mc, desc);
-		}
-
 		notify_channel_set_change(si, si->smu, mc, "PUBACL", "ON");
 
 		return;
@@ -112,20 +94,6 @@ static void cs_cmd_set_pubacl(sourceinfo_t *si, int parc, char *parv[])
 		mc->flags &= ~MC_PUBACL;
 
 		command_success_nodata(si, _("The \2%s\2 flag has been removed for channel: \2%s\2"), "PUBACL", mc->name);
-
-		if (add_history_entry == NULL)
-		{
-			add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-		}
-
-		if (add_history_entry != NULL)
-		{
-			char desc[350];
-
-			snprintf(desc, sizeof desc, "PUBACL setting disabled.");
-
-			add_history_entry(si, mc, desc);
-		}
 
 		notify_channel_set_change(si, si->smu, mc, "PUBACL", "OFF");
 
