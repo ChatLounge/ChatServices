@@ -228,6 +228,7 @@ static void ns_cmd_register(sourceinfo_t *si, int parc, char *parv[])
 	}
 
 	command_success_nodata(si, _("\2%s\2 is now registered to \2%s\2, with the password \2%s\2."), entity(mu)->name, mu->email, pass);
+	command_success_nodata(si, _("By registering an account, you are agreeing your e-mail address may be used for password recovery purposes or optionally, memo notifications.  Network staff may also use your e-mail address to communicate with you for official purposes.  If you don't agree to this, you may drop your account by typing \2/msg %s DROP\2 and following the instructions."), nicksvs.nick);
 	command_success_nodata(si, _("The default settings for new accounts are: %s"),
 		get_default_uflags());
 	command_success_nodata(si, _("If you would like to change these, or for more information on what they mean, please type: \2/msg %s HELP SET\2"), nicksvs.nick);
