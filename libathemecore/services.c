@@ -419,7 +419,14 @@ void handle_burstlogin(user_t *u, const char *login, time_t ts)
 			slog(LG_DEBUG, "handle_burstlogin(): got nonexistent login %s for user %s", login, u->nick);
 			if (authservice_loaded)
 			{
-				notice(nicksvs.nick ? nicksvs.nick : me.name, u->nick, _("Account %s dropped, forcing logout"), login);
+				if (config_options.helpchan && config_options.helpurl)
+					notice(nicksvs.nick ? nicksvs.nick : me.name, u->nick, _("Account %s doesn't exist in the database, forcing logout.  If you believe this is in error, please join the help channel %s or consult the help web page at: %s"), config_options.helpchan, config_options.helpurl);
+				else if (config_options.helpchan && !config_options.helpurl)
+					notice(nicksvs.nick ? nicksvs.nick : me.name, u->nick, _("Account %s doesn't exist in the database, forcing logout.  If you believe this is in error, please join the help channel: %s"), config_options.helpchan);
+				else if (!config_options.helpchan && config_options.helpurl)
+					notice(nicksvs.nick ? nicksvs.nick : me.name, u->nick, _("Account %s doesn't exist in the database, forcing logout.  If you believe this is in error, please consult the help web page at: %s"), config_options.helpurl);
+				else
+					notice(nicksvs.nick ? nicksvs.nick : me.name, u->nick, _("Account %s doesn't exist in the database, forcing logout."), login);
 				ircd_on_logout(u, login);
 			}
 			return;
