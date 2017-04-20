@@ -176,3 +176,65 @@ void add_history_entry(sourceinfo_t *si, mychan_t *mc, const char *desc)
 
 	return;
 };
+
+/* add_history_entry_misc: Similar to add_history_entry but the source is ChanServ itself.
+ */
+
+void add_history_entry_misc(mychan_t *mc, const char *desc)
+{
+	metadata_t *md;
+	char mdname2[20];
+	char mdvalue[400];
+	unsigned int i = 1;
+	unsigned int last = 0; /* Store the number of the last (highest) history entry. */
+
+	/* Look for the highest count of history entries.
+	 * If necessary, overwrite the oldest one to make room for the newest one.
+	 */
+	for (i = 1; i < CHANNEL_HISTORY_LIMIT; i++)
+	{
+		char mdname[20];
+
+		snprintf(mdname, 20, "private:history-%03d", i);
+
+		md = metadata_find(mc, mdname);
+
+		if (md == NULL)
+		{
+			/* If no history exists, neither will the first entry.  A "0th" entry is not used. */
+			if (i == 1 && last == 0)
+				break;
+
+			break;
+		}
+
+		last++;
+	}
+
+	/* Too many entries, will need to overwrite the first one, and move every prior entry up by one. */
+	if (last == CHANNEL_HISTORY_LIMIT - 1)
+	{
+		for (i = 2; i < CHANNEL_HISTORY_LIMIT + 1; i++)
+		{
+			char mdname[20], mdname3[20];
+
+			snprintf(mdname, 20, "private:history-%03u", i);
+
+			md = metadata_find(mc, mdname);
+
+			snprintf(mdname3, 20, "private:history-%03u", i - 1);
+
+			if (md != NULL)
+				metadata_add(mc, mdname3, md->value);
+		}
+	}
+
+	/* Actually add the entry. */
+	snprintf(mdname2, 20, "private:history-%03u", last + 1);
+
+	snprintf(mdvalue, 400, "%u %s %s", CURRTIME, chansvs.nick, desc);
+
+	metadata_add(mc, mdname2, mdvalue);
+
+	return;
+};

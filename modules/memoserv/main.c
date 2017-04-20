@@ -241,6 +241,80 @@ bool send_user_memo(sourceinfo_t *si, myuser_t *target,
 	return true;
 }
 
+/* send_user_memo_misc:
+ *
+ *     Sends the target user a memo.  This function does no permissions
+ * or rate limit checking.  Similar to send_user_memo, but comes from MemoServ
+ * itself.  No ignores list check as it comes from MemoServ itself.  No "verbose"
+ * option as it comes from MemoServ itself.
+ *
+ * Inputs:
+ *   myuser_t *target - Target User
+ *   const char *memotext - Memo contents.
+ *   unsigned int status - Memo type.  Use 0 (for regular) or MEMO_CHANNEL - See account.h .
+ *   bool senduseremail - Send an e-mail if the user has that enabled.
+ *       Normally you want to enable this.
+ *
+ * Output:
+ *   Returns true if successful or if an ignore is triggered.  Otherwise, false.
+ *
+ * Side Effects:
+ *   Sends a memo to the target user, if possible.
+ */
+bool send_user_memo_misc(myuser_t *target,
+	const char *memotext, unsigned int status, bool senduseremail)
+{
+	mymemo_t *memo;
+	mowgli_node_t *n, *o;
+	user_t *tu;
+
+	/* In case the function gets called with a NULL target or no memo text. */
+	if (target == NULL)
+		return false;
+
+	if (memotext == NULL)
+		return false;
+
+	if (strlen(memotext) >= MEMOLEN)
+		return false;
+
+	if (*memotext == '\001')
+		return false;
+
+	/* Does the recipient user permit memos? */
+	if(target->flags & MU_NOMEMO)
+		return false;
+
+	if (target->memos.count >= maxmemos)
+		return false;
+
+	/* Malloc and populate struct */
+	memo = smalloc(sizeof(mymemo_t));
+	memo->sent = CURRTIME;
+	memo->status = status;
+	mowgli_strlcpy(memo->sender, memosvs->me->nick, NICKLEN);
+	mowgli_strlcpy(memo->text, memotext, MEMOLEN);
+	
+	/* Create a linked list node and add to memos */
+	n = mowgli_node_create();
+	mowgli_node_add(memo, n, &target->memos);
+	target->memoct_new++;
+
+	/* Should we email this? */
+	if (senduseremail && target->flags & MU_EMAILMEMOS)
+		sendemail(memosvs->me, target, EMAIL_MEMO, target->email, memo->text);
+
+	/* Is the user online? If so, tell them about the new memo. */
+	myuser_notice(memosvs->nick, target,
+		"You have a new memo from %s (%zu).", memosvs->nick,
+		MOWGLI_LIST_LENGTH(&target->memos));
+	myuser_notice(memosvs->nick, target, _("To read it, type: /%s%s READ %zu"),
+		ircd->uses_rcommand ? "" : "msg ", memosvs->disp,
+		MOWGLI_LIST_LENGTH(&target->memos));
+
+	return true;
+}
+
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
  * vim:ts=8
  * vim:sw=8

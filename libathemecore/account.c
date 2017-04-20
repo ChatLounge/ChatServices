@@ -3,7 +3,7 @@
  * account.c: Account management
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -41,6 +41,8 @@ mowgli_heap_t *mycertfp_heap; /* HEAP_USER */
 mowgli_heap_t *myuser_name_heap;	/* HEAP_USER / 2 */
 mowgli_heap_t *mychan_heap;	/* HEAP_CHANNEL */
 mowgli_heap_t *chanacs_heap;	/* HEAP_CHANACS */
+
+void (*notify_channel_misc_change)(myuser_t *smu, myuser_t *tmu, mychan_t *mc) = NULL;
 
 /* Template iteration - Needed for get_template_name */
 typedef struct {
@@ -249,6 +251,13 @@ void myuser_delete(myuser_t *mu)
 
 			/* CA_FOUNDER | CA_FLAGS is the minimum required for full control; let chanserv take care of assigning the rest via founder_flags */
 			chanacs_change_simple(mc, entity(successor), NULL, CA_FOUNDER | CA_FLAGS, 0, NULL);
+
+			/* Call notify_channel_misc_change to notify channel management. */
+			notify_channel_misc_change = module_locate_symbol("chanserv/main", "notify_channel_misc_change");
+
+			if (notify_channel_misc_change != NULL)
+				notify_channel_misc_change(mu, successor, mc);
+
 			hook_call_channel_succession((
 					&(hook_channel_succession_req_t){
 						.mc = mc,

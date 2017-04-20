@@ -23,8 +23,11 @@ DECLARE_MODULE_V1
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
+void (*add_history_entry_misc)(mychan_t *mc, const char *desc) = NULL;
 bool *(*send_user_memo)(sourceinfo_t *si, myuser_t *target,
 	const char *memotext, bool verbose, unsigned int status, bool senduseremail) = NULL;
+bool *(*send_user_memo_misc)(myuser_t *target,
+	const char *memotext, unsigned int status, bool senduseremail) = NULL;
 
 static void cs_join(hook_channel_joinpart_t *hdata);
 static void cs_part(hook_channel_joinpart_t *hdata);
@@ -1064,6 +1067,9 @@ void notify_channel_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 
 /* notify_channel_set_change: Notifes the target channel management about
  *     the new settings in a channel in the form of a memo (if possible).
+ *     Additionally, if chanserv/history is loaded, add another history entry.
+ *     Additionally, send a private notice to every member of channel management
+ *     with +F, +R, and/or +s who is online and has NOTIFY_ACL enabled.
  *
  * Inputs: myuser_t *smu - Source user
  *         myuser_t *tmu - Target user
@@ -1088,7 +1094,7 @@ void notify_channel_set_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", chansvs.nick, text);
 
 	add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
-	
+
 	if (add_history_entry != NULL)
 		add_history_entry(si, mc, text1);
 
@@ -1116,6 +1122,67 @@ void notify_channel_set_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 		if (!(user(ca->entity)->flags & MU_NOMEMO) && user(ca->entity)->flags & MU_NOTIFYMEMO && user(ca->entity)->flags & MU_NOTIFYACL &&
 			(send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) != NULL)
 			send_user_memo(si, user(ca->entity), text2, false, MEMO_CHANNEL, user(ca->entity)->flags & MU_EMAILNOTIFY);
+	}
+}
+
+/* notify_channel_successor_change: Notifies the target channel management about
+ *     a channel succession event and send a memo to each member (if possible).
+ *     Additionally, if chanserv/history is loaded, add another history entry.
+ *     Additionally, send a private notice to every member of channel management
+ *     with +F, +R, and/or +s who is online and has NOTIFY_ACL enabled.
+ *
+ * Inputs: myuser_t *smu - Source user
+ *         myuser_t *tmu - Target user
+ *         mychan_t *mc - Channel where the change is taking place.
+ */
+
+void notify_channel_misc_change(myuser_t *smu, myuser_t *tmu, mychan_t *mc)
+{
+	char text[256], text1[256], text2[300];
+	chanacs_t *ca;
+	mowgli_node_t *m;
+
+	snprintf(text, sizeof text, "Succession - Old Founder: \2%s\2 New Founder: \2%s\2",
+		entity(smu)->name, entity(tmu)->name);
+
+	snprintf(text1, sizeof text1, "Channel succession of \2%s\2 - Old Founder: \2%s\2 New Founder: \2%s\2",
+		mc->name, entity(smu)->name, entity(tmu)->name);
+
+	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s",
+		chansvs.nick, text1);
+
+	add_history_entry_misc = module_locate_symbol("chanserv/history", "add_history_entry_misc");
+
+	if (add_history_entry_misc != NULL)
+		add_history_entry_misc(mc, text1);
+
+	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
+	{
+		ca = m->data;
+
+		/* Skip if the entity isn't a NickServ account.  ToDo: Make it work for group memos? */
+		if (!isuser(ca->entity))
+			continue;
+
+		/* Don't send any notifications to the source user. */
+		if (smu == user(ca->entity))
+			continue;
+
+		/* Check for +F, +R, and/or +s.  If not, skip.
+		 * ToDo: Have this as default, have channel configuration setting? */
+		if (!(ca->level & CA_FOUNDER || ca->level & CA_RECOVER || ca->level & CA_SET))
+			continue;
+
+		/* Send the notice to everyone but the target
+		 * (already handled in account.c:myuser_delete).
+		 */
+		if (tmu != user(ca->entity) && user(ca->entity)->flags & MU_NOTIFYACL)
+			myuser_notice(chansvs.nick, user(ca->entity), text);
+
+		/* Send a memo to everyone with NOTIFY_ACL and NOTIFY_MEMO enabled, including the target. */
+		if (!(user(ca->entity)->flags & MU_NOMEMO) && user(ca->entity)->flags & MU_NOTIFYMEMO && user(ca->entity)->flags & MU_NOTIFYACL &&
+			(send_user_memo_misc = module_locate_symbol("memoserv/main", "send_user_memo_misc")) != NULL)
+			send_user_memo_misc(user(ca->entity), text2, MEMO_CHANNEL, user(ca->entity)->flags & MU_EMAILNOTIFY);
 	}
 }
 
