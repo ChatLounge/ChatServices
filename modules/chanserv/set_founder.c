@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2006-2010 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the CService SET FOUNDER command.
@@ -13,8 +15,11 @@ DECLARE_MODULE_V1
 (
 	"chanserv/set_founder", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *settingname, const char *setting) = NULL;
 
 static void cs_cmd_set_founder(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -25,6 +30,9 @@ mowgli_patricia_t **cs_set_cmdtree;
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_set_cmdtree, "chanserv/set_core", "cs_set_cmdtree");
+
+	if (module_request("chanserv/main"))
+		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
 
 	command_add(&cs_set_founder, *cs_set_cmdtree);
 }
@@ -145,6 +153,9 @@ static void cs_cmd_set_founder(sourceinfo_t *si, int parc, char *parv[])
 					chanacs_modify_simple(ca, CA_FLAGS, CA_FOUNDER);
 			}
 			chanacs_change_simple(mc, mt, NULL, CA_FOUNDER_0, 0, entity(si->smu));
+
+			/* Call notify_channel_set_change */
+			notify_channel_set_change(si, user(mt), mc, "FOUNDER", mt->name);
 
 			/* delete transfer metadata */
 			metadata_delete(mc, "private:verify:founderchg:newfounder");
