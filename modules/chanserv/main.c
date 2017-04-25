@@ -1156,7 +1156,7 @@ void notify_channel_set_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
  *         mychan_t *mc - Channel where the change is taking place.
  */
 
-void notify_channel_misc_change(myuser_t *smu, myuser_t *tmu, mychan_t *mc)
+void notify_channel_successor_change(myuser_t *smu, myuser_t *tmu, mychan_t *mc)
 {
 	char text[256], text1[256], text2[300];
 	chanacs_t *ca;
