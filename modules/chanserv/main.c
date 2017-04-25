@@ -1014,26 +1014,46 @@ void notify_target_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 void notify_channel_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *flagstr, unsigned int flags)
 {
-	char text[256], text2[300];
+	char text[256], text1[256], text2[300];
 	chanacs_t *ca;
 	mowgli_node_t *m;
 
 	if (flags == 0)
+	{
 		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 and removed \2%s\2 from: \2%s\2",
 			entity(si->smu)->name, flagstr, entity(tmu)->name, mc->name);
+		snprintf(text1, sizeof text1, "\2%s\2 set \2%s\2, removing: \2%s\2",
+			entity(si->smu)->name, flagstr, entity(tmu)->name, mc->name);
+	}
 	else if (get_template_name(mc, flags))
+	{
 		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on \2%s\2 in \2%s\2 who now has the flags: \2%s\2 (TEMPLATE: \2%s\2)",
 			entity(si->smu)->name, flagstr,
-			mc->name, entity(tmu)->name,
+			entity(tmu)->name, mc->name,
 			bitmask_to_flags(flags),
 			get_template_name(mc, flags));
+		snprintf(text1, sizeof text1, "\2%s\2 set \2%s\2 on \2%s\2 who now has flags: \2%s\2 (TEMPLATE: \2%s\2)",
+			entity(si->smu)->name, flagstr,
+			entity(tmu)->name, bitmask_to_flags(flags),
+			get_template_name(mc, flags));
+	}
 	else
+	{
 		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on \2%s\2 in \2%s\2 who now has the flags: \2%s\2",
 			entity(si->smu)->name, flagstr,
-			mc->name, entity(tmu)->name,
+			entity(tmu)->name, mc->name,
 			bitmask_to_flags(flags));
+		snprintf(text1, sizeof text1, "\2%s\2 has set \2%s\2 on \2%s\2 who now has the flags: \2%s\2",
+			entity(si->smu)->name, flagstr,
+			entity(tmu)->name, bitmask_to_flags(flags));
+	}
 
 	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", chansvs.nick, text);
+
+	add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+
+	if (add_history_entry != NULL)
+		add_history_entry(si, mc, text1);
 
 	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
 	{
