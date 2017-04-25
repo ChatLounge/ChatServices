@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2006 William Pitcock, et al.
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService FFLAGS functions.
@@ -13,8 +15,13 @@ DECLARE_MODULE_V1
 (
 	"chanserv/fflags", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*notify_channel_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
+void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *flagstr, unsigned int flags) = NULL;
 
 static void cs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -23,7 +30,13 @@ command_t cs_fflags = { "FFLAGS", N_("Forces a flags change on a channel."),
 
 void _modinit(module_t *m)
 {
-        service_named_bind_command("chanserv", &cs_fflags);
+	service_named_bind_command("chanserv", &cs_fflags);
+
+	if (module_request("chanserv/main"))
+	{
+		notify_channel_acl_change = module_locate_symbol("chanserv/main", "notify_channel_acl_change");
+		notify_target_acl_change = module_locate_symbol("chanserv/main", "notify_target_acl_change");
+	}
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -40,6 +53,7 @@ static void cs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 	mychan_t *mc;
 	myentity_t *mt;
 	unsigned int addflags, removeflags;
+	unsigned int newlevel;
 	chanacs_t *ca;
 	hook_channel_acl_req_t req;
 
@@ -115,6 +129,7 @@ static void cs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 		}
 
 		req.newlevel = ca->level;
+		newlevel = ca->level;
 
 		hook_call_channel_acl_change(&req);
 		chanacs_close(ca);
@@ -141,6 +156,7 @@ static void cs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 		}
 
 		req.newlevel = ca->level;
+		newlevel = ca->level;
 
 		hook_call_channel_acl_change(&req);
 		chanacs_close(ca);
@@ -156,6 +172,16 @@ static void cs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Flags \2%s\2 were set on \2%s\2 in \2%s\2."), flagstr, target, channel);
 	logcommand(si, CMDLOG_ADMIN, "FFLAGS: \2%s\2 \2%s\2 \2%s\2", mc->name, target, flagstr);
 	verbose(mc, "\2%s\2 forced flags change \2%s\2 on \2%s\2.", get_source_name(si), flagstr, target);
+
+	if (isuser(mt))
+	{
+		myuser_t *tmu = myuser_find(target);
+
+		char flagstr2[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+		mowgli_strlcpy(flagstr2, flagstr, 54);
+		notify_target_acl_change(si, tmu, mc, flagstr2, newlevel);
+		notify_channel_acl_change(si, tmu, mc, flagstr2, newlevel);
+	}
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
