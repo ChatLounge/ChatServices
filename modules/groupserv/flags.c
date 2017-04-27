@@ -252,7 +252,12 @@ no_founder:
 			mt->name, entity(mg)->name);
 
 		if (isuser(mt))
-			notify_target_acl_change(si, user(mt), mg, bitmask_to_gflags2(addflags, removeflags), ga->flags);
+		{
+			notify_target_acl_change(si, user(mt), mg,
+				bitmask_to_gflags2(addflags, removeflags), ga->flags);
+			notify_group_acl_change(si, user(mt), mg,
+				bitmask_to_gflags2(addflags, removeflags), ga->flags);
+		}
 
 		if (isuser(mt) && module_locate_symbol("hostserv/main", "get_hostsvs_limit_first_req") &&
 			(get_group_template_vhost_by_flags(mg, oldflags)) != NULL &&
@@ -410,7 +415,12 @@ no_founder:
 			mt->name, gflags_tostr(ga_flags, ga->flags),
 			get_group_template_name(mg, ga->flags), entity(mg)->name);
 		if (isuser(mt))
-			notify_target_acl_change(si, user(mt), mg, bitmask_to_gflags2(addflags, removeflags), ga->flags);
+		{
+			notify_target_acl_change(si, user(mt), mg,
+				bitmask_to_gflags2(addflags, removeflags), ga->flags);
+			notify_group_acl_change(si, user(mt), mg,
+				bitmask_to_gflags2(addflags, removeflags), ga->flags);
+		}
 	}
 	else
 	{
@@ -421,7 +431,12 @@ no_founder:
 			bitmask_to_gflags2(addflags, removeflags),
 			mt->name, gflags_tostr(ga_flags, ga->flags), entity(mg)->name);
 		if (isuser(mt))
-			notify_target_acl_change(si, user(mt), mg, bitmask_to_gflags2(addflags, removeflags), ga->flags);
+		{
+			notify_target_acl_change(si, user(mt), mg,
+				bitmask_to_gflags2(addflags, removeflags), ga->flags);
+			notify_group_acl_change(si, user(mt), mg,
+				bitmask_to_gflags2(addflags, removeflags), ga->flags);
+		}
 	}
 }
 
