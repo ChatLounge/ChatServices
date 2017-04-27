@@ -16,6 +16,7 @@ DECLARE_MODULE_V1
 
 service_t *groupsvs;
 
+void (*add_history_entry)(sourceinfo_t *si, mygroup_t *mg, const char *desc) = NULL;
 bool *(*send_user_memo)(sourceinfo_t *si, myuser_t *target,
 	const char *memotext, bool verbose, unsigned int status, bool senduseremail) = NULL;
 
@@ -148,10 +149,10 @@ void notify_group_acl_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg,
 
 	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", groupsvs->nick, text);
 
-	//add_history_entry = module_locate_symbol("groupserv/history", "add_history_entry");
+	add_history_entry = module_locate_symbol("groupserv/history", "add_history_entry");
 
-	//if (add_history_entry != NULL)
-		//add_history_entry(si, mc, text1);
+	if (add_history_entry != NULL)
+		add_history_entry(si, mg, text1);
 
 	MOWGLI_ITER_FOREACH(m, mg->acs.head)
 	{
