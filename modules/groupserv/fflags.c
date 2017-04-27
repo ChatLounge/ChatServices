@@ -270,7 +270,7 @@ static void gs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 		hook_call_channel_acl_change(&(hook_channel_acl_req_t){ .ca = ca });
 	}
 
-	if (get_group_template_vhost_by_flags(mg, ga->flags))
+	if (get_group_template_name(mg, ga->flags))
 	{
 		wallops("\2%s\2 is modifying flags (\2%s\2) for \2%s\2 (TEMPLATE: \2%s\2) on \2%s\2", get_oper_name(si), gflags_tostr(ga_flags, ga->flags),
 			mt->name, get_group_template_name(mg, ga->flags), entity(mg)->name);

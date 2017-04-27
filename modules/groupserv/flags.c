@@ -404,7 +404,7 @@ no_founder:
 		hook_call_channel_acl_change(&(hook_channel_acl_req_t){ .ca = ca });
 	}
 
-	if (get_group_template_vhost_by_flags(mg, ga->flags))
+	if (get_group_template_name(mg, ga->flags))
 	{
 		logcommand(si, CMDLOG_SET, "FLAGS: Set flags \2%s\2 on \2%s\2 who now has flags \2%s\2 (TEMPLATE: \2%s\2) on \2%s\2",
 			bitmask_to_gflags2(addflags, removeflags),
