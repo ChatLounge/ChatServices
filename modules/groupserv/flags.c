@@ -414,13 +414,6 @@ no_founder:
 			bitmask_to_gflags2(addflags, removeflags),
 			mt->name, gflags_tostr(ga_flags, ga->flags),
 			get_group_template_name(mg, ga->flags), entity(mg)->name);
-		if (isuser(mt))
-		{
-			notify_target_acl_change(si, user(mt), mg,
-				bitmask_to_gflags2(addflags, removeflags), ga->flags);
-			notify_group_acl_change(si, user(mt), mg,
-				bitmask_to_gflags2(addflags, removeflags), ga->flags);
-		}
 	}
 	else
 	{
@@ -430,13 +423,14 @@ no_founder:
 		command_success_nodata(si, _("Set flags \2%s\2 on \2%s\2 who now has flags \2%s\2 on: \2%s\2"),
 			bitmask_to_gflags2(addflags, removeflags),
 			mt->name, gflags_tostr(ga_flags, ga->flags), entity(mg)->name);
-		if (isuser(mt))
-		{
-			notify_target_acl_change(si, user(mt), mg,
-				bitmask_to_gflags2(addflags, removeflags), ga->flags);
-			notify_group_acl_change(si, user(mt), mg,
-				bitmask_to_gflags2(addflags, removeflags), ga->flags);
-		}
+	}
+
+	if (isuser(mt))
+	{
+		notify_target_acl_change(si, user(mt), mg,
+			bitmask_to_gflags2(addflags, removeflags), ga->flags);
+		notify_group_acl_change(si, user(mt), mg,
+			bitmask_to_gflags2(addflags, removeflags), ga->flags);
 	}
 }
 
