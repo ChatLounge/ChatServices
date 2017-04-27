@@ -32,7 +32,7 @@ static void gs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 	mygroup_t *mg;
 	myentity_t *mt;
 	groupacs_t *ga;
-	unsigned int flags = 0, oldflags = 0;
+	unsigned int flags = 0, oldflags = 0, addflags = 0, removeflags = 0;
 
 	if (!parv[0] || !parv[1] || !parv[2])
 	{
@@ -107,9 +107,23 @@ static void gs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 		metadata_t *md;
 
 		groupacs_delete(mg, mt);
+
+		addflags = flags;
+		removeflags = GA_ALL_ALL & ~addflags;
+		addflags &= ~oldflags;
+		removeflags &= oldflags & ~addflags;
+
 		command_success_nodata(si, _("\2%s\2 has been removed from \2%s\2."), mt->name, entity(mg)->name);
 		wallops("\2%s\2 is removing flags for \2%s\2 on \2%s\2", get_oper_name(si), mt->name, entity(mg)->name);
 		logcommand(si, CMDLOG_ADMIN, "FFLAGS:REMOVE: \2%s\2 on \2%s\2", mt->name, entity(mg)->name);
+
+		if (isuser(mt))
+		{
+			notify_target_acl_change(si, user(mt), mg,
+				bitmask_to_gflags2(addflags, removeflags), ga->flags);
+			notify_group_acl_change(si, user(mt), mg,
+				bitmask_to_gflags2(addflags, removeflags), ga->flags);
+		}
 
 		if (isuser(mt) && module_locate_symbol("hostserv/main", "get_hostsvs_req_time") &&
 			(get_group_template_vhost_by_flags(mg, oldflags)) != NULL &&
@@ -240,6 +254,11 @@ static void gs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 		}
 	}
 
+	addflags = flags;
+	removeflags = GA_ALL_ALL & ~addflags;
+	addflags &= ~oldflags;
+	removeflags &= oldflags & ~addflags;
+
 	MOWGLI_ITER_FOREACH(n, entity(mg)->chanacs.head)
 	{
 		chanacs_t *ca = n->data;
@@ -266,6 +285,14 @@ static void gs_cmd_fflags(sourceinfo_t *si, int parc, char *parv[])
 		wallops("\2%s\2 is modifying flags (\2%s\2) for \2%s\2 on \2%s\2", get_oper_name(si), gflags_tostr(ga_flags, ga->flags), mt->name, entity(mg)->name);
 		logcommand(si, CMDLOG_ADMIN, "FFLAGS: \2%s\2 now has flags \2%s\2 on \2%s\2", mt->name, gflags_tostr(ga_flags,  ga->flags), entity(mg)->name);
 		command_success_nodata(si, _("\2%s\2 now has flags \2%s\2 on: \2%s\2"), mt->name, gflags_tostr(ga_flags, ga->flags), entity(mg)->name);
+	}
+
+	if (isuser(mt))
+	{
+		notify_target_acl_change(si, user(mt), mg,
+			bitmask_to_gflags2(addflags, removeflags), ga->flags);
+		notify_group_acl_change(si, user(mt), mg,
+			bitmask_to_gflags2(addflags, removeflags), ga->flags);
 	}
 }
 
