@@ -185,6 +185,66 @@ void notify_group_acl_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg,
 	}
 }
 
+/* notify_group_set_change: Notifes the target group management about
+ *     the new settings in a group in the form of a memo (if possible).
+ *     Additionally, if group/history is loaded, add another history entry.
+ *     Additionally, send a private notice to every member of group management
+ *     with +F and/or +s who is online and has NOTIFY_ACL enabled.
+ *
+ * Inputs: myuser_t *smu - Source user
+ *         myuser_t *tmu - Target user
+ *         mygroup_t *mg - Group where the change is taking place.
+ *         const char *settingname - Name of the setting changed.
+ *         const char *setting - Actual setting.. usually "ON" or "OFF" but some settings have other options.
+ * Outputs: None
+ * Side Effects: Send a notice and/or memo to the target user, if possible.
+ */
+void notify_group_set_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg,
+	const char *settingname, const char *setting)
+{
+	char text[256], text1[256], text2[300];
+	groupacs_t *ga;
+	mowgli_node_t *m;
+
+	snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on channel \2%s\2 to: \2%s\2",
+		entity(tmu)->name, settingname, entity(mg)->name, setting);
+
+	snprintf(text1, sizeof text1, "\2%s\2 setting changed to: \2%s\2", settingname, setting);
+
+	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", groupsvs->nick, text);
+
+	add_history_entry = module_locate_symbol("groupserv/history", "add_history_entry");
+
+	if (add_history_entry != NULL)
+		add_history_entry(si, mg, text1);
+
+	MOWGLI_ITER_FOREACH(m, mg->acs.head)
+	{
+		ga = m->data;
+
+		/* Skip if the entity isn't a NickServ account.  ToDo: Make it work for group memos? */
+		if (!isuser(ga->mt))
+			continue;
+
+		/* Don't send a duplicate notification to the source user. */
+		//if (si->smu == tmu)
+			//continue;
+
+		/* Check for +F, +R, and/or +s.  If not, skip.
+		 * ToDo: Have this as default, have channel configuration setting? */
+		if (!(ga->flags & GA_FOUNDER || ga->flags & GA_SET))
+			continue;
+
+		/* Send the notice to everyone but the source. */
+		if (si->smu != user(ga->mt) && user(ga->mt)->flags & MU_NOTIFYACL)
+			myuser_notice(groupsvs->nick, user(ga->mt), text);
+
+		if (!(user(ga->mt)->flags & MU_NOMEMO) && user(ga->mt)->flags & MU_NOTIFYMEMO && user(ga->mt)->flags & MU_NOTIFYACL &&
+			(send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) != NULL)
+			send_user_memo(si, user(ga->mt), text2, false, MEMO_CHANNEL, user(ga->mt)->flags & MU_EMAILNOTIFY);
+	}
+}
+
 void _modinit(module_t *m)
 {
 	groupserv_persist_record_t *rec = mowgli_global_storage_get("atheme.groupserv.main.persist");

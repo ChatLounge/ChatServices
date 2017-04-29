@@ -57,6 +57,7 @@ E mowgli_patricia_t *global_group_template_dict;
 
 E void notify_target_acl_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *flagstr, unsigned int flags);
 E void notify_group_acl_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *flagstr, unsigned int flags);
+E void notify_group_set_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *settingname, const char *setting);
 
 /* services plumbing - sync with groupserv_common.h */
 E service_t *groupsvs;
