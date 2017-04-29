@@ -19,6 +19,7 @@ BASE_SRCS =             \
 	fflags.c            \
 	flags.c             \
 	help.c              \
+	history.c           \
 	info.c              \
 	invite.c            \
 	join.c              \
