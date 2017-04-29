@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Changes the account name to another registered nick
@@ -15,7 +17,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/set_groupname", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_set_groupname(sourceinfo_t *si, int parc, char *parv[]);
@@ -73,7 +75,7 @@ static void gs_cmd_set_groupname(sourceinfo_t *si, int parc, char *parv[])
 
 	if (strcmp(entity(mg)->name, newname) == 0)
 	{
-		command_fail(si, fault_nochange, _("The group name is already set to \2%s\2."), newname);
+		command_fail(si, fault_nochange, _("The group name is already set to: \2%s\2"), newname);
 		return;
 	}
 
@@ -86,7 +88,9 @@ static void gs_cmd_set_groupname(sourceinfo_t *si, int parc, char *parv[])
 	mygroup_rename(mg, newname);
 
 	logcommand(si, CMDLOG_REGISTER, "SET:GROUPNAME: \2%s\2 to \2%s\2", oldname, newname);
-	command_success_nodata(si, _("The group \2%s\2 has been renamed to \2%s\2."), oldname, newname);
+	command_success_nodata(si, _("The group \2%s\2 has been renamed to: \2%s\2"), oldname, newname);
+
+	notify_group_set_change(si, si->smu, mg, "GROUPNAME", newname);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

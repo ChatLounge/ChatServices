@@ -1,9 +1,11 @@
 
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
- * This file contains routines to handle the GroupServ HELP command.
+ * This file contains routines to handle the GroupServ SET !group CHANNEL command.
  *
  */
 
@@ -14,7 +16,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/set_channel", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_set_channel(sourceinfo_t *si, int parc, char *parv[]);
@@ -48,6 +50,7 @@ static void gs_cmd_set_channel(sourceinfo_t *si, int parc, char *parv[])
 			metadata_delete(mg, "channel");
 			logcommand(si, CMDLOG_SET, "SET:CHANNEL:NONE: \2%s\2", entity(mg)->name);
 			command_success_nodata(si, _("The official channel for \2%s\2 has been cleared."), parv[0]);
+			notify_group_set_change(si, si->smu, mg, "CHANNEL", "None");
 			return;
 		}
 
@@ -59,7 +62,9 @@ static void gs_cmd_set_channel(sourceinfo_t *si, int parc, char *parv[])
 	metadata_add(mg, "channel", chan);
 
 	logcommand(si, CMDLOG_SET, "SET:CHANNEL: \2%s\2 \2%s\2", entity(mg)->name, chan);
-	command_success_nodata(si, _("The official channel of \2%s\2 has been set to \2%s\2."), parv[0], chan);
+	command_success_nodata(si, _("The official channel of \2%s\2 has been set to: \2%s\2"), entity(mg)->name, chan);
+
+	notify_group_set_change(si, si->smu, mg, "CHANNEL", chan);
 }
 
 void _modinit(module_t *m)

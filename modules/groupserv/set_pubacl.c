@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -60,6 +60,8 @@ static void gs_cmd_set_pubacl(sourceinfo_t *si, int parc, char *parv[])
 
 		logcommand(si, CMDLOG_SET, "PUBACL:ON: \2%s\2", entity(mg)->name);
 		command_success_nodata(si, _("PUBACL has been set on: \2%s\2"), entity(mg)->name);
+
+		notify_group_set_change(si, si->smu, mg, "PUBACL", "ON");
 	}
 	else if (!strcasecmp(parv[1], "OFF"))
 	{
@@ -73,6 +75,8 @@ static void gs_cmd_set_pubacl(sourceinfo_t *si, int parc, char *parv[])
 
 		logcommand(si, CMDLOG_SET, "PUBACL:OFF: \2%s\2", entity(mg)->name);
 		command_success_nodata(si, _("PUBACL is no longer set on: \2%s\2"), entity(mg)->name);
+
+		notify_group_set_change(si, si->smu, mg, "PUBACL", "OFF");
 	}
 	else
 	{

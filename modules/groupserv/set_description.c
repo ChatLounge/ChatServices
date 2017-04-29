@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the GroupServ HELP command.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/set_description", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_set_description(sourceinfo_t *si, int parc, char *parv[]);
@@ -47,6 +49,8 @@ static void gs_cmd_set_description(sourceinfo_t *si, int parc, char *parv[])
 			metadata_delete(mg, "description");
 			logcommand(si, CMDLOG_SET, "SET:DESCRIPTION:NONE: \2%s\2", entity(mg)->name);
 			command_success_nodata(si, _("The description for \2%s\2 has been cleared."), parv[0]);
+
+			notify_group_set_change(si, si->smu, mg, "DESCRIPTION", "None");
 			return;
 		}
 
@@ -58,7 +62,9 @@ static void gs_cmd_set_description(sourceinfo_t *si, int parc, char *parv[])
 	metadata_add(mg, "description", desc);
 
 	logcommand(si, CMDLOG_SET, "SET:DESCRIPTION: \2%s\2 \2%s\2", entity(mg)->name, desc);
-	command_success_nodata(si, _("The description of \2%s\2 has been set to \2%s\2."), parv[0], desc);
+	command_success_nodata(si, _("The description of \2%s\2 has been set to: \2%s\2"), parv[0], desc);
+
+	notify_group_set_change(si, si->smu, mg, "DESCRIPTION", desc);
 }
 
 void _modinit(module_t *m)

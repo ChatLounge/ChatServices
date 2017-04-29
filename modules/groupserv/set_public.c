@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the GroupServ HELP command.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/set_public", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_set_public(sourceinfo_t *si, int parc, char *parv[]);
@@ -55,6 +57,8 @@ static void gs_cmd_set_public(sourceinfo_t *si, int parc, char *parv[])
 
 		logcommand(si, CMDLOG_SET, "PUBLIC:ON: \2%s\2", entity(mg)->name);
 		command_success_nodata(si, _("\2%s\2 is now public."), entity(mg)->name);
+
+		notify_group_set_change(si, si->smu, mg, "PUBLIC", "ON");
 	}
 	else if (!strcasecmp(parv[1], "OFF"))
 	{
@@ -68,6 +72,8 @@ static void gs_cmd_set_public(sourceinfo_t *si, int parc, char *parv[])
 
 		logcommand(si, CMDLOG_SET, "PUBLIC:OFF: \2%s\2", entity(mg)->name);
 		command_success_nodata(si, _("\2%s\2 is no longer public."), entity(mg)->name);
+
+		notify_group_set_change(si, si->smu, mg, "PUBLIC", "OFF");
 	}
 	else
 	{

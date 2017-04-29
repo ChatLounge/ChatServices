@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the GroupServ HELP command.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/set_email", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_set_email(sourceinfo_t *si, int parc, char *parv[]);
@@ -44,6 +46,8 @@ static void gs_cmd_set_email(sourceinfo_t *si, int parc, char *parv[])
 			metadata_delete(mg, "email");
 			command_success_nodata(si, _("The e-mail address for group \2%s\2 was deleted."), entity(mg)->name);
 			logcommand(si, CMDLOG_SET, "SET:EMAIL:NONE: \2%s\2", entity(mg)->name);
+
+			notify_group_set_change(si, si->smu, mg, "EMAIL", "None");
 			return;
 		}
 
@@ -61,7 +65,9 @@ static void gs_cmd_set_email(sourceinfo_t *si, int parc, char *parv[])
 	metadata_add(mg, "email", mail);
 
 	logcommand(si, CMDLOG_SET, "SET:EMAIL: \2%s\2 \2%s\2", entity(mg)->name, mail);
-	command_success_nodata(si, _("The e-mail address for group \2%s\2 has been set to \2%s\2."), parv[0], mail);
+	command_success_nodata(si, _("The e-mail address for group \2%s\2 has been set to: \2%s\2"), parv[0], mail);
+
+	notify_group_set_change(si, si->smu, mg, "EMAIL", mail);
 }
 
 void _modinit(module_t *m)

@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the GroupServ HELP command.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/set_joinflags", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_set_joinflags(sourceinfo_t *si, int parc, char *parv[]);
@@ -48,6 +50,8 @@ static void gs_cmd_set_joinflags(sourceinfo_t *si, int parc, char *parv[])
 			metadata_delete(mg, "joinflags");
 			logcommand(si, CMDLOG_SET, "SET:JOINFLAGS:NONE: \2%s\2", entity(mg)->name);
 			command_success_nodata(si, _("The group-specific join flags for \2%s\2 have been cleared."), parv[0]);
+
+			notify_group_set_change(si, si->smu, mg, "JOINFLAGS", "None");
 			return;
 		}
 
@@ -67,7 +71,9 @@ static void gs_cmd_set_joinflags(sourceinfo_t *si, int parc, char *parv[])
 	metadata_add(mg, "joinflags", number_to_string(flags));
 
 	logcommand(si, CMDLOG_SET, "SET:JOINFLAGS: \2%s\2 \2%s\2", entity(mg)->name, joinflags);
-	command_success_nodata(si, _("The join flags of \2%s\2 have been set to \2%s\2."), parv[0], joinflags);
+	command_success_nodata(si, _("The join flags of \2%s\2 have been set to: \2%s\2"), parv[0], joinflags);
+
+	notify_group_set_change(si, si->smu, mg, "JOINFLAGS", joinflags);
 }
 
 void _modinit(module_t *m)
