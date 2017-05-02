@@ -1,9 +1,11 @@
 
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
- * This file contains routines to handle the GroupServ HELP command.
+ * This file contains routines to handle the GroupServ REGNOLIMIT command.
  *
  */
 
@@ -14,7 +16,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/regnolimit", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_regnolimit(sourceinfo_t *si, int parc, char *parv[]);
@@ -51,6 +53,8 @@ static void gs_cmd_regnolimit(sourceinfo_t *si, int parc, char *parv[])
 		wallops("%s set the REGNOLIMIT option on the group \2%s\2.", get_oper_name(si), entity(mg)->name);
 		logcommand(si, CMDLOG_ADMIN, "REGNOLIMIT:ON: \2%s\2", entity(mg)->name);
 		command_success_nodata(si, _("\2%s\2 can now bypass registration limits."), entity(mg)->name);
+
+		notify_group_set_change(si, si->smu, mg, "REGNOLIMIT", "ON");
 	}
 	else if (!strcasecmp(parv[1], "OFF"))
 	{
@@ -65,6 +69,8 @@ static void gs_cmd_regnolimit(sourceinfo_t *si, int parc, char *parv[])
 		wallops("%s removed the REGNOLIMIT option from the group \2%s\2.", get_oper_name(si), entity(mg)->name);
 		logcommand(si, CMDLOG_ADMIN, "REGNOLIMIT:OFF: \2%s\2", entity(mg)->name);
 		command_success_nodata(si, _("\2%s\2 cannot bypass registration limits anymore."), entity(mg)->name);
+
+		notify_group_set_change(si, si->smu, mg, "REGNOLIMIT", "OFF");
 	}
 	else
 	{
