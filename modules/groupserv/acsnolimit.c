@@ -4,7 +4,7 @@
  *
  * Rights to this code are documented in doc/LICENSE.
  *
- * This file contains routines to handle the GroupServ HELP command.
+ * This file contains routines to handle the GroupServ ACSNOLIMIT command.
  *
  */
 
