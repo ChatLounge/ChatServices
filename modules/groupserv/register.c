@@ -1,8 +1,10 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
- * This file contains routines to handle the GroupServ HELP command.
+ * This file contains routines to handle the GroupServ REGISTER command.
  *
  */
 
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/register", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_register(sourceinfo_t *si, int parc, char *parv[]);
@@ -23,20 +25,21 @@ command_t gs_register = { "REGISTER", N_("Registers a group."), AC_AUTHENTICATED
 static void gs_cmd_register(sourceinfo_t *si, int parc, char *parv[])
 {
 	mygroup_t *mg;
+	char description[256];
 
-	if (!parv[0])
+	if (!parv[0] || *parv[0] != '!')
 	{
 		command_fail(si, fault_needmoreparams, STR_INSUFFICIENT_PARAMS, "REGISTER");
 		command_fail(si, fault_needmoreparams, _("To register a group: REGISTER <!groupname>"));
 		return;
 	}
 
-	if (*parv[0] != '!')
-	{
-		command_fail(si, fault_needmoreparams, STR_INVALID_PARAMS, "REGISTER");
-		command_fail(si, fault_needmoreparams, _("To register a group: REGISTER <!groupname>"));
-		return;
-	}
+	//if (*parv[0] != '!')
+	//{
+	//	command_fail(si, fault_needmoreparams, STR_INVALID_PARAMS, "REGISTER");
+	//	command_fail(si, fault_needmoreparams, _("To register a group: REGISTER <!groupname>"));
+	//	return;
+	//}
 
 	if (mygroup_find(parv[0]))
 	{
@@ -57,17 +60,21 @@ static void gs_cmd_register(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-        if (metadata_find(si->smu, "private:restrict:setter"))
-        {
-                command_fail(si, fault_noprivs, _("You have been restricted from registering groups by network staff."));
-                return;
-        }
+	if (metadata_find(si->smu, "private:restrict:setter"))
+	{
+		command_fail(si, fault_noprivs, _("You have been restricted from registering groups by network staff."));
+		return;
+	}
 
 	mg = mygroup_add(parv[0]);
 	groupacs_add(mg, entity(si->smu), GA_ALL | GA_FOUNDER);
 
 	logcommand(si, CMDLOG_REGISTER, "REGISTER: \2%s\2", entity(mg)->name);
-	command_success_nodata(si, _("The group \2%s\2 has been registered to \2%s\2."), entity(mg)->name, entity(si->smu)->name);
+	command_success_nodata(si, _("The group \2%s\2 has been registered to: \2%s\2"), entity(mg)->name, entity(si->smu)->name);
+
+	snprintf(description, sizeof description, "Registered group.");
+
+	notify_group_misc_change(si, mg, description);
 }
 
 

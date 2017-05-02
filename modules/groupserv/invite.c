@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the GroupServ INVITE command.
@@ -17,7 +19,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/invite", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_invite(sourceinfo_t *si, int parc, char *parv[]);
@@ -31,7 +33,7 @@ static void gs_cmd_invite(sourceinfo_t *si, int parc, char *parv[])
 	groupacs_t *ga;
 	char *group = parv[0];
 	char *user = parv[1];
-	char buf[BUFSIZE];
+	char buf[BUFSIZE], description[256];
 	service_t *svs;
 
 	if (!group || !user)
@@ -61,38 +63,41 @@ static void gs_cmd_invite(sourceinfo_t *si, int parc, char *parv[])
 
 	if ((ga = groupacs_find(mg, entity(mu), 0, false)) != NULL)
 	{
-		command_fail(si, fault_badparams, _("\2%s\2 is already a member of \2%s\2."), user, group);
+		command_fail(si, fault_badparams, _("\2%s\2 is already a member of: \2%s\2"), entity(mu)->name, entity(mg)->name);
 		return;
 	}
 
 	if (metadata_find(mu, "private:groupinvite"))
 	{
-		command_fail(si, fault_badparams, _("\2%s\2 can not be invited to a group currently because they already \
-					have another invitation pending."), user);
+		command_fail(si, fault_badparams, _("\2%s\2 may not be invited to a group and already has another invitation pending."), entity(mu)->name);
 		return;
 	}
 
 	if (MU_NEVERGROUP & mu->flags)
 	{
-		command_fail(si, fault_noprivs, _("\2%s\2 does not wish to belong to any groups."), user);
+		command_fail(si, fault_noprivs, _("\2%s\2 does not wish to belong to any groups."), entity(mu)->name);
 		return;
 	}
 
-	metadata_add(mu, "private:groupinvite", group);
+	metadata_add(mu, "private:groupinvite", entity(mg)->name);
 
 	if ((svs = service_find("memoserv")) != NULL)
 	{
-		snprintf(buf, BUFSIZE, "%s [auto memo] You have been invited to the group %s.", user, group);
+		snprintf(buf, BUFSIZE, "%s [auto memo] You have been invited to the group: %s", entity(mu)->name, entity(mg)->name);
 
 		command_exec_split(svs, si, "SEND", buf, svs->commands);
 	}
 	else
 	{
-		myuser_notice(si->service->nick, mu, "You have been invited to the group %s.", group);
+		myuser_notice(si->service->nick, mu, "You have been invited to the group: %s", entity(mg)->name);
 	}
 
-	logcommand(si, CMDLOG_SET, "INVITE: \2%s\2 \2%s\2", group, user);
-	command_success_nodata(si, _("\2%s\2 has been invited to \2%s\2"), user, group);
+	logcommand(si, CMDLOG_SET, "INVITE: \2%s\2 \2%s\2", entity(mg)->name, entity(mu)->name);
+	command_success_nodata(si, _("\2%s\2 has been invited to \2%s\2"), entity(mu)->name, entity(mg)->name);
+
+	snprintf(description, sizeof description, "Invited \2%s\2 to join.", entity(mu)->name);
+
+	notify_group_misc_change(si, mg, description);
 }
 
 void _modinit(module_t *m)

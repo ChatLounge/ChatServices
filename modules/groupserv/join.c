@@ -1,8 +1,10 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
- * This file contains routines to handle the GroupServ HELP command.
+ * This file contains routines to handle the GroupServ JOIN command.
  *
  */
 
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/join", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_join(sourceinfo_t *si, int parc, char *parv[]);
@@ -27,6 +29,7 @@ static void gs_cmd_join(sourceinfo_t *si, int parc, char *parv[])
 	metadata_t *md, *md2;
 	unsigned int flags = 0;
 	bool invited = false;
+	char description[256];
 
 	if (!parv[0])
 	{
@@ -43,7 +46,7 @@ static void gs_cmd_join(sourceinfo_t *si, int parc, char *parv[])
 
 	if ((md2 = metadata_find(si->smu, "private:groupinvite")))
 	{
-		if (!strcasecmp(md2->value, parv[0]))
+		if (!strcasecmp(md2->value, entity(mg)->name))
 			invited = true;
 		else
 			invited = false;
@@ -51,7 +54,7 @@ static void gs_cmd_join(sourceinfo_t *si, int parc, char *parv[])
 
 	if (!(mg->flags & MG_OPEN) && !invited)
 	{
-		command_fail(si, fault_noprivs, _("Group \2%s\2 is not open to anyone joining."), parv[0]);
+		command_fail(si, fault_noprivs, _("Group \2%s\2 is not open to anyone joining."), entity(mg)->name);
 		return;
 	}
 
@@ -63,7 +66,7 @@ static void gs_cmd_join(sourceinfo_t *si, int parc, char *parv[])
 
 	if (groupacs_sourceinfo_has_flag(mg, si, 0))
 	{
-		command_fail(si, fault_nochange, _("You are already a member of group \2%s\2."), parv[0]);
+		command_fail(si, fault_nochange, _("You are already a member of group: \2%s\2."), entity(mg)->name);
 		return;
 	}
 
@@ -76,14 +79,28 @@ static void gs_cmd_join(sourceinfo_t *si, int parc, char *parv[])
 	if ((md = metadata_find(mg, "joinflags")))
 		flags = atoi(md->value);
 	else
-		flags = gs_flags_parser(gs_config->join_flags, 0, flags);
+		flags = gs_flags_parser(gs_config->join_flags == 0 ? 0 : gs_config->join_flags, 0, flags);
+
+	if (gs_config->join_flags == 0 && flags == 0)
+	{
+		snprintf(description, sizeof description, "\2%s\2 joined.",
+			entity(si->smu)->name);
+		command_success_nodata(si, _("You are now a member of: \2%s\2"), entity(mg)->name);
+	}
+	else
+	{
+		snprintf(description, sizeof description, "\2%s\2 joined with the flags: %s",
+			entity(si->smu)->name, gflags_tostr(ga_flags , flags));
+		command_success_nodata(si, _("You are now a member of \2%s\2 with the flags: %s"),
+			entity(mg)->name, gflags_tostr(ga_flags, flags));
+	}
 
 	ga = groupacs_add(mg, entity(si->smu), flags);
 
 	if (invited)
 		metadata_delete(si->smu, "private:groupinvite");
 
-	command_success_nodata(si, _("You are now a member of \2%s\2."), entity(mg)->name);
+	notify_group_misc_change(si, mg, description);
 }
 
 void _modinit(module_t *m)
