@@ -54,6 +54,7 @@ void (*show_global_group_template_flags)(sourceinfo_t *si);
 void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *flagstr, unsigned int flags);
 void (*notify_group_acl_change)(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *flagstr, unsigned int flags);
 void (*notify_group_set_change)(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *settingname, const char *setting);
+void (*notify_group_misc_change)(sourceinfo_t *si, mygroup_t *mg, const char *description);
 
 struct gflags *ga_flags;
 
@@ -101,6 +102,7 @@ static inline void use_groupserv_main_symbols(module_t *m)
     MODULE_TRY_REQUEST_SYMBOL(m, notify_target_acl_change, "groupserv/main", "notify_target_acl_change");
 	MODULE_TRY_REQUEST_SYMBOL(m, notify_group_acl_change, "groupserv/main", "notify_group_acl_change");
 	MODULE_TRY_REQUEST_SYMBOL(m, notify_group_set_change, "groupserv/main", "notify_group_set_change");
+	MODULE_TRY_REQUEST_SYMBOL(m, notify_group_misc_change, "groupserv/main", "notify_group_misc_change");
 
     MODULE_TRY_REQUEST_SYMBOL(m, ga_flags, "groupserv/main", "ga_flags");
     MODULE_TRY_REQUEST_SYMBOL(m, gs_config, "groupserv/main", "gs_config");

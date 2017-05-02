@@ -1,6 +1,6 @@
 /* groupserv_main.h - group services main module header
  * Copyright (C) 2010 Atheme Development Group
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net/)
  */
 
@@ -58,6 +58,7 @@ E mowgli_patricia_t *global_group_template_dict;
 E void notify_target_acl_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *flagstr, unsigned int flags);
 E void notify_group_acl_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *flagstr, unsigned int flags);
 E void notify_group_set_change(sourceinfo_t *si, myuser_t *tmu, mygroup_t *mg, const char *settingname, const char *setting);
+E void notify_group_misc_change(sourceinfo_t *si, mygroup_t *mg, const char *description);
 
 /* services plumbing - sync with groupserv_common.h */
 E service_t *groupsvs;
