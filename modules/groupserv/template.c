@@ -383,6 +383,7 @@ static void gs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 				myuser_t *tmu = myuser_find(ga->mt->name);
 
 				notify_target_acl_change(si, tmu, mg, flagstr, newflags);
+				notify_group_acl_change(si, tmu, mg, flagstr, newflags);
 
 				groupacs_close(ga);
 			}
