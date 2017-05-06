@@ -66,7 +66,7 @@ static void gs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 	mygroup_t *mg;
 	unsigned int oldflags, newflags = 0, addflags, removeflags, restrictflags;
 	char *p, *q, *r;
-	char ss[40], newstr[400];
+	char ss[40], newstr[400], description[300];
 	bool found, denied;
 
 	if (!group)
@@ -352,12 +352,30 @@ static void gs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 			metadata_delete(mg, "private:templates");
 		else
 			metadata_add(mg, "private:templates", newstr);
+
 		if (oldflags == 0)
-			command_success_nodata(si, _("Added template \2%s\2 with flags \2%s\2 in \2%s\2."), target, bitmask_to_gflags(newflags), entity(mg)->name);
+		{
+			command_success_nodata(si, _("Added template \2%s\2 with flags \2%s\2 in \2%s\2."),
+				target, bitmask_to_gflags(newflags), entity(mg)->name);
+			snprintf(description, sizeof description, "Added template \2%s\2 (new flags: %s)",
+				target, bitmask_to_gflags(newflags));
+		}
 		else if (newflags == 0)
-			command_success_nodata(si, _("Removed template \2%s\2 from \2%s\2."), target, entity(mg)->name);
+		{
+			command_success_nodata(si, _("Removed template \2%s\2 from \2%s\2."),
+				target, entity(mg)->name);
+			snprintf(description, sizeof description, "Removed template \2%s\2",
+				target);
+		}
 		else
-			command_success_nodata(si, _("Changed template \2%s\2 to \2%s\2 in \2%s\2."), target, bitmask_to_gflags(newflags), entity(mg)->name);
+		{
+			command_success_nodata(si, _("Changed template \2%s\2 to \2%s\2 in \2%s\2."),
+				target, bitmask_to_gflags(newflags), entity(mg)->name);
+			snprintf(description, sizeof description, "Changed template \2%s\2 (new flags: %s)",
+				target, bitmask_to_gflags(newflags));
+		}
+
+		notify_group_misc_change(si, mg, description);
 
 		flagstr = bitmask_to_gflags2(addflags, removeflags);
 		if (changegroupacs)
