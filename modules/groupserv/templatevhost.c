@@ -72,6 +72,7 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 	char templatevhostmetadataname[128];
 	char *templatevhostold;
 	char templatename[128];
+	char description[300];
 	bool limit_first_req = get_hostsvs_limit_first_req();
 	unsigned int request_time = get_hostsvs_req_time();
 
@@ -236,6 +237,8 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 	}
 	else if (!vhost) /* Template name but no vhost, try to delete the template vhost. */
 	{
+		char oldvhost[80], *saveptr;
+
 		// Code to check for GA_SET or oper override.
 		if (!groupacs_sourceinfo_has_flag(mg, si, GA_SET) && !groupacs_sourceinfo_has_flag(mg, si, GA_FOUNDER))
 		{
@@ -296,10 +299,16 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 			}
 		}
 
-		logcommand(si, CMDLOG_GET, "TEMPLATEVHOST: \2%s\2 (formerly \2%s\2) removed on \2%s\2 %s", target, (char *)md->value, entity(mg)->name,
-			operoverride ? "(override)" : "");
-		command_success_nodata(si, _("The vhost offer for the template \2%s\2 on the group \2%s\2 has been dropped."),
-			target, entity(mg)->name);
+		mowgli_strlcpy(oldvhost, strtok_r((char *)md->value, "|", &saveptr), sizeof oldvhost);
+
+		logcommand(si, CMDLOG_GET, "TEMPLATEVHOST: \2%s\2 (formerly \2%s\2) removed on \2%s\2 %s",
+			target, oldvhost, entity(mg)->name, operoverride ? "(override)" : "");
+		command_success_nodata(si, _("The vhost offer for the template \2%s\2 on the group \2%s\2 has been dropped (formerly: \2%s\2)."),
+			target, entity(mg)->name, oldvhost);
+
+		snprintf(description, sizeof description, "Vhost offer for template \2%s\2 removed, formerly: \2%s\2",
+			target, oldvhost);
+		notify_group_misc_change(si, mg, description);
 
 		metadata_delete(mg, templatevhostmetadataname);
 	}
@@ -407,7 +416,9 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 			logcommand(si, CMDLOG_GET, "TEMPLATEVHOST: \2%s\2 for \2%s\2 added on \2%s\2 %s", vhost, target, entity(mg)->name,
 				operoverride ? "(override)" : "");
 			command_success_nodata(si, _("Added the vhost offer %s for the template %s in group: \2%s\2"), vhost, target, entity(mg)->name);
-			return;
+
+			snprintf(description, sizeof description, "Vhost offer for template \2%s\2 added: \2%s\2",
+				target, vhost);
 		}
 		else
 		{
@@ -416,6 +427,11 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 			logcommand(si, CMDLOG_GET, "TEMPLATEVHOST: \2%s\2 changed to \2%s\2 on \2%s\2 %s", target, vhost, entity(mg)->name,
 				operoverride ? "(override)" : "");
 			command_success_nodata(si, _("Changed the vhost offer for template %s to %s in group: \2%s\2"), target, vhost, entity(mg)->name);
+
+			snprintf(description, sizeof description, "Vhost offer for template \2%s\2 changed to: \2%s\2",
+				target, vhost);
 		}
+
+		notify_group_misc_change(si, mg, description);
 	}
 }
