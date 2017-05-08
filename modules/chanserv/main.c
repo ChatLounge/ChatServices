@@ -1206,6 +1206,55 @@ void notify_channel_successor_change(myuser_t *smu, myuser_t *tmu, mychan_t *mc)
 	}
 }
 
+/* notify_channel_misc_change: Notifies the target channel management about
+ *     a miscellaneous event and send a memo to each member (if possible).
+ *     Additionally, if chanserv/history is loaded, add another history entry.
+ *     Additionally, send a private notice to every member of channel management
+ *     with +F, +R, and/or +s who is online and has NOTIFY_ACL enabled.
+ *
+ * Inputs: sourceinfo_t *si - Source user
+ *         mychan_t *mc - Channel where the change is taking place.
+ *         const char *desc - Free form description of the event.
+ */
+
+void notify_channel_misc_change(sourceinfo_t *si, mychan_t *mc, const char *desc)
+{
+	char text[256], text2[300];
+	chanacs_t *ca;
+	mowgli_node_t *m;
+
+	snprintf(text, sizeof text, "Channel Event on \2%s\2 - %s", mc->name, desc);
+
+	snprintf(text2, sizeof text2, "[automatic memo from \2%s\2] - %s", chansvs.nick, text);
+
+	add_history_entry = module_locate_symbol("chanserv/history", "add_history_entry");
+
+	if (add_history_entry != NULL)
+		add_history_entry(si, mc, desc);
+
+	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
+	{
+		ca = m->data;
+
+		/* Skip if the entity isn't a NickServ account.  ToDo: Make it work for group memos? */
+		if (!isuser(ca->entity))
+			continue;
+
+		/* Check for +F, +R, and/or +s.  If not, skip.
+		 * ToDo: Have this as default, have channel configuration setting? */
+		if (!(ca->level & CA_FOUNDER || ca->level & CA_RECOVER || ca->level & CA_SET))
+			continue;
+
+		/* Send the notice to everyone but the source. */
+		if (si->smu != user(ca->entity) && user(ca->entity)->flags & MU_NOTIFYACL)
+			myuser_notice(chansvs.nick, user(ca->entity), text);
+
+		if (!(user(ca->entity)->flags & MU_NOMEMO) && user(ca->entity)->flags & MU_NOTIFYMEMO && user(ca->entity)->flags & MU_NOTIFYACL &&
+			(send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) != NULL)
+			send_user_memo(si, user(ca->entity), text2, false, MEMO_CHANNEL, user(ca->entity)->flags & MU_EMAILNOTIFY);
+	}
+}
+
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
  * vim:ts=8
  * vim:sw=8
