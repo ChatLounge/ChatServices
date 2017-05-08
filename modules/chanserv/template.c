@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2006 Jilles Tjoelker, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService TEMPLATE functions.
@@ -13,13 +15,15 @@ DECLARE_MODULE_V1
 (
 	"chanserv/template", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 void (*notify_channel_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *flagstr, unsigned int flags) = NULL;
 void (*notify_target_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *flagstr, unsigned int flags) = NULL;
+void (*notify_channel_misc_change)(sourceinfo_t *si, mychan_t *mc,
+	const char *desc) = NULL;
 
 static void list_generic_flags(sourceinfo_t *si);
 
@@ -36,6 +40,7 @@ void _modinit(module_t *m)
 	{
 		notify_channel_acl_change = module_locate_symbol("chanserv/main", "notify_channel_acl_change");
 		notify_target_acl_change = module_locate_symbol("chanserv/main", "notify_target_acl_change");
+		notify_channel_misc_change = module_locate_symbol("chanserv/main", "notify_channel_misc_change");
 	}
 }
 
@@ -82,6 +87,7 @@ static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 	unsigned int oldflags, newflags = 0, addflags, removeflags, restrictflags;
 	char *p, *q, *r;
 	char ss[40], newstr[400];
+	char description[300];
 	bool found, denied;
 
 	if (!channel)
@@ -113,7 +119,7 @@ static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 
 		if (metadata_find(mc, "private:close:closer") && !has_priv(si, PRIV_CHAN_AUSPEX))
 		{
-			command_fail(si, fault_noprivs, _("\2%s\2 is closed."), channel);
+			command_fail(si, fault_noprivs, _("\2%s\2 is closed."), mc->name);
 			return;
 		}
 
@@ -174,13 +180,13 @@ static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 
 		if (metadata_find(mc, "private:close:closer"))
 		{
-			command_fail(si, fault_noprivs, _("\2%s\2 is closed."), channel);
+			command_fail(si, fault_noprivs, _("\2%s\2 is closed."), mc->name);
 			return;
 		}
 
 		if (!target || !flagstr)
 		{
-			command_fail(si, fault_needmoreparams, _("Usage: TEMPLATE %s [target flags]"), channel);
+			command_fail(si, fault_needmoreparams, _("Usage: TEMPLATE %s [target flags]"), mc->name);
 			return;
 		}
 
@@ -329,9 +335,9 @@ static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 		if ((addflags | removeflags) == 0)
 		{
 			if (oldflags != 0)
-				command_fail(si, fault_nochange, _("Template \2%s\2 on \2%s\2 unchanged."), target, channel);
+				command_fail(si, fault_nochange, _("Template \2%s\2 on \2%s\2 unchanged."), target, mc->name);
 			else
-				command_fail(si, fault_nosuch_key, _("No such template \2%s\2 on \2%s\2."), target, channel);
+				command_fail(si, fault_nosuch_key, _("No such template \2%s\2 on \2%s\2."), target, mc->name);
 			return;
 		}
 		if (denied)
@@ -341,7 +347,7 @@ static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 		}
 		if (strlen(newstr) >= 300)
 		{
-			command_fail(si, fault_toomany, _("Sorry, too many templates on \2%s\2."), channel);
+			command_fail(si, fault_toomany, _("Sorry, too many templates on \2%s\2."), mc->name);
 			return;
 		}
 		p = md != NULL ? md->value : NULL;
@@ -367,12 +373,29 @@ static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 			metadata_delete(mc, "private:templates");
 		else
 			metadata_add(mc, "private:templates", newstr);
+
 		if (oldflags == 0)
-			command_success_nodata(si, _("Added template \2%s\2 with flags \2%s\2 in \2%s\2."), target, bitmask_to_flags(newflags), channel);
+		{
+			command_success_nodata(si, _("Added template \2%s\2 with flags \2%s\2 in: \2%s\2"),
+				target, bitmask_to_flags(newflags), mc->name);
+			snprintf(description, sizeof description, "Added flag template \2%s\2 (flags: %s)",
+				target, bitmask_to_flags(newflags));
+		}
 		else if (newflags == 0)
-			command_success_nodata(si, _("Removed template \2%s\2 from \2%s\2."), target, channel);
+		{
+			command_success_nodata(si, _("Removed template \2%s\2 from: \2%s\2"), target, mc->name);
+			snprintf(description, sizeof description, "Removed flag template: \2%s\2",
+				target);
+		}
 		else
-			command_success_nodata(si, _("Changed template \2%s\2 to \2%s\2 in \2%s\2."), target, bitmask_to_flags(newflags), channel);
+		{
+			command_success_nodata(si, _("Changed template \2%s\2 to \2%s\2 in: \2%s\2"),
+				target, bitmask_to_flags(newflags), mc->name);
+			snprintf(description, sizeof description, "Set flag template \2%s\2 to: %s",
+				target, bitmask_to_flags(newflags));
+		}
+
+		notify_channel_misc_change(si, mc, description);
 
 		flagstr = bitmask_to_flags2(addflags, removeflags);
 		if (changechanacs)
