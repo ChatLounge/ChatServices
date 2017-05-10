@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains the main() routine.
@@ -14,8 +16,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/main", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 struct
 {
@@ -179,6 +183,36 @@ void _moddeinit(module_unload_intent_t intent)
 
         hook_del_config_ready(nickserv_config_ready);
         hook_del_nick_check(nickserv_handle_nickchange);
+}
+
+/* add_history_entry_setting:
+ *
+ *      Constructs a character array (string), then calls add_history_entry
+ * in nickserv/history, if possible.  More specialized version of
+ * add_history_entry to enhance consistency.
+ *
+ * Inputs:
+ *   myuser_t *smu - Source of the change (normally also the target)
+ *   myuser_t *tmu - Target NickServ account the history entry is being
+ *     added to.
+ *   const char *settingname - Name of the setting (e.g. "EMAILMEMOS")
+ *   const char *setting - The actual setting (e.g. "ON")
+ */
+
+void add_history_entry_setting(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting)
+{
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) == NULL)
+		return;
+
+	/* Failsafe - In theory shouldn't trigger. */
+	if (smu == NULL || tmu == NULL || settingname == NULL || setting == NULL)
+		return;
+
+	char description[300];
+
+	snprintf(description, sizeof description, "Setting \2%s\2 is now: \2%s\2", settingname, setting);
+
+	add_history_entry(smu, tmu, description);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
