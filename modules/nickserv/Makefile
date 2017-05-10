@@ -20,6 +20,7 @@ BASE_SRCS =			\
 	ghost.c	\
 	group.c	\
 	help.c	\
+	history.c	\
 	hold.c	\
 	identify.c	\
 	info.c	\
