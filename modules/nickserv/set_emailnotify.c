@@ -19,6 +19,8 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
+
 mowgli_patricia_t **ns_set_cmdtree;
 
 static void ns_cmd_set_emailnotify(sourceinfo_t *si, int parc, char *parv[]);
@@ -45,6 +47,9 @@ void _modinit(module_t *m)
 	emailnotify.is_match = has_emailnotify;
 
 	list_register("emailnotify", &emailnotify);
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 }
 
 
@@ -81,6 +86,8 @@ static void ns_cmd_set_emailnotify(sourceinfo_t *si, int parc, char *parv[])
 
 		command_success_nodata(si, _("The \2%s\2 flag has been set for account \2%s\2."), "EMAILNOTIFY", entity(si->smu)->name);
 
+		add_history_entry_setting(si->smu, si->smu, "EMAILNOTIFY", "ON");
+
 		return;
 	}
 	else if (!strcasecmp("OFF", params))
@@ -96,6 +103,8 @@ static void ns_cmd_set_emailnotify(sourceinfo_t *si, int parc, char *parv[])
 		si->smu->flags &= ~MU_EMAILNOTIFY;
 
 		command_success_nodata(si, _("The \2%s\2 flag has been removed for account \2%s\2."), "EMAILNOTIFY", entity(si->smu)->name);
+
+		add_history_entry_setting(si->smu, si->smu, "EMAILNOTIFY", "OFF");
 
 		return;
 	}

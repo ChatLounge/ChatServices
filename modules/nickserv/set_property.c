@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Manipulates metadata entries associated with an account.
@@ -14,8 +16,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/set_property", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 mowgli_patricia_t **ns_set_cmdtree;
 
@@ -26,6 +30,9 @@ command_t ns_set_property = { "PROPERTY", N_("Manipulates metadata entries assoc
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 
 	command_add(&ns_set_property, *ns_set_cmdtree);
 }
@@ -40,6 +47,7 @@ static void ns_cmd_set_property(sourceinfo_t *si, int parc, char *parv[])
 {
 	char *property = strtok(parv[0], " ");
 	char *value = strtok(NULL, "");
+	char propertydescription[300];
 	unsigned int count;
 	mowgli_patricia_iteration_state_t state;
 	metadata_t *md;
@@ -78,6 +86,11 @@ static void ns_cmd_set_property(sourceinfo_t *si, int parc, char *parv[])
 		metadata_delete(si->smu, property);
 		logcommand(si, CMDLOG_SET, "SET:PROPERTY: \2%s\2 (deleted)", property);
 		command_success_nodata(si, _("Metadata entry \2%s\2 has been deleted."), property);
+
+		snprintf(propertydescription, sizeof propertydescription, "PROPERTY:%s", property);
+
+		add_history_entry_setting(si->smu, si->smu, propertydescription, "<Removed>");
+
 		return;
 	}
 
@@ -109,7 +122,11 @@ static void ns_cmd_set_property(sourceinfo_t *si, int parc, char *parv[])
 		hook_call_metadata_change(&mdchange);
 	}
 	logcommand(si, CMDLOG_SET, "SET:PROPERTY: \2%s\2 to \2%s\2", property, value);
-	command_success_nodata(si, _("Metadata entry \2%s\2 added."), property);
+	command_success_nodata(si, _("Metadata entry \2%s\2 added with the value: %s"), property, value);
+
+	snprintf(propertydescription, sizeof propertydescription, "PROPERTY:%s", property);
+
+	add_history_entry_setting(si->smu, si->smu, propertydescription, value);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

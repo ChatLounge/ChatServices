@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Changes the language services uses to talk to you.
@@ -16,8 +18,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/set_language", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 mowgli_patricia_t **ns_set_cmdtree;
 
@@ -28,6 +32,9 @@ command_t ns_set_language = { "LANGUAGE", N_("Changes the language services uses
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 
 	command_add(&ns_set_language, *ns_set_cmdtree);
 }
@@ -65,6 +72,8 @@ static void ns_cmd_set_language(sourceinfo_t *si, int parc, char *parv[])
 	si->smu->language = lang;
 
 	command_success_nodata(si, _("The language for \2%s\2 has been changed to \2%s\2."), entity(si->smu)->name, language_get_name(lang));
+
+	add_history_entry_setting(si->smu, si->smu, "LANGUAGE", language_get_name(lang));
 
 	return;
 }

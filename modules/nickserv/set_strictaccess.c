@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 ChatLounge IRC Network Development Team
+/* Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     <http://www.chatlounge.net/>
  *
  *     This files contains the functions to provide the NickServ
@@ -17,6 +17,8 @@ DECLARE_MODULE_V1
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 mowgli_patricia_t **ns_set_cmdtree;
 
@@ -51,6 +53,8 @@ static void ns_cmd_set_strictaccess(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("The \2%s\2 flag has been set for: \2%s\2"),
 			"STRICTACCESS", entity(si->smu)->name);
 
+		add_history_entry_setting(si->smu, si->smu, "STRICTACCESS", "ON");
+
 		return;
 	}
 	else if (!strcasecmp("OFF", parv[0]) || !strcasecmp("0", parv[0]) || !strcasecmp("FALSE", parv[0]))
@@ -68,6 +72,8 @@ static void ns_cmd_set_strictaccess(sourceinfo_t *si, int parc, char *parv[])
 
 		command_success_nodata(si, _("The \2%s\2 flag has been removed for: \2%s\2"),
 			"STRICTACCESS", entity(si->smu)->name);
+
+		add_history_entry_setting(si->smu, si->smu, "STRICTACCESS", "OFF");
 
 		return;
 	}
@@ -90,6 +96,10 @@ static bool uses_myuser_strictaccess(const mynick_t *mn, const void *arg)
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
+
 	command_add(&ns_set_strictaccess, *ns_set_cmdtree);
 
 	use_myuser_strictaccess++;

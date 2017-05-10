@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
+ * Copyright (c) 2017 ChatLounge IRC Network Development
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Forwards incoming memos to your e-mail address.
@@ -16,8 +18,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/set_emailmemos", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 mowgli_patricia_t **ns_set_cmdtree;
 
@@ -45,6 +49,9 @@ void _modinit(module_t *m)
 	emailmemos.is_match = has_emailmemos;
 
 	list_register("emailmemos", &emailmemos);
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -86,9 +93,11 @@ static void ns_cmd_set_emailmemos(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_SET, "SET:EMAILMEMOS:ON");
 		si->smu->flags |= MU_EMAILMEMOS;
 		command_success_nodata(si, _("The \2%s\2 flag has been set for account \2%s\2."), "EMAILMEMOS", entity(si->smu)->name);
+
+		add_history_entry_setting(si->smu, si->smu, "EMAILMEMOS", "ON");
+
 		return;
 	}
-
 	else if (!strcasecmp("OFF", params))
 	{
 		if (!(MU_EMAILMEMOS & si->smu->flags))
@@ -100,6 +109,9 @@ static void ns_cmd_set_emailmemos(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_SET, "SET:EMAILMEMOS:OFF");
 		si->smu->flags &= ~MU_EMAILMEMOS;
 		command_success_nodata(si, _("The \2%s\2 flag has been removed for account \2%s\2."), "EMAILMEMOS", entity(si->smu)->name);
+
+		add_history_entry_setting(si->smu, si->smu, "EMAILMEMOS", "OFF");
+
 		return;
 	}
 	else

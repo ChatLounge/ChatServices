@@ -20,6 +20,8 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
 
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
+
 mowgli_patricia_t **ns_set_cmdtree;
 
 static void ns_cmd_set_notifymemo(sourceinfo_t *si, int parc, char *parv[]);
@@ -36,6 +38,9 @@ static bool has_notifymemo(const mynick_t *mn, const void *arg)
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 
 	command_add(&ns_set_notifymemo, *ns_set_cmdtree);
 
@@ -82,6 +87,8 @@ static void ns_cmd_set_notifymemo(sourceinfo_t *si, int parc, char *parv[])
 
 		command_success_nodata(si, _("The \2%s\2 flag has been set for account \2%s\2."), "NOTIFYMEMO", entity(si->smu)->name);
 
+		add_history_entry_setting(si->smu, si->smu, "NOTIFYMEMO", "ON");
+
 		return;
 	}
 	else if (!strcasecmp("OFF", params))
@@ -97,6 +104,8 @@ static void ns_cmd_set_notifymemo(sourceinfo_t *si, int parc, char *parv[])
 		si->smu->flags &= ~MU_NOTIFYMEMO;
 
 		command_success_nodata(si, _("The \2%s\2 flag has been removed for account \2%s\2."), "NOTIFYMEMO", entity(si->smu)->name);
+
+		add_history_entry_setting(si->smu, si->smu, "NOTIFYMEMO", "OFF");
 
 		return;
 	}

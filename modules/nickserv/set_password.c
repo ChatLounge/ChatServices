@@ -1,7 +1,8 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2016 ChatLounge IRC Network Development
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Changes the password associated with your account.
@@ -15,8 +16,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/set_password", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 mowgli_patricia_t **ns_set_cmdtree;
 
@@ -27,6 +30,9 @@ command_t ns_set_password = { "PASSWORD", N_("Changes the password associated wi
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 
 	command_add(&ns_set_password, *ns_set_cmdtree);
 }
@@ -72,6 +78,8 @@ static void ns_cmd_set_password(sourceinfo_t *si, int parc, char *parv[])
 	set_password(si->smu, password);
 
 	command_success_nodata(si, _("The password for \2%s\2 has been changed to: \2%s\2"), entity(si->smu)->name, password);
+
+	add_history_entry_setting(si->smu, si->smu, "PASSWORD", "<Changed>");
 
 	return;
 }

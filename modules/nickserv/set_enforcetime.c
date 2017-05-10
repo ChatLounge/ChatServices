@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010 Atheme Development Group
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -13,8 +13,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/set_enforcetime",false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 mowgli_patricia_t **ns_set_cmdtree;
 
@@ -42,6 +44,9 @@ void _modinit(module_t *m)
 	MODULE_TRY_REQUEST_DEPENDENCY(m, "nickserv/enforce");
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
 
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
+
 	command_add(&ns_set_enforcetime, *ns_set_cmdtree);
 
 	hook_add_event("user_info");
@@ -58,6 +63,7 @@ void _moddeinit(module_unload_intent_t intent)
 static void ns_cmd_set_enforcetime(sourceinfo_t *si, int parc, char *parv[])
 {
 	char *setting = parv[0];
+	char enforcetimetext[5];
 
 	if (!setting)
 	{
@@ -75,6 +81,10 @@ static void ns_cmd_set_enforcetime(sourceinfo_t *si, int parc, char *parv[])
 			logcommand(si, CMDLOG_SET, "SET:ENFORCETIME:DEFAULT");
 			metadata_delete(si->smu, "private:enforcetime");
 			command_success_nodata(si, _("The \2%s\2 for account \2%s\2 has been reset to default, which is \2%d\2 seconds."), "ENFORCETIME", entity(si->smu)->name, nicksvs.enforce_delay);
+
+			snprintf(enforcetimetext, sizeof enforcetimetext, "%d seconds", nicksvs.enforce_delay);
+
+			add_history_entry_setting(si->smu, si->smu, "EMAILNOTIFY", "ON");
 		}
 		else
 		{
@@ -88,6 +98,10 @@ static void ns_cmd_set_enforcetime(sourceinfo_t *si, int parc, char *parv[])
 			logcommand(si, CMDLOG_SET, "SET:ENFORCETIME: %d", enforcetime);
 			metadata_add(si->smu, "private:enforcetime", setting);
 			command_success_nodata(si, _("The \2%s\2 for account \2%s\2 has been set to \2%d\2 second%s."), "ENFORCETIME", entity(si->smu)->name, enforcetime, enforcetime == 1 ? "" : "s");
+
+			snprintf(enforcetimetext, sizeof enforcetimetext, "%d seconds", enforcetime);
+
+			add_history_entry_setting(si->smu, si->smu, "EMAILNOTIFY", "ON");
 		}
 		else
 		{
