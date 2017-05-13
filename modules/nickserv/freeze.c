@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2007 Patrick Fish, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Gives services the ability to freeze nicknames
@@ -15,8 +17,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/freeze", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 static void ns_cmd_freeze(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -60,6 +64,9 @@ void _modinit(module_t *m)
 
 	list_register("frozen", &frozen);
 	list_register("frozen-reason", &frozen_reason);
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -135,6 +142,8 @@ static void ns_cmd_freeze(sourceinfo_t *si, int parc, char *parv[])
 		wallops("%s froze the account: \2%s\2 (%s)", get_oper_name(si), target, reason);
 		logcommand(si, CMDLOG_ADMIN, "FREEZE:ON: \2%s\2 (reason: \2%s\2)", target, reason);
 		command_success_nodata(si, _("\2%s\2 is now frozen; reason: %s"), target, reason);
+
+		add_history_entry_setting(si->smu, mu, "FROZEN", "ON");
 	}
 	else if (!strcasecmp(action, "OFF"))
 	{
@@ -151,6 +160,8 @@ static void ns_cmd_freeze(sourceinfo_t *si, int parc, char *parv[])
 		wallops("%s unfroze/thawed the account: \2%s\2", get_oper_name(si), target);
 		logcommand(si, CMDLOG_ADMIN, "FREEZE:OFF: \2%s\2", target);
 		command_success_nodata(si, _("\2%s\2 has been unfrozen."), target);
+
+		add_history_entry_setting(si->smu, mu, "FROZEN", "OFF");
 	}
 	else
 	{

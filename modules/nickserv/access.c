@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2006-2007 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Changes and shows nickname access lists.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/access", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_access(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -198,6 +202,7 @@ static void ns_cmd_access(sourceinfo_t *si, int parc, char *parv[])
 	char *host;
 	char *p;
 	char mangledmask[NICKLEN+HOSTLEN+10];
+	char description[300];
 
 	if (parc < 1)
 	{
@@ -378,6 +383,12 @@ static void ns_cmd_access(sourceinfo_t *si, int parc, char *parv[])
 		{
 			command_success_nodata(si, _("Added mask \2%s\2 to your access list."), mask);
 			logcommand(si, CMDLOG_SET, "ACCESS:ADD: \2%s\2", mask);
+
+			if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "Access list entry added: \2%s\2", mask);
+				add_history_entry(si->smu, si->smu, description);
+			}
 		}
 		else
 			command_fail(si, fault_toomany, _("Your access list is full."));
@@ -407,7 +418,13 @@ static void ns_cmd_access(sourceinfo_t *si, int parc, char *parv[])
 
 		if ((MU_STRICTACCESS & mu->flags) && !myuser_access_verify(si->su, mu))
 		{
-			command_success_nodata(si, _("\2WARNING\2: You have removed the last ACCESS list entry that matches this connection.  You will not be able to ID from this host unless you add it back."));
+			command_success_nodata(si, _("\2WARNING\2: You have removed the last ACCESS list entry that matches this connection.  You will not be able to ID from this connection unless you add it back or disable STRICTACCESS."));
+		}
+
+		if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Access list entry removed: \2%s\2", parv[1]);
+			add_history_entry(si->smu, si->smu, description);
 		}
 	}
 	else

@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2007 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the NickServ RELEASE/ENFORCE functions.
@@ -19,8 +21,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/enforce",false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting);
 
 typedef struct {
 	char nick[NICKLEN];
@@ -157,6 +161,9 @@ static void ns_cmd_set_enforce(sourceinfo_t *si, int parc, char *parv[])
 			metadata_add(si->smu, "private:doenforce", "1");
 			command_success_nodata(si, _("The \2%s\2 flag has been set for account \2%s\2."), "ENFORCE", entity(si->smu)->name);
 			check_enforce_all(si->smu);
+
+			if ((add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting")) != NULL)
+				add_history_entry_setting(si->smu, si->smu, "ENFORCE", "ON");
 		}
 	}
 	else if (strcasecmp(setting, "OFF") == 0)
@@ -166,6 +173,9 @@ static void ns_cmd_set_enforce(sourceinfo_t *si, int parc, char *parv[])
 			logcommand(si, CMDLOG_SET, "SET:ENFORCE:OFF");
 			metadata_delete(si->smu, "private:doenforce");
 			command_success_nodata(si, _("The \2%s\2 flag has been removed for account \2%s\2."), "ENFORCE", entity(si->smu)->name);
+
+			if ((add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting")) != NULL)
+				add_history_entry_setting(si->smu, si->smu, "ENFORCE", "OFF");
 		}
 		else
 		{

@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2006 Jilles Tjoelker, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the NickServ GROUP command.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/group", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_group(sourceinfo_t *si, int parc, char *parv[]);
 static void ns_cmd_ungroup(sourceinfo_t *si, int parc, char *parv[]);
@@ -42,6 +46,7 @@ static void ns_cmd_group(sourceinfo_t *si, int parc, char *parv[])
 	mynick_t *mn;
 	hook_user_req_t hdata;
 	hook_user_register_check_t hdata_reg;
+	char description[300];
 
 	if (si->su == NULL)
 	{
@@ -100,6 +105,12 @@ static void ns_cmd_group(sourceinfo_t *si, int parc, char *parv[])
 	hdata.mu = si->smu;
 	hdata.mn = mn;
 	hook_call_nick_group(&hdata);
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Nick grouped: \2%s\2", mn->nick);
+		add_history_entry(si->smu, si->smu, description);
+	}
 }
 
 static void ns_cmd_ungroup(sourceinfo_t *si, int parc, char *parv[])
@@ -107,6 +118,7 @@ static void ns_cmd_ungroup(sourceinfo_t *si, int parc, char *parv[])
 	mynick_t *mn;
 	const char *target;
 	hook_user_req_t hdata;
+	char description[300];
 
 	if (parc >= 1)
 		target = parv[0];
@@ -139,6 +151,13 @@ static void ns_cmd_ungroup(sourceinfo_t *si, int parc, char *parv[])
 	hook_call_nick_ungroup(&hdata);
 	holdnick_sts(si->service->me, 0, mn->nick, NULL);
 	command_success_nodata(si, _("Nick \2%s\2 has been removed from your account."), mn->nick);
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Nick ungrouped: \2%s\2", mn->nick);
+		add_history_entry(si->smu, si->smu, description);
+	}
+
 	object_unref(mn);
 }
 
@@ -147,6 +166,7 @@ static void ns_cmd_fungroup(sourceinfo_t *si, int parc, char *parv[])
 	mynick_t *mn, *mn2 = NULL;
 	myuser_t *mu;
 	hook_user_req_t hdata;
+	char description[300];
 
 	if (parc < 1)
 	{
@@ -228,6 +248,13 @@ static void ns_cmd_fungroup(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("Nick \2%s\2 has been removed from account \2%s\2, name changed to \2%s\2."), mn->nick, entity(mu)->name, mn2->nick);
 	else
 		command_success_nodata(si, _("Nick \2%s\2 has been removed from account \2%s\2."), mn->nick, entity(mu)->name);
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Nick ungrouped: \2%s\2", mn->nick);
+		add_history_entry(si->smu, mn->owner, description);
+	}
+	
 	object_unref(mn);
 }
 

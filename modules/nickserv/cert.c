@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2006-2010 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Changes and shows nickname CertFP authentication lists.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/cert", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -34,7 +38,7 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 {
 	myuser_t *mu;
 	mowgli_node_t *n;
-	char *mcfp;
+	char *mcfp, description[300];
 	mycertfp_t *cert;
 	user_t *cu;
 	service_t *ns;
@@ -129,6 +133,12 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 		{
 			command_success_nodata(si, _("Added fingerprint \2%s\2 to your fingerprint list."), mcfp);
 			logcommand(si, CMDLOG_SET, "CERT:ADD: \2%s\2", mcfp);
+
+			if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "Fingerprint added: \2%s\2", mcfp);
+				add_history_entry(si->smu, si->smu, description);
+			}
 		}
 		else
 			command_fail(si, fault_toomany, _("Your fingerprint list is full."));
@@ -156,6 +166,12 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("Deleted fingerprint \2%s\2 from your fingerprint list."), parv[1]);
 		logcommand(si, CMDLOG_SET, "CERT:DEL: \2%s\2", parv[1]);
 		mycertfp_delete(cert);
+
+		if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Fingerprint removed: \2%s\2", parv[1]);
+			add_history_entry(si->smu, si->smu, description);
+		}
 	}
 	else if (!strcasecmp(parv[0], "IDENTIFY") || !strcasecmp(parv[0], "ID"))
 	{
