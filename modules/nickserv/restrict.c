@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Restrictions for nicknames.
@@ -14,8 +16,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/restrict", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 static void ns_cmd_restrict(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -85,6 +89,9 @@ void _modinit(module_t *m)
 
 	list_register("restricted", &restricted);
 	list_register("restricted-reason", &restrict_match);
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -139,6 +146,8 @@ static void ns_cmd_restrict(sourceinfo_t *si, int parc, char *parv[])
 		wallops("%s restricted the account \2%s\2.", get_oper_name(si), entity(mu)->name);
 		logcommand(si, CMDLOG_ADMIN, "RESTRICT:ON: \2%s\2 (reason: \2%s\2)", entity(mu)->name, info);
 		command_success_nodata(si, _("\2%s\2 is now restricted."), entity(mu)->name);
+
+		add_history_entry_setting(si->smu, mu, "RESTRICT", "ON");
 	}
 	else if (!strcasecmp(action, "OFF"))
 	{
@@ -155,6 +164,8 @@ static void ns_cmd_restrict(sourceinfo_t *si, int parc, char *parv[])
 		wallops("%s unrestricted the account \2%s\2.", get_oper_name(si), entity(mu)->name);
 		logcommand(si, CMDLOG_ADMIN, "RESTRICT:OFF: \2%s\2", entity(mu)->name);
 		command_success_nodata(si, _("\2%s\2 is now unrestricted."), entity(mu)->name);
+
+		add_history_entry_setting(si->smu, mu, "RESTRICT", "OFF");
 	}
 	else
 	{

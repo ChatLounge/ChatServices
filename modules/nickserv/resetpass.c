@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Patrick Fish, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for nickserv RESETPASS
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/resetpass", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 static void ns_cmd_resetpass(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -22,6 +26,9 @@ command_t ns_resetpass = { "RESETPASS", N_("Resets an account password."), PRIV_
 void _modinit(module_t *m)
 {
 	service_named_bind_command("nickserv", &ns_resetpass);
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -85,6 +92,8 @@ static void ns_cmd_resetpass(sourceinfo_t *si, int parc, char *parv[])
 
 	wallops("%s reset the password for the account %s", get_oper_name(si), entity(mu)->name);
 	logcommand(si, CMDLOG_ADMIN, "RESETPASS: \2%s\2", entity(mu)->name);
+
+	add_history_entry_setting(si->smu, mu, "PASSWORD", "<Changed>");
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
