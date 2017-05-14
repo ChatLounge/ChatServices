@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Alex Lambert
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Implements nickserv RETURN.
@@ -13,8 +15,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/return", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_return(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -36,6 +40,7 @@ static void ns_cmd_return(sourceinfo_t *si, int parc, char *parv[])
 	char *newmail = parv[1];
 	char *newpass;
 	char oldmail[EMAILLEN];
+	char description[300];
 	myuser_t *mu;
 	user_t *u;
 	mowgli_node_t *n, *tn;
@@ -110,6 +115,12 @@ static void ns_cmd_return(sourceinfo_t *si, int parc, char *parv[])
 						target, newmail);
 	command_success_nodata(si, _("A random password has been set; it has been sent to \2%s\2."),
 						newmail);
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Account returned to: \2%s\2", newmail);
+		add_history_entry(si->smu, mu, description);
+	}
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

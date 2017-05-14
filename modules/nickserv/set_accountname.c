@@ -19,6 +19,8 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
+
 mowgli_patricia_t **ns_set_cmdtree;
 
 static void ns_cmd_set_accountname(sourceinfo_t *si, int parc, char *parv[]);
@@ -33,6 +35,9 @@ void _modinit(module_t *m)
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
 
 	command_add(&ns_set_accountname, *ns_set_cmdtree);
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -121,6 +126,8 @@ static void ns_cmd_set_accountname(sourceinfo_t *si, int parc, char *parv[])
 
 	logcommand(si, CMDLOG_REGISTER, "SET:ACCOUNTNAME: \2%s\2", newname);
 	command_success_nodata(si, _("Your account name is now set to \2%s\2."), newname);
+
+	add_history_entry_setting(si->smu, si->smu, "ACCOUNTNAME", newname);
 
 	update_vhost_on_account_name_change = module_locate_symbol("hostserv/offer", "update_vhost_on_account_name_change");
 
