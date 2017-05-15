@@ -23,6 +23,7 @@ DECLARE_MODULE_V1
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
+void (*add_nickserv_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 void (*add_history_entry_misc)(mychan_t *mc, const char *desc) = NULL;
 bool *(*send_user_memo)(sourceinfo_t *si, myuser_t *target,
 	const char *memotext, bool verbose, unsigned int status, bool senduseremail) = NULL;
@@ -965,29 +966,42 @@ static void cs_leave_empty(void *unused)
 void notify_target_acl_change(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *flagstr, unsigned int flags)
 {
-	char text[256], text2[300];
+	char text[256], text1[256], text2[300];
 
 	if (si->smu == NULL || tmu == NULL || mc == NULL || flagstr == NULL)
 		return;
 
-	if (!(tmu->flags & MU_NOTIFYACL))
-		return;
-
 	if (flags == 0)
+	{
 		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 and removed you from: \2%s\2",
 			entity(si->smu)->name, flagstr, mc->name);
+		snprintf(text1, sizeof text1, "Set \2%s\2, removing you from: \2%s\2",
+			flagstr, mc->name);
+	}
 	else if (get_template_name(mc, flags))
+	{
 		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on you in \2%s\2 where you now have the flags: \2%s\2 (TEMPLATE: \2%s\2)",
 			entity(si->smu)->name, flagstr, mc->name, bitmask_to_flags(flags),
 			get_template_name(mc, flags));
+		snprintf(text1, sizeof text1, "Set \2%s\2 on you in: \2%s\2  You have the flags: \2%s\2 (TEMPLATE: \2%s\2)",
+			flagstr, mc->name, bitmask_to_flags(flags),
+			get_template_name(mc, flags));
+	}
 	else
+	{
 		snprintf(text, sizeof text, "\2%s\2 has set \2%s\2 on you in \2%s\2 where you now have the flags: \2%s\2",
 			entity(si->smu)->name, flagstr, mc->name, bitmask_to_flags(flags));
+		snprintf(text1, sizeof text1, "Set \2%s\2 on you in: \2%s\2  You have the flags: \2%s\2",
+			flagstr, mc->name, bitmask_to_flags(flags));
+	}
 
-	if (MOWGLI_LIST_LENGTH(&tmu->logins) > 0)
+	if ((tmu->flags & MU_NOTIFYACL) && MOWGLI_LIST_LENGTH(&tmu->logins) > 0)
 		myuser_notice(chansvs.nick, tmu, text);
 
-	if (tmu->flags & MU_NOMEMO || !(tmu->flags & MU_NOTIFYMEMO))
+	if ((add_nickserv_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+		add_nickserv_history_entry(si->smu, tmu, text1);
+
+	if (!(tmu->flags & MU_NOTIFYACL) || tmu->flags & MU_NOMEMO || !(tmu->flags & MU_NOTIFYMEMO))
 		return;
 
 	if ((send_user_memo = module_locate_symbol("memoserv/main", "send_user_memo")) == NULL)
