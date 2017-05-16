@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -19,6 +19,8 @@ DECLARE_MODULE_V1
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void hs_cmd_vhost(sourceinfo_t *si, int parc, char *parv[]);
 static void hs_cmd_listvhost(sourceinfo_t *si, int parc, char *parv[]);
@@ -45,6 +47,7 @@ static void hs_cmd_vhost(sourceinfo_t *si, int parc, char *parv[])
 {
 	char *target = parv[0];
 	char *host = parv[1];
+	char description[300];
 	myuser_t *mu;
 
 	if (!target)
@@ -68,6 +71,13 @@ static void hs_cmd_vhost(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("Deleted all vhosts for \2%s\2."), entity(mu)->name);
 		logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2", target);
 		do_sethost_all(mu, NULL); // restore user vhost from user host
+
+		if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Removed vhost.");
+			add_history_entry(si->smu, mu, description);
+		}
+
 		return;
 	}
 
@@ -85,6 +95,12 @@ static void hs_cmd_vhost(sourceinfo_t *si, int parc, char *parv[])
 	logcommand(si, CMDLOG_ADMIN, "VHOST:ASSIGN: \2%s\2 to \2%s\2",
 			host, target);
 	do_sethost_all(mu, host);
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Vhost set to: \2%s\2", host);
+		add_history_entry(si->smu, mu, description);
+	}
 	return;
 }
 

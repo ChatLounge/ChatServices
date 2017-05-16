@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -20,6 +20,8 @@ DECLARE_MODULE_V1
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void hs_cmd_offer(sourceinfo_t *si, int parc, char *parv[]);
 static void hs_cmd_unoffer(sourceinfo_t *si, int parc, char *parv[]);
@@ -290,6 +292,7 @@ const char *update_vhost_on_account_name_change(myuser_t *mu, const char *newnam
 	metadata_t *md;
 	char vhoststring[128];
 	static char newvhoststring[128];
+	char description[300];
 
 	if (mu == NULL)
 		return NULL;
@@ -320,6 +323,12 @@ const char *update_vhost_on_account_name_change(myuser_t *mu, const char *newnam
 
 			hs_sethost_all(mu, newvhoststring, newname);
 			do_sethost_all(mu, newvhoststring);
+
+			if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "New vhost set to: \2%s\2", newvhoststring);
+				add_history_entry(mu, mu, description);
+			}
 
 			return newvhoststring;
 		}
@@ -354,6 +363,12 @@ const char *update_vhost_on_account_name_change(myuser_t *mu, const char *newnam
 			hs_sethost_all(mu, newvhoststring, newname);
 			do_sethost_all(mu, newvhoststring);
 
+			if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "New vhost set to: \2%s\2", newvhoststring);
+				add_history_entry(mu, mu, description);
+			}
+
 			return newvhoststring;
 		}
 	}
@@ -369,6 +384,7 @@ static void hs_cmd_take(sourceinfo_t *si, int parc, char *parv[])
 	mowgli_node_t *n, *o;
 	mowgli_list_t *ml;
 	char templatevhost[128], templatevhost2[128];
+	char description[300];
 
 	if (!host)
 	{
@@ -413,6 +429,12 @@ static void hs_cmd_take(sourceinfo_t *si, int parc, char *parv[])
 			hs_sethost_all(si->smu, host, get_source_name(si));
 			do_sethost_all(si->smu, host);
 
+			if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "New vhost set to: \2%s\2", host);
+				add_history_entry(si->smu, si->smu, description);
+			}
+
 			return;
 		}
 	}
@@ -446,6 +468,12 @@ static void hs_cmd_take(sourceinfo_t *si, int parc, char *parv[])
 				command_success_nodata(si, _("You have taken vhost \2%s\2."), host);
 				hs_sethost_all(si->smu, host, get_source_name(si));
 				do_sethost_all(si->smu, host);
+
+				if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+				{
+					snprintf(description, sizeof description, "New vhost set to: \2%s\2", host);
+					add_history_entry(si->smu, si->smu, description);
+				}
 
 				return;
 			}

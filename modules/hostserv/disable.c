@@ -12,7 +12,7 @@
  *  and must be run at the beginning of every IRC session, prior to oper
  *  intervention.
  *
- *  Copyright (c) 2015-2016 - ChatLounge IRC Network Development Team
+ *  Copyright (c) 2015-2017 - ChatLounge IRC Network Development Team
  */
  
 #include "atheme.h"
@@ -24,6 +24,8 @@ DECLARE_MODULE_V1
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void hs_cmd_disable(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -41,6 +43,8 @@ void _moddeinit(module_unload_intent_t intent)
 
 static void hs_cmd_disable(sourceinfo_t *si, int parc, char *parv[])
 {
+	char description[300];
+
 	if (si->smu == NULL)
 	{
 		command_fail(si, fault_noprivs, _("You are not logged in."));
@@ -51,4 +55,10 @@ static void hs_cmd_disable(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Deleted all vhosts for \2%s\2."), entity(si->smu)->name);
 	logcommand(si, CMDLOG_ADMIN, "VHOST:REMOVE: \2%s\2", entity(si->smu)->name);
 	do_sethost_all(si->smu, NULL);
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Removed vhost.");
+		add_history_entry(si->smu, si->smu, description);
+	}
 }
