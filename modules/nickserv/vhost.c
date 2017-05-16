@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Allows setting a vhost on an account
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/vhost", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void vhost_on_identify(user_t *u);
 static void ns_cmd_vhost(sourceinfo_t *si, int parc, char *parv[]);
@@ -70,6 +74,7 @@ static void ns_cmd_vhost(sourceinfo_t *si, int parc, char *parv[])
 	bool force = false;
 	char cmdtext[NICKLEN + HOSTLEN + 20];
 	char timestring[16];
+	char description[300];
 
 	if (!target)
 	{
@@ -174,6 +179,13 @@ static void ns_cmd_vhost(sourceinfo_t *si, int parc, char *parv[])
 			command_success_nodata(si, _("Overriding MARK placed by %s on the account %s."), markmd->value, entity(mu)->name);
 		}
 		do_sethost_all(mu, NULL); // restore user vhost from user host
+
+		if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Removed vhost.");
+			add_history_entry(si->smu, mu, description);
+		}
+
 		return;
 	}
 
@@ -203,6 +215,13 @@ static void ns_cmd_vhost(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("Overriding MARK placed by %s on the account %s."), markmd->value, entity(mu)->name);
 	}
 	do_sethost_all(mu, host);
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Vhost set to: \2%s\2", host);
+		add_history_entry(si->smu, mu, description);
+	}
+
 	return;
 }
 
