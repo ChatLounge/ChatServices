@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2007 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the NickServ SETPASS function.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/setpass", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 static void clear_setpass_key(user_t *u);
 static void ns_cmd_setpass(sourceinfo_t *si, int parc, char *parv[]);
@@ -23,6 +27,9 @@ command_t ns_setpass = { "SETPASS", N_("Changes a password using an authcode."),
 
 void _modinit(module_t *m)
 {
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
+
 	hook_add_event("user_identify");
 	hook_add_user_identify(clear_setpass_key);
 	hook_add_event("user_info");
@@ -90,6 +97,8 @@ static void ns_cmd_setpass(sourceinfo_t *si, int parc, char *parv[])
 
 
 		command_success_nodata(si, _("The password for \2%s\2 has been changed to \2%s\2."), entity(mu)->name, password);
+
+		add_history_entry_setting(si->smu, mu, "PASSWORD", "<Changed>");
 
 		return;
 	}

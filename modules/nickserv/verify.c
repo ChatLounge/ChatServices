@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the NickServ VERIFY function.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/verify", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_verify(sourceinfo_t *si, int parc, char *parv[]);
 static void ns_cmd_fverify(sourceinfo_t *si, int parc, char *parv[]);
@@ -42,6 +46,7 @@ static void ns_cmd_verify(sourceinfo_t *si, int parc, char *parv[])
 	char *nick = parv[1];
 	char *key = parv[2];
 	hook_user_req_t req;
+	char description[300];
 
 	if (!op || !nick || !key)
 	{
@@ -84,6 +89,13 @@ static void ns_cmd_verify(sourceinfo_t *si, int parc, char *parv[])
 
 			command_success_nodata(si, _("\2%s\2 has now been verified."), entity(mu)->name);
 			command_success_nodata(si, _("Thank you for verifying your e-mail address! You have taken steps in ensuring that your registrations are not exploited."));
+
+			if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "Verified account.");
+				add_history_entry(si->smu, si->smu, description);
+			}
+
 			MOWGLI_ITER_FOREACH(n, mu->logins.head)
 			{
 				user_t *u = n->data;
@@ -136,6 +148,12 @@ static void ns_cmd_verify(sourceinfo_t *si, int parc, char *parv[])
 
 			command_success_nodata(si, _("\2%s\2 has now been verified."), mu->email);
 
+			if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "Verified new e-mail address.");
+				add_history_entry(si->smu, si->smu, description);
+			}
+
 			return;
 		}
 
@@ -161,6 +179,7 @@ static void ns_cmd_fverify(sourceinfo_t *si, int parc, char *parv[])
 	char *op = parv[0];
 	char *nick = parv[1];
 	hook_user_req_t req;
+	char description[300];
 
 	if (!op || !nick)
 	{
@@ -191,6 +210,13 @@ static void ns_cmd_fverify(sourceinfo_t *si, int parc, char *parv[])
 		metadata_delete(mu, "private:verify:register:timestamp");
 
 		command_success_nodata(si, _("\2%s\2 has now been verified."), entity(mu)->name);
+
+		if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Verified account (manually).");
+			add_history_entry(si->smu, mu, description);
+		}
+
 		MOWGLI_ITER_FOREACH(n, mu->logins.head)
 		{
 			user_t *u = n->data;
@@ -224,6 +250,12 @@ static void ns_cmd_fverify(sourceinfo_t *si, int parc, char *parv[])
 		metadata_delete(mu, "private:verify:emailchg:timestamp");
 
 		command_success_nodata(si, _("\2%s\2 has now been verified."), mu->email);
+
+		if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Verified new e-mail address (manually).");
+			add_history_entry(si->smu, mu, description);
+		}
 
 		return;
 	}

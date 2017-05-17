@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2008 William Pitcock <nenolod@atheme.org>
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Allows extension of expiry times if user will be away from IRC for
@@ -12,12 +14,15 @@ DECLARE_MODULE_V1
 (
 	"nickserv/vacation", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_vacation(sourceinfo_t *si, int parc, char *parv[])
 {
 	char tsbuf[BUFSIZE];
+	char description[300];
 
 	if (CURRTIME < (time_t)(si->smu->registered + nicksvs.expiry))
 	{
@@ -37,17 +42,31 @@ static void ns_cmd_vacation(sourceinfo_t *si, int parc, char *parv[])
 	if (nicksvs.expiry > 0)
 		command_success_nodata(si, _("Your account will automatically expire in %d days if you do not return."),
 				(nicksvs.expiry / 3600 / 24) * 3);
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Enabled vacation mode.");
+		add_history_entry(si->smu, si->smu, description);
+	}
 }
 
 command_t ns_vacation = { "VACATION", N_("Sets an account as being on vacation."), AC_AUTHENTICATED, 1, ns_cmd_vacation, { .path = "nickserv/vacation" } };
 
 static void user_identify_hook(user_t *u)
 {
+	char description[300];
+
 	if (!metadata_find(u->myuser, "private:vacation"))
 		return;
 
 	notice(nicksvs.nick, u->nick, _("Your account is no longer marked as being on vacation."));
 	metadata_delete(u->myuser, "private:vacation");
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Disabled vacation mode.");
+		add_history_entry(u->myuser, u->myuser, description);
+	}
 }
 
 static void user_expiry_hook(hook_expiry_req_t *req)

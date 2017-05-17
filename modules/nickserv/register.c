@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the NickServ REGISTER function.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/register", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 unsigned int ratelimit_count = 0;
 time_t ratelimit_firsttime = 0;
@@ -43,6 +47,7 @@ static void ns_cmd_register(sourceinfo_t *si, int parc, char *parv[])
 	char lau[BUFSIZE], lao[BUFSIZE];
 	hook_user_register_check_t hdata;
 	hook_user_req_t req;
+	char description[300];
 
 	if (si->smu)
 	{
@@ -233,6 +238,12 @@ static void ns_cmd_register(sourceinfo_t *si, int parc, char *parv[])
 		get_default_uflags());
 	command_success_nodata(si, _("If you would like to change these, or for more information on what they mean, please type: \2/msg %s HELP SET\2"), nicksvs.nick);
 	hook_call_user_register(mu);
+
+	if ((add_history_entry = module_locate_symbol("nickserv/history", "add_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Registered account.");
+		add_history_entry(mu, mu, description);
+	}
 
 	if (si->su != NULL)
 	{
