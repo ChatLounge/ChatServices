@@ -31,6 +31,7 @@ BASE_SRCS =			\
 	listmail.c	\
 	listownmail.c	\
 	login.c		\
+	loginhistory.c	\
 	logout.c	\
 	mark.c	\
 	multimark.c	\
