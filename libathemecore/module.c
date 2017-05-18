@@ -382,7 +382,7 @@ void *module_locate_symbol(const char *modname, const char *sym)
 
 	if (!(m = module_find_published(modname)))
 	{
-		slog(LG_ERROR, "module_locate_symbol(): %s is not loaded.", modname);
+		slog(LG_DEBUG, "module_locate_symbol(): %s is not loaded.", modname);
 		return NULL;
 	}
 
