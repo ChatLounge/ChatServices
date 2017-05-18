@@ -18,6 +18,7 @@ DECLARE_MODULE_V1
 );
 
 void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
+void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -219,6 +220,12 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 		notice(ns->nick, cu->nick, nicksvs.no_nick_ownership ? _("You are now logged in as \2%s\2.") : _("You are now identified for \2%s\2."), entity(mu)->name);
 
 		user_show_all_logins(mu, nicksvs.me->me, cu);
+
+		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Successful login: CERT");
+			add_login_history_entry(mu, mu, description);
+		}
 	}
 	else
 	{

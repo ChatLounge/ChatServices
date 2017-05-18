@@ -35,6 +35,8 @@ int use_myuser_strictaccess = 0;
 
 #define MAX_BUF 256
 
+void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
+
 /* ban wrapper for cmode, returns number of bans added (0 or 1) */
 int ban(user_t *sender, channel_t *c, user_t *user)
 {
@@ -577,6 +579,7 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 	myuser_t *mu;
 	mycertfp_t *mcfp;
 	service_t *svs;
+	char description[300];
 
 	free(u->certfp);
 	u->certfp = sstrdup(certfp);
@@ -611,6 +614,12 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 	logcommand_user(svs, u, CMDLOG_LOGIN, "LOGIN via CERTFP (%s)", certfp);
 
 	user_show_all_logins(mu, svs->me, u);
+
+	if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Successful login: CERT", mcfp);
+		add_login_history_entry(mu, mu, description);
+	}
 }
 
 void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount)

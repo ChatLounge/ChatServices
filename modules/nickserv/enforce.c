@@ -25,6 +25,7 @@ DECLARE_MODULE_V1
 );
 
 void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting);
+void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 typedef struct {
 	char nick[NICKLEN];
@@ -301,6 +302,7 @@ static void ns_cmd_regain(sourceinfo_t *si, int parc, char *parv[])
 	mowgli_node_t *n, *tn;
 	enforce_timeout_t *timeout;
 	char lau[BUFSIZE];
+	char description[300];
 
 	/* Absolutely do not do anything like this if nicks
 	 * are not considered owned */
@@ -432,6 +434,12 @@ static void ns_cmd_regain(sourceinfo_t *si, int parc, char *parv[])
 			myuser_login(si->service, si->su, mn->owner, true);
 
 			user_show_all_logins(mn->owner, nicksvs.me->me, si->su);
+
+			if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "Successful login: IDENTIFY via REGAIN.");
+				add_login_history_entry(mn->owner, mn->owner, description);
+			}
 		}
 
 		return;

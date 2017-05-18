@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains the main() routine.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"saslserv/main", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 mowgli_list_t sessions;
 static mowgli_list_t sasl_mechanisms;
@@ -628,6 +632,7 @@ static void sasl_newuser(hook_user_nick_t *data)
 	sasl_session_t *p;
 	myuser_t *mu;
 	char buf[BUFSIZE];
+	char description[300];
 
 	/* If the user has been killed, don't do anything. */
 	if (!u)
@@ -662,6 +667,12 @@ static void sasl_newuser(hook_user_nick_t *data)
 	notice(saslsvs->nick, u->nick, _("You are now logged in to: %s"), entity(mu)->name);
 
 	user_show_all_logins(mu, saslsvs->me, u);
+
+	if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Successful login: SASL");
+		add_login_history_entry(mu, mu, description);
+	}
 }
 
 /* This function is run approximately once every 30 seconds.

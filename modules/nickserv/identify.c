@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005-2006 William Pitcock, et al.
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the NickServ IDENTIFY and LOGIN functions.
@@ -22,8 +22,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/" COMMAND_LC, false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -59,6 +61,7 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 	const char *target = parv[0];
 	const char *password = parv[1];
 	char buf[BUFSIZE], lau[BUFSIZE];
+	char description[300];
 
 	if (si->su == NULL)
 	{
@@ -161,6 +164,12 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_LOGIN, COMMAND_UC);
 
 		user_show_all_logins(mu, nicksvs.me->me, u);
+
+		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Successful login: IDENTIFY");
+			add_login_history_entry(mu, mu, description);
+		}
 
 		return;
 	}
