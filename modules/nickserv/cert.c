@@ -202,16 +202,23 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 			command_fail(si, fault_nochange, _("You are already logged in as: \2%s\2"), entity(cu->myuser)->name);
 			return;
 		}
-		
-		if (MOWGLI_LIST_LENGTH(&mu->logins) >= me.maxlogins)
-		{
-			command_fail(si, fault_toomany, _("There are already \2%zu\2 sessions logged in to \2%s\2 (maximum allowed: %u)."), MOWGLI_LIST_LENGTH(&mu->logins), entity(mu)->name, me.maxlogins);
-			return;
-		}
 
 		if ((mu->flags & MU_STRICTACCESS) && !myuser_access_verify(si->su, mu))
 		{
 			command_fail(si, fault_authfail, _("You may not log in from this connection as STRICTACCESS has been enabled on this account."));
+
+			if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "Failed login: CERT (one or more client certificates have been compromised.)", mcfp);
+				add_login_history_entry(mu, mu, description);
+			}
+			
+			return;
+		}
+
+		if (MOWGLI_LIST_LENGTH(&mu->logins) >= me.maxlogins)
+		{
+			command_fail(si, fault_toomany, _("There are already \2%zu\2 sessions logged in to \2%s\2 (maximum allowed: %u)."), MOWGLI_LIST_LENGTH(&mu->logins), entity(mu)->name, me.maxlogins);
 			return;
 		}
 

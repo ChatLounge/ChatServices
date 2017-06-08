@@ -606,6 +606,12 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 	{
 		command_fail(si, fault_authfail, _("You may not log in from this connection as STRICTACCESS has been enabled on this account."));
 
+		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Failed login: CERT (one or more client certificates have been compromised.)", mcfp);
+			add_login_history_entry(mu, mu, description);
+		}
+
 		return;
 	}
 
