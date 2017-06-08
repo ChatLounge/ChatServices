@@ -608,7 +608,7 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 
 		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
 		{
-			snprintf(description, sizeof description, "Failed login: CERT (one or more client certificates have been compromised.)", mcfp);
+			snprintf(description, sizeof description, "Failed login: CERT from %s (%s@%s) [%s] (one or more client certificates have been compromised.)", si->su->nick, si->su->user, si->su->host, si->su->ip);
 			add_login_history_entry(mu, mu, description);
 		}
 
