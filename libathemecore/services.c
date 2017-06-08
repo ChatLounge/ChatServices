@@ -602,6 +602,13 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 		return;
 	}
 
+	if ((mu != NULL) && (mu->flags & MU_STRICTACCESS) && (!myuser_access_verify(u, mu)))
+	{
+		command_fail(si, fault_authfail, _("You may not log in from this connection as STRICTACCESS has been enabled on this account."));
+
+		return;
+	}
+
 	if (MOWGLI_LIST_LENGTH(&mu->logins) >= me.maxlogins)
 	{
 		notice(svs->me->nick, u->nick, _("There are already \2%zu\2 sessions logged in to \2%s\2 (maximum allowed: %u)."), MOWGLI_LIST_LENGTH(&mu->logins), entity(mu)->name, me.maxlogins);
