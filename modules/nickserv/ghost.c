@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2007 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the NickServ GHOST function.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/ghost", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_ghost(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -36,6 +40,7 @@ void ns_cmd_ghost(sourceinfo_t *si, int parc, char *parv[])
 	char *password = parv[1];
 	user_t *target_u;
 	mynick_t *mn;
+	char description[300];
 
 	if (!target)
 	{
@@ -102,8 +107,14 @@ void ns_cmd_ghost(sourceinfo_t *si, int parc, char *parv[])
 	if (password && mu)
 	{
 		logcommand(si, CMDLOG_DO, "failed GHOST \2%s\2 (bad password)", target);
-		command_fail(si, fault_authfail, _("Invalid password for \2%s\2."), entity(mu)->name);
+		command_fail(si, fault_authfail, _("Invalid password for: \2%s\2"), entity(mu)->name);
 		bad_password(si, mu);
+
+		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Failed password: GHOST from %s (%s@%s) [%s]", si->su->nick, si->su->user, si->su->host, si->su->ip);
+			add_login_history_entry(NULL, mu, description);
+		}
 	}
 	else
 	{

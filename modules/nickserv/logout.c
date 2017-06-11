@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService LOGOUT functions.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/logout", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
 static void ns_cmd_logout(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -36,6 +40,7 @@ static void ns_cmd_logout(sourceinfo_t *si, int parc, char *parv[])
 	mynick_t *mn;
 	char *user = parv[0];
 	char *pass = parv[1];
+	char description[300];
 
 	if ((!si->smu) && (!user || !pass))
 	{
@@ -66,6 +71,13 @@ static void ns_cmd_logout(sourceinfo_t *si, int parc, char *parv[])
 			logcommand(si, CMDLOG_LOGIN, "failed LOGOUT \2%s\2 (bad password)", u->nick);
 			command_fail(si, fault_authfail, _("Authentication failed.  Invalid password for: \2%s\2"), entity(u->myuser)->name);
 			bad_password(si, u->myuser);
+
+			if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+			{
+				snprintf(description, sizeof description, "Failed password: LOGOUT from %s (%s@%s) [%s]", si->su->nick, si->su->user, si->su->host, si->su->ip);
+				add_login_history_entry(si->smu, u->myuser, description);
+			}
+
 			return;
 		}
 		else
