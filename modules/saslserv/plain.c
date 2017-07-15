@@ -15,6 +15,8 @@ DECLARE_MODULE_V1
 	"Atheme Development Group <http://www.atheme.org>"
 );
 
+void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
+
 sasl_mech_register_func_t *regfuncs;
 static int mech_start(sasl_session_t *p, char **out, size_t *out_len);
 static int mech_step(sasl_session_t *p, char *message, size_t len, char **out, size_t *out_len);
@@ -84,7 +86,21 @@ static int mech_step(sasl_session_t *p, char *message, size_t len, char **out, s
 
 	p->username = strdup(authc);
 	p->authzid = strdup(authz);
-	return verify_password(mu, pass) ? ASASL_DONE : ASASL_FAIL;
+
+	if (verify_password(mu, pass))
+		return ASASL_DONE;
+	else
+	{
+		char description[300];
+
+		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Failed login: SASL (Plain)");
+			add_login_history_entry(mu, mu, description);
+		}
+
+		return ASASL_FAIL;
+	}
 }
 
 static void mech_finish(sasl_session_t *p)
