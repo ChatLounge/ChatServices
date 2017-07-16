@@ -66,13 +66,13 @@ static void cs_cmd_set_gameserv(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!strcasecmp("ALL", parv[1]))
+	if (!strcasecmp("ON", parv[1]) || !strcasecmp("1", parv[1]) || !strcasecmp("TRUE", parv[1]) || !strcasecmp("ALL", parv[1]))
 		val = "ALL";
 	else if (!strcasecmp("VOICE", parv[1]) || !strcasecmp("VOICES", parv[1]))
 		val = "VOICE";
 	else if (!strcasecmp("OP", parv[1]) || !strcasecmp("OPS", parv[1]))
 		val = "OP";
-	else if (!strcasecmp("OFF", parv[1]))
+	else if (!strcasecmp("OFF", parv[1]) || !strcasecmp("0", parv[1]) || !strcasecmp("FALSE", parv[1]))
 		val = NULL;
 	else
 	{

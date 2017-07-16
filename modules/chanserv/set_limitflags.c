@@ -68,7 +68,7 @@ static void cs_cmd_set_limitflags(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!strcasecmp("ON", parv[1]))
+	if (!strcasecmp("ON", parv[1]) || !strcasecmp("1", parv[1]) || !strcasecmp("TRUE", parv[1]))
 	{
 		if (MC_LIMITFLAGS & mc->flags)
 		{
@@ -87,7 +87,7 @@ static void cs_cmd_set_limitflags(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	else if (!strcasecmp("OFF", parv[1]))
+	else if (!strcasecmp("OFF", parv[1]) || !strcasecmp("0", parv[1]) || !strcasecmp("FALSE", parv[1]))
 	{
 		if (!(MC_LIMITFLAGS & mc->flags))
 		{

@@ -425,7 +425,7 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!strcasecmp(parv[1], "OFF"))
+	if (!strcasecmp("OFF", parv[1]) || !strcasecmp("0", parv[1]) || !strcasecmp("FALSE", parv[1]))
 	{
 		mc->flags &= ~MC_ANTIFLOOD;
 		metadata_delete(mc, METADATA_KEY_ENFORCE_METHOD);
@@ -437,7 +437,7 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 
 		return;
 	}
-	else if (!strcasecmp(parv[1], "ON"))
+	else if (!strcasecmp("ON", parv[1]) || !strcasecmp("1", parv[1]) || !strcasecmp("TRUE", parv[1]))
 	{
 		if (MC_ANTIFLOOD & mc->flags)
 		{
