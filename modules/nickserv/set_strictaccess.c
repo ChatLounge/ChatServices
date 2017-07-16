@@ -25,13 +25,15 @@ mowgli_patricia_t **ns_set_cmdtree;
 /* SET STRICTACCESS ON/OFF */
 static void ns_cmd_set_strictaccess(sourceinfo_t *si, int parc, char *parv[])
 {
-	if(!parv[0])
+	char *params = parv[0];
+
+	if (!params)
 	{
 		command_fail(si, fault_needmoreparams, STR_INSUFFICIENT_PARAMS, "STRICTACCESS");
 		return;
 	}
 
-	if(!strcasecmp("ON", parv[0]) || !strcasecmp("1", parv[0]) || !strcasecmp("TRUE", parv[0]))
+	if (!strcasecmp("ON", params) || !strcasecmp("1", params) || !strcasecmp("TRUE", params))
 	{
 		if (MU_STRICTACCESS & si->smu->flags)
 		{
@@ -57,7 +59,7 @@ static void ns_cmd_set_strictaccess(sourceinfo_t *si, int parc, char *parv[])
 
 		return;
 	}
-	else if (!strcasecmp("OFF", parv[0]) || !strcasecmp("0", parv[0]) || !strcasecmp("FALSE", parv[0]))
+	else if (!strcasecmp("OFF", params) || !strcasecmp("0", params) || !strcasecmp("FALSE", params))
 	{
 		if(!(MU_STRICTACCESS & si->smu->flags))
 		{

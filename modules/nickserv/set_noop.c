@@ -72,7 +72,7 @@ static void ns_cmd_set_noop(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!strcasecmp("ON", params))
+	if (!strcasecmp("ON", params) || !strcasecmp("1", params) || !strcasecmp("TRUE", params))
 	{
 		if (MU_NOOP & si->smu->flags)
 		{
@@ -90,7 +90,7 @@ static void ns_cmd_set_noop(sourceinfo_t *si, int parc, char *parv[])
 
 		return;
 	}
-	else if (!strcasecmp("OFF", params))
+	else if (!strcasecmp("OFF", params) || !strcasecmp("0", params) || !strcasecmp("FALSE", params))
 	{
 		if (!(MU_NOOP & si->smu->flags))
 		{
