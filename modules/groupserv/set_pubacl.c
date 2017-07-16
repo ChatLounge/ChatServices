@@ -48,7 +48,7 @@ static void gs_cmd_set_pubacl(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!strcasecmp(parv[1], "ON"))
+	if (!strcasecmp(parv[1], "ON") || !strcasecmp(parv[1], "1") || !strcasecmp(parv[1], "TRUE"))
 	{
 		if (mg->flags & MG_PUBACL)
 		{
@@ -63,7 +63,7 @@ static void gs_cmd_set_pubacl(sourceinfo_t *si, int parc, char *parv[])
 
 		notify_group_set_change(si, si->smu, mg, "PUBACL", "ON");
 	}
-	else if (!strcasecmp(parv[1], "OFF"))
+	else if (!strcasecmp(parv[1], "OFF") || !strcasecmp(parv[1], "0") || !strcasecmp(parv[1], "FALSE"))
 	{
 		if (!(mg->flags & MG_PUBACL))
 		{
