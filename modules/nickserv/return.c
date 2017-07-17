@@ -71,7 +71,7 @@ static void ns_cmd_return(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	newpass = random_string(12);
+	newpass = random_string(128);
 	mowgli_strlcpy(oldmail, mu->email, EMAILLEN);
 	myuser_set_email(mu, newmail);
 

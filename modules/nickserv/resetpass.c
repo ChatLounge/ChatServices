@@ -67,7 +67,7 @@ static void ns_cmd_resetpass(sourceinfo_t *si, int parc, char *parv[])
 	{
 		logcommand(si, CMDLOG_ADMIN, "RESETPASS: \2%s\2 (overriding mark by \2%s\2)", entity(mu)->name, md->value);
 		command_success_nodata(si, _("Overriding MARK placed by %s on the account %s."), md->value, entity(mu)->name);
-		newpass = random_string(12);
+		newpass = random_string(128);
 		command_success_nodata(si, _("The password for the account %s has been changed to %s."), entity(mu)->name, newpass);
 		set_password(mu, newpass);
 		free(newpass);
@@ -82,7 +82,7 @@ static void ns_cmd_resetpass(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	newpass = random_string(12);
+	newpass = random_string(128);
 	command_success_nodata(si, _("The password for the account %s has been changed to %s."), entity(mu)->name, newpass);
 	set_password(mu, newpass);
 	free(newpass);

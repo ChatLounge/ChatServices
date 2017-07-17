@@ -3,6 +3,7 @@
  * authcookie.c: Remote authentication ticket management
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -54,7 +55,7 @@ authcookie_t *authcookie_create(myuser_t *mu)
 {
 	authcookie_t *au = mowgli_heap_alloc(authcookie_heap);
 
-	au->ticket = random_string(20);
+	au->ticket = random_string(192);
 	au->myuser = mu;
 	au->expire = CURRTIME + 3600;
 

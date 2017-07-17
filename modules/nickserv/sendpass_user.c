@@ -125,7 +125,7 @@ static void ns_cmd_sendpass(sourceinfo_t *si, int parc, char *parv[])
 			command_fail(si, fault_alreadyexists, _("Use SENDPASS %s CLEAR to clear it so that a new one can be sent."), entity(mu)->name);
 		return;
 	}
-	key = random_string(12);
+	key = random_string(128);
 	if (sendemail(si->su != NULL ? si->su : si->service->me, mu, EMAIL_SETPASS, mu->email, key))
 	{
 		metadata_add(mu, "private:setpass:key", crypt_string(key, gen_salt()));
