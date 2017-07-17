@@ -3,6 +3,7 @@
  * function.c: Miscellaneous functions.
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -24,7 +25,7 @@
 #include "atheme.h"
 #include "conf.h"
 
-char ch[] = "abcdefghijklmnopqrstuvwxyz";
+char ch[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
 
 /* This function uses smalloc() to allocate memory.
  * You MUST free the result when you are done with it!
@@ -36,7 +37,7 @@ char *random_string(int sz)
 
 	for (i = 0; i < sz; i++)
 	{
-		buf[i] = ch[arc4random() % 26];
+		buf[i] = ch[arc4random() % 64];
 	}
 
 	buf[sz] = 0;
