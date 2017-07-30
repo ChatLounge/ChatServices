@@ -11,6 +11,10 @@ this feature unless you know what you are doing.
 You may only enable this option from a connection that
 matches at least one of the NickServ ACCESS list entries.
 
+In the event you get locked out of your account as a result
+of this option, you may use the RESETSTRICTACCESS command
+to restore access.
+
 Syntax: SET STRICTACCESS ON|OFF
 
 Example:

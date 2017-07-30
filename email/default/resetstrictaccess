@@ -1,0 +1,14 @@
+From: &from&
+To: &to&
+Reply-To: &replyto&
+Subject: &netname& Account Key to Disable Strict Access
+Date: &date&
+
+&accountname&,
+
+Someone has requested a key to disable the STRICTACCESS option on
+your account and sent to the e-mail address on file.  If you did not
+request this change, please let us know immediately, as it may be an
+attempt to compromise your account.
+
+   /msg &nicksvs& RESETSTRICTACCESS &accountname& &param&

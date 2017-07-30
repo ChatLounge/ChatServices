@@ -1,0 +1,28 @@
+#if soper
+nickserv/resetstrictaccess
+#endif
+
+Help for RESETSTRICTACCESS:
+
+This command is useful if, through the STRICTACCESS option
+you have locked yourself out of your account.  Upon
+executing this command, you will receive an e-mail where
+you will be given a key to use in order to disable it.
+
+To prevent abuse of this command, this command may not be
+executed more than once every 24 hours.
+
+Syntax: RESETSTRICTACCESS <account> [key]
+
+Example:
+    /msg &nick& RESETSTRICTACCESS Ben
+    /msg &nick& RESETSTRICTACCESS Ben abcdEFGH1234..
+
+#if soper
+Services operators also have the ability to cancel an old
+key on an account, with the CLEAR sub-command, invalidating
+the previous key.
+
+    /msg &nick& RESETSTRICTACCESS CLEAR
+
+#endif

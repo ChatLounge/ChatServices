@@ -14,11 +14,12 @@
 E int sendemail(user_t *u, myuser_t *mu, const char *type, const char *email, const char *param);
 
 /* email types (meaning of param argument) */
-#define EMAIL_REGISTER	"register"	/* register an account/nick (verification code) */
-#define EMAIL_SENDPASS	"sendpass"	/* send a password to a user (password) */
-#define EMAIL_SETEMAIL	"setemail"	/* change email address (verification code) */
-#define EMAIL_MEMO	"memo"		/* emailed memos (memo text) */
-#define EMAIL_SETPASS	"setpass"	/* send a password change key (verification code) */
+#define EMAIL_REGISTER				"register"				/* register an account/nick (verification code) */
+#define EMAIL_SENDPASS				"sendpass"				/* send a password to a user (password) */
+#define EMAIL_SETEMAIL				"setemail"				/* change email address (verification code) */
+#define EMAIL_MEMO					"memo"					/* emailed memos (memo text) */
+#define EMAIL_SETPASS				"setpass"				/* send a password change key (verification code) */
+#define EMAIL_RESETSTRICTACCESS		"resetstrictaccess"		/* send a key to disable STRICTACCESS (verification code) */
 
 /* arc4random.c */
 #ifndef HAVE_ARC4RANDOM
@@ -64,7 +65,7 @@ E void logfile_unregister(logfile_t *lf);
 #define LG_ERROR        0x00000004      /* log real important stuff */
 #define LG_IOERROR      0x00000008      /* log I/O errors. */
 #define LG_DEBUG        0x00000010      /* log debugging stuff      */
-#define LG_VERBOSE	0x00000020	/* log a bit more verbosely than INFO or REGISTER, but not as much as DEBUG */
+#define LG_VERBOSE      0x00000020      /* log a bit more verbosely than INFO or REGISTER, but not as much as DEBUG */
 /* commands */
 #define LG_CMD_ADMIN    0x00000100 /* oper-only commands */
 #define LG_CMD_REGISTER 0x00000200 /* register/drop */
@@ -72,7 +73,7 @@ E void logfile_unregister(logfile_t *lf);
 #define LG_CMD_DO       0x00000800 /* change properties of dynamic data */
 #define LG_CMD_LOGIN    0x00001000 /* login/logout */
 #define LG_CMD_GET      0x00002000 /* query information */
-#define LG_CMD_REQUEST	0x00004000 /* requests made by users */
+#define LG_CMD_REQUEST  0x00004000 /* requests made by users */
 /* other */
 #define LG_NETWORK      0x00010000 /* netsplit/netjoin */
 #define LG_WALLOPS      0x00020000 /* NOTYET wallops from opers/other servers */
@@ -80,7 +81,7 @@ E void logfile_unregister(logfile_t *lf);
 #define LG_REGISTER     0x00080000 /* all registration related messages */
 #define LG_WARN1        0x00100000 /* NOTYET messages formerly walloped */
 #define LG_WARN2        0x00200000 /* NOTYET messages formerly snooped */
-#define LG_DENYCMD	0x00400000 /* commands denied by security policy */
+#define LG_DENYCMD      0x00400000 /* commands denied by security policy */
 
 #define LG_CMD_ALL      0x0000FF00
 #define LG_ALL          0x7FFFFFFF /* XXX cannot use bit 31 as it would then be equal to TOKEN_UNMATCHED */

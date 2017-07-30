@@ -1,4 +1,6 @@
 # Copyright (c) 2003-2004 E. Will et al.
+# Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
+#
 # Rights to this code are documented in doc/LICENSE.
 #
 # This file contains build instructions.
@@ -37,6 +39,7 @@ BASE_SRCS =			\
 	multimark.c	\
 	register.c	\
 	regnolimit.c	\
+	resetstrictaccess.c	\
 	resetpass.c	\
 	restrict.c	\
 	return.c	\

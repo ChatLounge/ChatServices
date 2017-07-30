@@ -181,6 +181,8 @@ loadmodule "modules/crypto/posix";
  * REGISTER command                             modules/nickserv/register
  * Bypass registration limits (REGNOLIMIT)      modules/nickserv/regnolimit
  * Password reset (RESETPASS command)           modules/nickserv/resetpass
+ * Remove the SET STRICTACCESS through a key
+ *   sent through an e-mail                     modules/nickserv/resetstrictaccess
  * RESTRICT command                             modules/nickserv/restrict
  * Password return (RETURN command)             modules/nickserv/return
  * Password retrieval (SENDPASS command)        modules/nickserv/sendpass
@@ -202,6 +204,7 @@ loadmodule "modules/crypto/posix";
  * Account info hiding (SET PRIVATE command)    modules/nickserv/set_private
  * SET PROPERTY command                         modules/nickserv/set_property
  * SET QUIETCHG command                         modules/nickserv/set_quietchg
+ * SET STRICTACCESS command                     modules/nickserv/set_strictaccess
  * Password retrieval uses code (SETPASS cmd)   modules/nickserv/setpass
  * STATUS command                               modules/nickserv/status
  * Nickname metadata viewer (TAXONOMY command)  modules/nickserv/taxonomy
@@ -235,6 +238,7 @@ loadmodule "modules/nickserv/listgroups";
 loadmodule "modules/nickserv/register";
 loadmodule "modules/nickserv/regnolimit";
 loadmodule "modules/nickserv/resetpass";
+#loadmodule "modules/nickserv/resetstrictaccess";
 loadmodule "modules/nickserv/restrict";
 loadmodule "modules/nickserv/return";
 loadmodule "modules/nickserv/setpass";
@@ -257,6 +261,7 @@ loadmodule "modules/nickserv/set_password";
 #loadmodule "modules/nickserv/set_private";
 loadmodule "modules/nickserv/set_property";
 loadmodule "modules/nickserv/set_quietchg";
+#loadmodule "modules/nickserv/set_strictaccess";
 loadmodule "modules/nickserv/status";
 loadmodule "modules/nickserv/taxonomy";
 loadmodule "modules/nickserv/vacation";
