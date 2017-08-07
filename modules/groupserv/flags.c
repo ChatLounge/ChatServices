@@ -72,12 +72,12 @@ static void show_group_flags(sourceinfo_t *si, mygroup_t *mg, bool operoverride)
 
 static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 {
-	mowgli_node_t *n;
+	mowgli_node_t *n, *n2;
 	mygroup_t *mg;
 	myentity_t *mt;
 	groupacs_t *ga;
 	unsigned int flags = 0, oldflags = 0, addflags = 0, removeflags = 0;
-	unsigned int dir = 0;
+	unsigned int dir = 0, self = 0;
 	char *c;
 	bool operoverride = false;
 
@@ -106,11 +106,24 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
+	/* Check if it's a possible self deletion?  Just check if it's an operation by the user on himself. */
+	if (parv[2] && !strcasecmp(parv[2], "-*") && !groupacs_sourceinfo_has_flag(mg, si, GA_FLAGS) && si->smu != NULL)
+	{
+		MOWGLI_ITER_FOREACH(n2, si->smu->nicks.head)
+		{
+			if (!strcasecmp(parv[1], ((mynick_t *)(n2->data))->nick))
+			{
+				self = 1;
+				break;
+			}
+		}
+	}
+
 	if (!groupacs_sourceinfo_has_flag(mg, si, (parv[2] != NULL ? GA_FLAGS : GA_ACLVIEW)))
 	{
 		if (has_priv(si, PRIV_GROUP_AUSPEX))
 			operoverride = true;
-		else
+		else if (!self)
 		{
 			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 			return;
@@ -154,6 +167,13 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	if (ga != NULL)
 		flags = ga->flags;
 
+	/* Prevent self delete of +b */
+	if (ga != NULL && isuser(mt) && self && si->smu == user(ga->mt) && ga->flags & GA_BAN)
+	{
+		command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
+		return;
+	}
+
 	oldflags = flags;
 
 	if (strchr(parv[2], '+') || strchr(parv[2], '-') || strchr(parv[2], '='))
@@ -194,7 +214,7 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!gs_config->no_leveled_flags)
+	if (!gs_config->no_leveled_flags && parv[2] != NULL && !(!strcmp(parv[2], "-*") && ga != NULL && si->smu == user(ga->mt)))
 	{
 		if (((oldflags & GA_FLAGS) || (flags & GA_FLAGS)) && !((groupacs_sourceinfo_flags(mg, si) & GA_SET) || (groupacs_sourceinfo_flags(mg, si) & GA_FOUNDER))) {
 			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
