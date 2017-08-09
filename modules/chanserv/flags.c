@@ -119,6 +119,8 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 		mowgli_strlcat(flagsborder, "-", BUFSIZE);
 	}
 
+	command_success_nodata(si, _("FLAGS list for: \2%s\2"), mc->name);
+
 	command_success_nodata(si, _("Entry%sNickname/Host%sFlags"), entryspacing, nickhostspacing);
 	command_success_nodata(si, "%s %s %s", entryborder, nickhostborder, flagsborder);
 
