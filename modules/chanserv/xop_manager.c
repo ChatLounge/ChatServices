@@ -549,28 +549,34 @@ static void cs_xop_do_list(sourceinfo_t *si, mychan_t *mc, unsigned int level, c
 			mowgli_strlcat(accounthostspacing, " ", BUFSIZE);
 	}
 
-	snprintf(fmtstring, BUFSIZE, "%%%uu %%-%us", entrywidth, accounthostwidth);
+	snprintf(fmtstring, BUFSIZE, "%%%uu %%-%us [modified %%s ago, on %%s]",
+		entrywidth, accounthostwidth);
 
 	command_success_nodata(si, _("%s list for: \2%s\2"), leveldesc ,mc->name);
-	command_success_nodata(si, "Entry%sAccount/Host", entryspacing);
-	command_success_nodata(si, "%s %s", entryborder, accounthostborder);
+	command_success_nodata(si, "Entry%sAccount/Host%sModified Time", entryspacing, accounthostspacing);
+	command_success_nodata(si, "%s %s --------------------", entryborder, accounthostborder);
+
+	i = 0;
 
 	MOWGLI_ITER_FOREACH(n, mc->chanacs.head)
 	{
+		const char *mod_ago;
+		struct tm tm;
+		char mod_date[64];
+
 		ca = (chanacs_t *)n->data;
+
+		mod_ago = ca->tmodified ? time_ago(ca->tmodified) : "?";
+
+		tm = *localtime(&ca->tmodified);
+		strftime(mod_date, sizeof mod_date, TIME_FORMAT, &tm);
+
 		if (ca->level == level)
-		{
-			if (ca->entity == NULL)
-				//command_success_nodata(si, "%d: \2%s\2", ++i, ca->host);
-				command_success_nodata(si, _(fmtstring), ++i, ca->host);
-			else
-				//command_success_nodata(si, _("%d: \2%s\2"), ++i, ca->entity->name);
-				command_success_nodata(si, _(fmtstring), ++i, ca->entity->name);
-		}
+			command_success_nodata(si, _(fmtstring), ++i, ca->entity ? ca->entity->name : ca->host, mod_ago, mod_date);
 	}
 
 	/* XXX */
-	command_success_nodata(si, "%s %s", entryborder, accounthostborder);
+	command_success_nodata(si, "%s %s --------------------", entryborder, accounthostborder);
 	command_success_nodata(si, _("End of \2%s\2 %s listing.  Total of \2%d\2 %s."),
 		mc->name, leveldesc, i, (i == 1) ? "entry" : "entries");
 
