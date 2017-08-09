@@ -498,23 +498,81 @@ static void cs_xop_do_del(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 static void cs_xop_do_list(sourceinfo_t *si, mychan_t *mc, unsigned int level, const char *leveldesc, bool operoverride)
 {
 	chanacs_t *ca;
-	int i = 0;
+	mowgli_node_t *m;
+	unsigned int i = 0;
+	unsigned int entrywidth = 5, accounthostwidth = 12; /* "Account/Host is 12 characters long." */
 	mowgli_node_t *n;
+	char fmtstring[BUFSIZE], entryspacing[BUFSIZE], entryborder[BUFSIZE], accounthostspacing[BUFSIZE], accounthostborder[BUFSIZE];
+
+	/* Set entrywidth and nickhostwidth to the length of the
+	 * longest entries.
+	 * - Ben
+	 */
+
+	MOWGLI_ITER_FOREACH(m, mc->chanacs.head)
+	{
+		ca = m->data;
+
+		if (strlen(ca->entity ? ca->entity->name : ca->host) > accounthostwidth)
+			accounthostwidth = strlen(ca->entity ? ca->entity->name : ca->host);
+
+		i++;
+	}
+
+	while (i != 0)
+	{
+		i =  i/10;
+		if (i > 5)
+			entrywidth++;
+	}
+
+	mowgli_strlcpy(entryspacing, " ", BUFSIZE);
+	mowgli_strlcpy(entryborder, "-", BUFSIZE);
+	mowgli_strlcpy(accounthostspacing, " ", BUFSIZE);
+	mowgli_strlcpy(accounthostborder, "-", BUFSIZE);
+
+	i = 1;
+
+	for (i; i < entrywidth; i++)
+	{
+		mowgli_strlcat(entryborder, "-", BUFSIZE);
+		if (i > 4)
+			mowgli_strlcat(entryspacing, " ", BUFSIZE);
+	}
+
+	i = 1;
+
+	for (i; i < accounthostwidth; i++)
+	{
+		mowgli_strlcat(accounthostborder, "-", BUFSIZE);
+		if (i > 11)
+			mowgli_strlcat(accounthostspacing, " ", BUFSIZE);
+	}
+
+	snprintf(fmtstring, BUFSIZE, "%%%uu %%-%us", 5, 20);
 
 	command_success_nodata(si, _("%s list for: \2%s\2"), leveldesc ,mc->name);
+	command_success_nodata(si, "Entry%sAccount/Host", entryspacing);
+	command_success_nodata(si, "%s %s", entryborder, accounthostborder);
+
 	MOWGLI_ITER_FOREACH(n, mc->chanacs.head)
 	{
 		ca = (chanacs_t *)n->data;
 		if (ca->level == level)
 		{
 			if (ca->entity == NULL)
-				command_success_nodata(si, "%d: \2%s\2", ++i, ca->host);
+				//command_success_nodata(si, "%d: \2%s\2", ++i, ca->host);
+				command_success_nodata(si, _(fmtstring), ++i, ca->host);
 			else
-				command_success_nodata(si, _("%d: \2%s\2"), ++i, ca->entity->name);
+				//command_success_nodata(si, _("%d: \2%s\2"), ++i, ca->entity->name);
+				command_success_nodata(si, _(fmtstring), ++i, ca->entity->name);
 		}
 	}
+
 	/* XXX */
-	command_success_nodata(si, _("Total of \2%d\2 %s in %s list of: \2%s\2"), i, (i == 1) ? "entry" : "entries", leveldesc, mc->name);
+	command_success_nodata(si, "%s %s", entryborder, accounthostborder);
+	command_success_nodata(si, _("End of \2%s\2 %s listing.  Total of \2%d\2 %s."),
+		mc->name, leveldesc, i, (i == 1) ? "entry" : "entries");
 
 	if (operoverride)
 		logcommand(si, CMDLOG_ADMIN, "LIST: \2%s\2 \2%s\2 (oper override)", mc->name, leveldesc);
