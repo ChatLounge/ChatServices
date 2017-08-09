@@ -501,7 +501,7 @@ static void cs_xop_do_list(sourceinfo_t *si, mychan_t *mc, unsigned int level, c
 	int i = 0;
 	mowgli_node_t *n;
 
-	command_success_nodata(si, _("%s list for \2%s\2:"), leveldesc ,mc->name);
+	command_success_nodata(si, _("%s list for: \2%s\2"), leveldesc ,mc->name);
 	MOWGLI_ITER_FOREACH(n, mc->chanacs.head)
 	{
 		ca = (chanacs_t *)n->data;
@@ -509,14 +509,12 @@ static void cs_xop_do_list(sourceinfo_t *si, mychan_t *mc, unsigned int level, c
 		{
 			if (ca->entity == NULL)
 				command_success_nodata(si, "%d: \2%s\2", ++i, ca->host);
-			else if (isuser(ca->entity) && MOWGLI_LIST_LENGTH(&user(ca->entity)->logins))
-				command_success_nodata(si, _("%d: \2%s\2 (logged in)"), ++i, ca->entity->name);
 			else
-				command_success_nodata(si, _("%d: \2%s\2 (not logged in)"), ++i, ca->entity->name);
+				command_success_nodata(si, _("%d: \2%s\2"), ++i, ca->entity->name);
 		}
 	}
 	/* XXX */
-	command_success_nodata(si, _("Total of \2%d\2 %s in %s list of \2%s\2."), i, (i == 1) ? "entry" : "entries", leveldesc, mc->name);
+	command_success_nodata(si, _("Total of \2%d\2 %s in %s list of: \2%s\2"), i, (i == 1) ? "entry" : "entries", leveldesc, mc->name);
 
 	if (operoverride)
 		logcommand(si, CMDLOG_ADMIN, "LIST: \2%s\2 \2%s\2 (oper override)", mc->name, leveldesc);
