@@ -549,7 +549,7 @@ static void cs_xop_do_list(sourceinfo_t *si, mychan_t *mc, unsigned int level, c
 			mowgli_strlcat(accounthostspacing, " ", BUFSIZE);
 	}
 
-	snprintf(fmtstring, BUFSIZE, "%%%uu %%-%us", 5, 20);
+	snprintf(fmtstring, BUFSIZE, "%%%uu %%-%us", entrywidth, accounthostwidth);
 
 	command_success_nodata(si, _("%s list for: \2%s\2"), leveldesc ,mc->name);
 	command_success_nodata(si, "Entry%sAccount/Host", entryspacing);
