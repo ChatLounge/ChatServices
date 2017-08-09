@@ -589,7 +589,7 @@ static void cs_cmd_access_list(sourceinfo_t *si, int parc, char *parv[])
 	bool operoverride = false;
 	unsigned int i = 0;
 	unsigned int entrywidth = 5, nickhostwidth = 13, rolewidth = 4; /* "Nickname/Host" is 13 chars long, "Role" is 4. */
-	char fmtstring[BUFSIZE], entryspacing[BUFSIZE], entryborder[BUFSIZE], nickhostspacing[BUFSIZE], nickhostborder[BUFSIZE], roleborder[BUFSIZE];
+	char fmtstring[BUFSIZE], entryspacing[BUFSIZE], entryborder[BUFSIZE], nickhostspacing[BUFSIZE], nickhostborder[BUFSIZE], rolespacing[BUFSIZE], roleborder[BUFSIZE];
 
 	mc = mychan_find(channel);
 	if (!mc)
@@ -649,6 +649,7 @@ static void cs_cmd_access_list(sourceinfo_t *si, int parc, char *parv[])
 	mowgli_strlcpy(entryborder, "-", BUFSIZE);
 	mowgli_strlcpy(nickhostspacing, " ", BUFSIZE);
 	mowgli_strlcpy(nickhostborder, "-", BUFSIZE);
+	mowgli_strlcpy(rolespacing, " ", BUFSIZE);
 	mowgli_strlcpy(roleborder, "-", BUFSIZE);
 
 	i = 1;
@@ -674,20 +675,24 @@ static void cs_cmd_access_list(sourceinfo_t *si, int parc, char *parv[])
 	for (i; i < rolewidth; i++)
 	{
 		mowgli_strlcat(roleborder, "-", BUFSIZE);
+		if (i > 3)
+			mowgli_strlcat(rolespacing, " ", BUFSIZE);
 	}
 
-	command_success_nodata(si, _("Entry%sNickname/Host%sRole"), entryspacing, nickhostspacing);
-	command_success_nodata(si, "%s %s %s", entryborder, nickhostborder, roleborder);
+	command_success_nodata(si, _("Entry%sNickname/Host%sRole%sModified Time"), entryspacing, nickhostspacing, rolespacing);
+	command_success_nodata(si, "%s %s %s ---------------", entryborder, nickhostborder, roleborder);
 
 	/* Make dynamic format string. */
-	snprintf(fmtstring, BUFSIZE, "%%%ud %%-%us %%s",
-		entrywidth, nickhostwidth);
+	snprintf(fmtstring, BUFSIZE, "%%%ud %%-%us %%-%us %%s ago, on %%s",
+		entrywidth, nickhostwidth, rolewidth);
 
 	i = 1;
 
 	MOWGLI_ITER_FOREACH(n, mc->chanacs.head)
 	{
-		const char *role;
+		const char *role, *mod_ago;
+		struct tm tm;
+		char mod_date[64];
 
 		ca = n->data;
 
@@ -695,13 +700,18 @@ static void cs_cmd_access_list(sourceinfo_t *si, int parc, char *parv[])
 			continue;
 
 		role = get_template_name(mc, ca->level);
+		mod_ago = ca->tmodified ? time_ago(ca->tmodified) : "?";
 
-		command_success_nodata(si, _(fmtstring), i, ca->entity ? ca->entity->name : ca->host, role == NULL ? "<Custom>" : role);
+		tm = *localtime(&ca->tmodified);
+		strftime(mod_date, sizeof mod_date, TIME_FORMAT, &tm);
+
+		command_success_nodata(si, _(fmtstring), i, ca->entity ? ca->entity->name : ca->host,
+			role == NULL ? "<Custom>" : role, mod_ago, mod_date);
 
 		i++;
 	}
 
-	command_success_nodata(si, "%s %s %s", entryborder, nickhostborder, roleborder);
+	command_success_nodata(si, "%s %s %s ---------------", entryborder, nickhostborder, roleborder);
 	command_success_nodata(si, _("End of \2%s\2 ACCESS listing."), channel);
 
 	if (operoverride)
