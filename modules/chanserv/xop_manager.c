@@ -513,10 +513,11 @@ static void cs_xop_do_list(sourceinfo_t *si, mychan_t *mc, unsigned int level, c
 	{
 		ca = m->data;
 
-		if (strlen(ca->entity ? ca->entity->name : ca->host) > accounthostwidth)
+		if (ca->level == level && strlen(ca->entity ? ca->entity->name : ca->host) > accounthostwidth)
+		{
 			accounthostwidth = strlen(ca->entity ? ca->entity->name : ca->host);
-
-		i++;
+			i++;
+		}
 	}
 
 	while (i != 0)
@@ -574,6 +575,10 @@ static void cs_xop_do_list(sourceinfo_t *si, mychan_t *mc, unsigned int level, c
 		if (ca->level == level)
 			command_success_nodata(si, _(fmtstring), ++i, ca->entity ? ca->entity->name : ca->host, mod_ago, mod_date);
 	}
+
+	/* List is empty. */
+	if (i == 0)
+		command_success_nodata(si, _("%s list is empty."), leveldesc);
 
 	/* XXX */
 	command_success_nodata(si, "%s %s --------------------", entryborder, accounthostborder);
