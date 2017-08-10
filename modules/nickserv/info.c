@@ -293,107 +293,107 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	if (MU_EMAILMEMOS & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "EMailMemos");
+		strcat(buf, "EMAILMEMOS");
 	}
 	if (MU_EMAILNOTIFY & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "EMailNotify");
+		strcat(buf, "EMAILNOTIFY");
 	}
 	if (MU_HIDEMAIL & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "HideMail");
+		strcat(buf, "HIDEMAIL");
 	}
 	if (MU_HOLD & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "Hold");
+		strcat(buf, "HOLD");
 	}
 	if (MU_NEVERGROUP & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "NeverGroup");
+		strcat(buf, "NEVERGROUP");
 	}
 	if (MU_NEVEROP & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "NeverOp");
+		strcat(buf, "NEVEROP");
 	}
 	if (MU_NOGREET & mu->flags)
     {
         if (*buf)
-            strcat(buf, ", ");
+            strcat(buf, " ");
 
-        strcat(buf, "NoGreet");
+        strcat(buf, "NOGREET");
     }
 	if (MU_NOMEMO & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "NoMemo");
+		strcat(buf, "NOMEMO");
 	}
 	if (MU_NOOP & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "NoOp");
+		strcat(buf, "NOOP");
 	}
 	if (MU_NOTIFYACL & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "NotifyAcl");
+		strcat(buf, "NOTIFYACL");
 	}
 	if (MU_NOTIFYMEMO & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "NotifyMemo");
+		strcat(buf, "NOTIFYMEMO");
 	}
 	if (MU_NOTIFYSET & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "NotifySet");
+		strcat(buf, "NOTIFYSET");
 	}
 	if (use_account_private && MU_PRIVATE & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "Private");
+		strcat(buf, "PRIVATE");
 	}
 	if (MU_REGNOLIMIT & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "RegNoLimit");
+		strcat(buf, "REGNOLIMIT");
 	}
 	if (MU_STRICTACCESS & mu->flags)
 	{
 		if (*buf)
-			strcat(buf, ", ");
+			strcat(buf, " ");
 
-		strcat(buf, "StrictAccess");
+		strcat(buf, "STRICTACCESS");
 	}
 
 	if (*buf)
