@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService INFO functions.
@@ -12,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/info", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[]);
@@ -79,29 +81,27 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	command_success_nodata(si, _("Information on \2%s\2:"), mc->name);
 
 	if (!hide_info)
-		command_success_nodata(si, _("Founder    : %s"), mychan_founder_names(mc));
+		command_success_nodata(si, _("Founder%s    : %s"),
+			mychan_num_flags(mc, CA_FOUNDER) == 1 ? " " : "s", mychan_founder_names(mc));
 
 	if ((!(mc->flags & MC_PUBACL) && chanacs_source_has_flag(mc, si, CA_ACLVIEW)) ||
 		has_priv(si, PRIV_CHAN_AUSPEX))
 	{
 		mu = mychan_pick_successor(mc);
-		if (mu != NULL)
-			command_success_nodata(si, _("Successor  : %s"), entity(mu)->name);
-		else
-			command_success_nodata(si, _("Successor  : (none)"));
+		command_success_nodata(si, _("Successor   : %s"), mu == NULL ? "(none)" : entity(mu)->name);
 	}
 
-	command_success_nodata(si, _("Registered : %s (%s ago)"), strfbuf, time_ago(mc->registered));
+	command_success_nodata(si, _("Registered  : %s (%s ago)"), strfbuf, time_ago(mc->registered));
 
 	if (CURRTIME - mc->used >= 86400)
 	{
 		if (hide_info)
-			command_success_nodata(si, _("Last used  : (about %d weeks ago)"), (int)((CURRTIME - mc->used) / 604800));
+			command_success_nodata(si, _("Last used   : (about %d weeks ago)"), (int)((CURRTIME - mc->used) / 604800));
 		else
 		{
 			tm = *localtime(&mc->used);
 			strftime(strfbuf, sizeof strfbuf, TIME_FORMAT, &tm);
-			command_success_nodata(si, _("Last used  : %s (%s ago)"), strfbuf, time_ago(mc->used));
+			command_success_nodata(si, _("Last used   : %s (%s ago)"), strfbuf, time_ago(mc->used));
 		}
 	}
 
@@ -115,20 +115,20 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 			md = NULL;
 		}
 
-		command_success_nodata(si, _("Mode lock  : %s"), mychan_get_mlock(mc));
+		command_success_nodata(si, _("Mode lock   : %s"), mychan_get_mlock(mc));
 	}
 
 
 	if ((!hide_info || (si->su != NULL && chanuser_find(mc->chan, si->su))) &&
 			(md = metadata_find(mc, "url")))
-		command_success_nodata(si, "URL        : %s", md->value);
+		command_success_nodata(si, "URL         : %s", md->value);
 
 	if (!hide_info && (md = metadata_find(mc, "email")))
-		command_success_nodata(si, "Email      : %s", md->value);
+		command_success_nodata(si, "E-mail      : %s", md->value);
 
 	if ((!hide_info || (si->su != NULL && chanuser_find(mc->chan, si->su))) &&
 			(md = metadata_find(mc, "private:entrymsg")))
-		command_success_nodata(si, "Entrymsg   : %s", md->value);
+		command_success_nodata(si, "Entrymsg    : %s", md->value);
 
 	if (!hide_info)
 	{
@@ -141,7 +141,7 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 					!strcasecmp(md->name, "url") ||
 					!strcasecmp(md->name, "disable_fantasy"))
 				continue;
-			command_success_nodata(si, _("Metadata   : %s = %s"),
+			command_success_nodata(si, _("Metadata    : %s = %s"),
 					md->name, md->value);
 		}
 	}
@@ -255,14 +255,14 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	}
 
 	if (*buf)
-		command_success_nodata(si, _("Flags      : %s"), buf);
+		command_success_nodata(si, _("Flags       : %s"), buf);
 
 	if (chansvs.fantasy && !metadata_find(mc, "disable_fantasy"))
 	{
 		if ((md = metadata_find(mc, "private:prefix")))
-			command_success_nodata(si, _("Prefix     : %s"), md->value);
+			command_success_nodata(si, _("Prefix      : %s"), md->value);
 		else
-			command_success_nodata(si, _("Prefix     : %s (default)"), chansvs.trigger);
+			command_success_nodata(si, _("Prefix      : %s (default)"), chansvs.trigger);
 	}
 
 	if (has_priv(si, PRIV_CHAN_AUSPEX) && (md = metadata_find(mc, "private:mark:setter")))
