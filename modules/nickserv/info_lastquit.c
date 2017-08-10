@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2012 Jilles Tjoelker <jilles@stack.nl>
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Remembers the last quit message of a user.
@@ -11,7 +13,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/info_lastquit", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.atheme.org>"
 );
 
 static void user_delete_info_hook(hook_user_delete_t *hdata)
@@ -31,7 +33,7 @@ static void info_hook(hook_user_req_t *hdata)
 	{
 		md = metadata_find(hdata->mu, "private:lastquit:message");
 		if (md != NULL)
-			command_success_nodata(hdata->si, "Last quit  : %s",
+			command_success_nodata(hdata->si, "Last quit   : %s",
 					md->value);
 	}
 }

@@ -1,5 +1,6 @@
 /* groupserv - group services.
  * Copyright (C) 2010 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
  */
 
 #include "groupserv_main.h"
@@ -135,7 +136,7 @@ static void user_info_hook(hook_user_req_t *req)
 	}
 
 	if (*buf != 0)
-		command_success_nodata(req->si, _("Groups     : %s"), buf);
+		command_success_nodata(req->si, _("Groups      : %s"), buf);
 }
 
 static void sasl_may_impersonate_hook(hook_sasl_may_impersonate_t *req)

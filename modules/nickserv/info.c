@@ -133,16 +133,16 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	registered = mn != NULL ? mn->registered : mu->registered;
 	tm = *localtime(&registered);
 	strftime(strfbuf, sizeof strfbuf, TIME_FORMAT, &tm);
-	command_success_nodata(si, _("Registered : %s (%s ago)"), strfbuf, time_ago(registered));
+	command_success_nodata(si, _("Registered  : %s (%s ago)"), strfbuf, time_ago(registered));
 	/* show account's time if it's different from nick's time */
 	if (mu->registered != registered)
 	{
 		tm = *localtime(&mu->registered);
 		strftime(strfbuf, sizeof strfbuf, TIME_FORMAT, &tm);
-		command_success_nodata(si, _("User reg.  : %s (%s ago)"), strfbuf, time_ago(mu->registered));
+		command_success_nodata(si, _("User reg.   : %s (%s ago)"), strfbuf, time_ago(mu->registered));
 	}
 
-	command_success_nodata(si, _("Entity ID  : %s"), entity(mu)->id);
+	command_success_nodata(si, _("Entity ID   : %s"), entity(mu)->id);
 
 	md = metadata_find(mu, "private:usercloak");
 	vhost = md ? md->value : NULL;
@@ -165,7 +165,7 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 				p++;
 			mowgli_strlcpy(p, vhost, sizeof buf - (p - buf));
 		}
-		command_success_nodata(si, _("Last addr  : %s"), buf);
+		command_success_nodata(si, _("Last addr   : %s"), buf);
 	}
 
 	if ((vhost || vhost_timestring || vhost_assigner) && (si->smu == mu || has_user_auspex))
@@ -185,32 +185,32 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 			buflen += snprintf(buf + buflen, BUFSIZE - buflen, _(" by %s"), vhost_assigner);
 
 		if (vhost && !buf[0])
-			command_success_nodata(si, _("vHost      : %s"), vhost);
+			command_success_nodata(si, _("vHost       : %s"), vhost);
 		else if (vhost && buf[0])
-			command_success_nodata(si, _("vHost      : %s (assigned%s)"), vhost, buf);
+			command_success_nodata(si, _("vHost       : %s (assigned%s)"), vhost, buf);
 		else if (!vhost && buf[0])
-			command_success_nodata(si, _("vHost      : unassigned%s"), buf);
+			command_success_nodata(si, _("vHost       : unassigned%s"), buf);
 	}
 
 	if (mu == si->smu || has_user_auspex)
 	{
 		if ((md = metadata_find(mu, "private:host:actual")))
-			command_success_nodata(si, _("Real addr  : %s"), md->value);
+			command_success_nodata(si, _("Real addr   : %s"), md->value);
 	}
 
 	if (recognized)
-		command_success_nodata(si, _("Recognized : now (matches access list)"));
+		command_success_nodata(si, _("Recognized  : now (matches access list)"));
 	/* show nick's lastseen/online, if we have a nick */
 	if (u != NULL)
-		command_success_nodata(si, _("Last seen  : now"));
+		command_success_nodata(si, _("Last seen   : now"));
 	else if (mn != NULL)
 	{
 		tm2 = *localtime(&mn->lastseen);
 		strftime(lastlogin, sizeof lastlogin, TIME_FORMAT, &tm2);
 		if (hide_info)
-			command_success_nodata(si, _("Last seen  : (about %d weeks ago)"), (int)((CURRTIME - mn->lastseen) / 604800));
+			command_success_nodata(si, _("Last seen   : (about %d weeks ago)"), (int)((CURRTIME - mn->lastseen) / 604800));
 		else
-			command_success_nodata(si, _("Last seen  : %s (%s ago)"), lastlogin, time_ago(mn->lastseen));
+			command_success_nodata(si, _("Last seen   : %s (%s ago)"), lastlogin, time_ago(mn->lastseen));
 	}
 
 	/* if noone is logged in to this account, show account's lastseen,
@@ -223,16 +223,16 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		if (mn == NULL)
 		{
 			if (hide_info)
-				command_success_nodata(si, _("Last seen  : (about %d weeks ago)"), (int)((CURRTIME - mu->lastlogin) / 604800));
+				command_success_nodata(si, _("Last seen   : (about %d weeks ago)"), (int)((CURRTIME - mu->lastlogin) / 604800));
 			else
-				command_success_nodata(si, _("Last seen  : %s (%s ago)"), lastlogin, time_ago(mu->lastlogin));
+				command_success_nodata(si, _("Last seen   : %s (%s ago)"), lastlogin, time_ago(mu->lastlogin));
 		}
 		else if (mn->lastseen != mu->lastlogin)
 		{
 			if (hide_info)
-				command_success_nodata(si, _("User seen  : (about %d weeks ago)"), (int)((CURRTIME - mu->lastlogin) / 604800));
+				command_success_nodata(si, _("User seen   : (about %d weeks ago)"), (int)((CURRTIME - mu->lastlogin) / 604800));
 			else
-				command_success_nodata(si, _("User seen  : %s (%s ago)"), lastlogin, time_ago(mu->lastlogin));
+				command_success_nodata(si, _("User seen   : %s (%s ago)"), lastlogin, time_ago(mu->lastlogin));
 		}
 	}
 	/* tell them this account is online, but not which nick
@@ -241,9 +241,9 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	else if (u == NULL && !(mu == si->smu || has_user_auspex))
 	{
 		if (mn != NULL)
-			command_success_nodata(si, _("User seen  : now"));
+			command_success_nodata(si, _("User seen   : now"));
 		else
-			command_success_nodata(si, _("Last seen  : now"));
+			command_success_nodata(si, _("Last seen   : now"));
 	}
 
 	if (!nicksvs.no_nick_ownership)
@@ -256,7 +256,7 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 			{
 				if (strlen(buf) > 80)
 				{
-					command_success_nodata(si, _("Nicks      : %s"), buf);
+					command_success_nodata(si, _("Nicks       : %s"), buf);
 					buf[0] = '\0';
 				}
 				if (buf[0])
@@ -264,20 +264,20 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 				mowgli_strlcat(buf, ((mynick_t *)(n->data))->nick, sizeof buf);
 			}
 			if (buf[0])
-				command_success_nodata(si, _("Nicks      : %s"), buf);
+				command_success_nodata(si, _("Nicks       : %s"), buf);
 		}
 	}
 
 	if (!(mu->flags & MU_HIDEMAIL)
 		|| (si->smu == mu || has_user_auspex))
-		command_success_nodata(si, _("Email      : %s%s"), mu->email,
+		command_success_nodata(si, _("E-mail      : %s%s"), mu->email,
 					(mu->flags & MU_HIDEMAIL) ? " (hidden)": "");
 
 	MOWGLI_PATRICIA_FOREACH(md, &state, object(mu)->metadata)
 	{
 		if (!strncmp(md->name, "private:", 8))
 			continue;
-		command_success_nodata(si, _("Metadata   : %s = %s"),
+		command_success_nodata(si, _("Metadata    : %s = %s"),
 				md->name, md->value);
 	}
 
@@ -397,17 +397,17 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	}
 
 	if (*buf)
-		command_success_nodata(si, _("Flags      : %s"), buf);
+		command_success_nodata(si, _("Flags       : %s"), buf);
 
 #ifdef ENABLE_NLS
 	if (mu == si->smu || has_user_auspex)
-		command_success_nodata(si, _("Language   : %s"),
+		command_success_nodata(si, _("Language    : %s"),
 				language_get_name(mu->language));
 #endif
 
 	if (mu->soper && (mu == si->smu || has_priv(si, PRIV_VIEWPRIVS)))
 	{
-		command_success_nodata(si, _("Oper class : %s"), mu->soper->operclass ? mu->soper->operclass->name : mu->soper->classname);
+		command_success_nodata(si, _("Oper class  : %s"), mu->soper->operclass ? mu->soper->operclass->name : mu->soper->classname);
 	}
 
 	if (mu == si->smu || has_user_auspex || has_priv(si, PRIV_CHAN_AUSPEX))
@@ -423,7 +423,7 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 			else if (ca->level != CA_AKICK)
 				other++;
 		}
-		command_success_nodata(si, _("Channels   : %d founder, %d other"), founder, other);
+		command_success_nodata(si, _("Channels    : %d founder, %d other"), founder, other);
 	}
 
 	if (has_user_auspex && (md = metadata_find(mu, "private:freeze:freezer")))
