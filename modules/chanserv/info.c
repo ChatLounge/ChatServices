@@ -43,6 +43,8 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	mowgli_patricia_iteration_state_t state;
 	hook_channel_req_t req;
 	bool hide_info;
+	char titleborder[BUFSIZE];
+	unsigned int i = 0, titlewidth = 0;
 
 	if (!name)
 	{
@@ -78,7 +80,19 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	tm = *localtime(&mc->registered);
 	strftime(strfbuf, sizeof strfbuf, TIME_FORMAT, &tm);
 
-	command_success_nodata(si, _("Information on \2%s\2:"), mc->name);
+	mowgli_strlcpy(titleborder, "-", sizeof titleborder);
+
+	/* "Information on " is 15 characters. */
+	titlewidth = 15 + strlen(mc->name);
+
+	command_success_nodata(si, _("Information on \2%s\2"), mc->name);
+
+	i = 1;
+
+	for (i; i < titlewidth; i++)
+		mowgli_strlcat(titleborder, "-", sizeof titleborder);
+
+	command_success_nodata(si, titleborder);
 
 	if (!hide_info)
 		command_success_nodata(si, _("Founder%s    : %s"),
@@ -308,7 +322,7 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	req.si = si;
 	hook_call_channel_info(&req);
 
-	command_success_nodata(si, _("\2*** End of Info ***\2"));
+	command_success_nodata(si, _("\2*** End of Info for the channel %s ***\2"), mc->name);
 	logcommand(si, CMDLOG_GET, "INFO: \2%s\2", mc->name);
 }
 

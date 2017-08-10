@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the GroupServ HELP command.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/info", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_info(sourceinfo_t *si, int parc, char *parv[]);
@@ -26,6 +28,8 @@ static void gs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	struct tm tm;
 	char buf[BUFSIZE], strfbuf[BUFSIZE];
 	metadata_t *md;
+	char titleborder[BUFSIZE];
+	unsigned int i = 0, titlewidth = 0;
 
 	if (!parv[0])
 	{
@@ -43,7 +47,20 @@ static void gs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	tm = *localtime(&mg->regtime);
 	strftime(strfbuf, sizeof strfbuf, TIME_FORMAT, &tm);
 
-	command_success_nodata(si, _("Information for \2%s\2:"), parv[0]);
+	mowgli_strlcpy(titleborder, "-", sizeof titleborder);
+
+	/* "Information on " is 15 characters. */
+	titlewidth = 15 + strlen(entity(mg)->name);
+
+	command_success_nodata(si, _("Information on \2%s\2"), entity(mg)->name);
+
+	i = 1;
+
+	for (i; i < titlewidth; i++)
+		mowgli_strlcat(titleborder, "-", sizeof titleborder);
+
+	command_success_nodata(si, titleborder);
+
 	command_success_nodata(si, _("Registered  : %s (%s ago)"), strfbuf, time_ago(mg->regtime));
 
 	if (has_priv(si, PRIV_GROUP_AUSPEX))
@@ -106,7 +123,7 @@ static void gs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("Join flags: %s"), bitmask_to_gflags(atoi(md->value)));
 	}
 
-	command_success_nodata(si, _("\2*** End of Info ***\2"));
+	command_success_nodata(si, _("\2*** End of Info for the group %s ***\2"), entity(mg)->name);
 
 	logcommand(si, CMDLOG_GET, "INFO: \2%s\2", parv[0]);
 }

@@ -54,6 +54,8 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	bool hide_info;
 	hook_user_req_t req;
 	hook_info_noexist_req_t noexist_req;
+	unsigned int i = 0, titlewidth = 0;
+	char titleborder[BUFSIZE];
 
 	/* On IRC, default the name to something.
 	 * Not currently documented.
@@ -125,10 +127,29 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		}
 	}
 
+	mowgli_strlcpy(titleborder, "-", sizeof titleborder);
+
 	if (mn != NULL)
-		command_success_nodata(si, _("Information on \2%s\2 (account \2%s\2):"), mn->nick, entity(mu)->name);
+	{
+		/* "Information on " is 15 characters long, " (account " is 10,
+		 * and ")" is 1, for a total of 26. */
+		titlewidth = 26 + strlen(mn->nick) + strlen(entity(mu)->name);
+		command_success_nodata(si, _("Information on \2%s\2 (account \2%s\2)"), mn->nick, entity(mu)->name);
+	}
 	else
-		command_success_nodata(si, _("Information on \2%s\2:"), entity(mu)->name);
+	{
+		/* "Information on " is 15 characters long.
+		 */
+		titlewidth = 15 + strlen(entity(mu)->name);
+		command_success_nodata(si, _("Information on \2%s\2"), entity(mu)->name);
+	}
+
+	i = 1;
+
+	for (i; i < titlewidth; i++)
+		mowgli_strlcat(titleborder, "-", sizeof titleborder);
+
+	command_success_nodata(si, titleborder);
 
 	registered = mn != NULL ? mn->registered : mu->registered;
 	tm = *localtime(&registered);
@@ -490,7 +511,7 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	if (mu == si->smu || has_user_auspex)
 		user_show_all_logins(mu, nicksvs.me->me, si->su);
 
-	command_success_nodata(si, _("*** \2End of Info\2 ***"));
+	command_success_nodata(si, _("*** \2End of Info for the account %s\2 ***"), entity(mu)->name);
 
 	logcommand(si, CMDLOG_GET, "INFO: \2%s\2", mn != NULL ? mn->nick : entity(mu)->name);
 }
