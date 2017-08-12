@@ -61,7 +61,8 @@
  * Nefarious IRCu 0.4.0 or later                modules/protocol/nefarious
  * ngIRCd 19 or later [experimental]            modules/protocol/ngircd
  * ShadowIRCd 5.0 or later                      modules/protocol/shadowircd
- * UnrealIRCd 3.2 or later                      modules/protocol/unreal
+ * UnrealIRCd 3.2 or later, earlier than 4.0    modules/protocol/unreal
+ * UnrealIRCd 4.0 or later                      modules/protocol/unreal40
  *
  * If your IRCd vendor has supplied a module file, build it and load it here
  * instead of one above.
