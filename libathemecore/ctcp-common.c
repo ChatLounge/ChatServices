@@ -3,6 +3,7 @@
  * ctcp-common.c: Handling of CTCP commands.
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -61,12 +62,24 @@ static void ctcp_machinegod_handler(sourceinfo_t *si, char *cmd, char *args)
 /* update this as necessary to track notable events */
 static void ctcp_about_handler(sourceinfo_t *si, char *cmd, char *args)
 {
+	char reply[BUFSIZE];
 	/*
-	 * October 16, 2012: UnrealIRCd 3.2.10-rc1 was released, the first release of the world's most widely-deployed
-	 * IRC server software featuring full support for the Atheme platform.  Unreal has thousands of users, of which
-	 * Atheme will now be aggressively marketed to by both projects.
+	 * October 18th, 2014: The date that Ben officially decided to start the ChatIRCd and ChatServices projects.
+	 *     The ChatLounge IRC Network Development Team does not recommend using UnrealIRCd for anything.
 	 */
-	notice(si->service->nick, si->su->nick, "\001ABOUT \002Suddenly\002 the beast saw the machine god's wisdom, and surely Belphegor \037trembled\037. ~The Book of Atheme, 10:16\001");
+	if (config_options.helpchan && config_options.helpurl)
+		snprintf(reply, sizeof reply, "\001ABOUT \002ChatServices\002 is developed by Ben, the lead developer of the ChatLounge IRC Network Development Team.  For software support, please join #ChatServices at \037irc.chatlounge.net\037.  If you're a normal user who needs assistance, please join your official network help channel instead at \002%s\002 or consult: \002%s\002",
+			config_options.helpchan, config_options.helpurl);
+	else if (config_options.helpchan && !config_options.helpurl)
+		snprintf(reply, sizeof reply, "\001ABOUT \002ChatServices\002 is developed by Ben, the lead developer of the ChatLounge IRC Network Development Team.  For software support, please join #ChatServices at \037irc.chatlounge.net\037.  If you're a normal user who needs assistance, please join your official network help channel instead at: \002%s\002",
+			config_options.helpchan);
+	else if (!config_options.helpchan && config_options.helpurl)
+		snprintf(reply, sizeof reply, "\001ABOUT \002ChatServices\002 is developed by Ben, the lead developer of the ChatLounge IRC Network Development Team.  For software support, please join #ChatServices at \037irc.chatlounge.net\037.  If you're a normal user who needs assistance, please join your official network help channel instead or consult: \002%s\002",
+			config_options.helpurl);
+	else
+		snprintf(reply, sizeof reply, "\001ABOUT \002ChatServices\002 is developed by Ben, the lead developer of the ChatLounge IRC Network Development Team.  For software support, please join #ChatServices at \037irc.chatlounge.net\037.  If you're a normal user who needs assistance, please join your official network help channel instead.");
+
+	notice(si->service->nick, si->su->nick, reply);
 }
 
 void common_ctcp_init(void)
