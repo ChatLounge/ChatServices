@@ -57,15 +57,13 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 	unsigned int i = 0, titlewidth = 0;
 	char titleborder[BUFSIZE];
 
-	/* On IRC, default the name to something.
-	 * Not currently documented.
+	/* On IRC, default the name to something if specified.
+	 * Set it to the account the user is logged in as, if
+	 * the user is logged in.
 	 */
-	if (!name && si->su)
+	if (!name && si->su && si->smu)
 	{
-		if (!nicksvs.no_nick_ownership)
-			name = si->su->nick;
-		else if (si->smu)
-			name = entity(si->smu)->name;
+		name = entity(si->smu)->name;
 	}
 
 	if (!name)
