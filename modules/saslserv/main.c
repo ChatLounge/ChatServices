@@ -41,6 +41,7 @@ static void sasl_mech_register(sasl_mechanism_t *mech);
 static void sasl_mech_unregister(sasl_mechanism_t *mech);
 static void mechlist_build_string(char *ptr, size_t buflen);
 static void mechlist_do_rebuild();
+static const char *sasl_get_source_name(sourceinfo_t *si);
 static void on_shutdown(void *unused);
 
 sasl_mech_register_func_t sasl_mech_register_funcs = { &sasl_mech_register, &sasl_mech_unregister };
@@ -245,6 +246,8 @@ void destroy_session(sasl_session_t *p)
 	free(p->username);
 	free(p->certfp);
 	free(p->authzid);
+	free(p->host);
+	free(p->ip);
 
 	free(p);
 }
@@ -257,55 +260,63 @@ static void sasl_input(sasl_message_t *smsg)
 	char *tmpbuf;
 	int tmplen;
 
-	/* Abort packets, or maybe some other kind of (D)one */
-	if(smsg->mode == 'D')
+	switch(smsg->mode)
 	{
-		destroy_session(p);
+	case 'H':
+		/* (H)ost information */
+		p->host = sstrdup(smsg->buf);
+		p->ip   = sstrdup(smsg->ext);
 		return;
-	}
-
-	if(smsg->mode != 'S' && smsg->mode != 'C')
-		return;
-
-	if(smsg->mode == 'S' && smsg->ext != NULL &&
-			!strcmp(smsg->buf, "EXTERNAL"))
-	{
-		free(p->certfp);
-		p->certfp = sstrdup(smsg->ext);
-	}
-
-	if(p->buf == NULL)
-	{
-		p->buf = (char *)malloc(len + 1);
-		p->p = p->buf;
-		p->len = len;
-	}
-	else
-	{
-		if(p->len + len + 1 > 8192) /* This is a little much... */
+	case 'S':
+		/* (S)tart authentication */
+		if(smsg->mode == 'S' && smsg->ext != NULL && !strcmp(smsg->buf, "EXTERNAL"))
 		{
-			sasl_sts(p->uid, 'D', "F");
-			destroy_session(p);
-			return;
+			free(p->certfp);
+			p->certfp = sstrdup(smsg->ext);
+		}
+		/* fallthrough to 'C' */
+
+	case 'C':
+		/* (C)lient data */
+		if(p->buf == NULL)
+		{
+			p->buf = (char *)malloc(len + 1);
+			p->p = p->buf;
+			p->len = len;
+		}
+		else
+		{
+			if(p->len + len + 1 > 8192) /* This is a little much... */
+			{
+				sasl_sts(p->uid, 'D', "F");
+				destroy_session(p);
+				return;
+			}
+
+			p->buf = (char *)realloc(p->buf, p->len + len + 1);
+			p->p = p->buf + p->len;
+			p->len += len;
 		}
 
-		p->buf = (char *)realloc(p->buf, p->len + len + 1);
-		p->p = p->buf + p->len;
-		p->len += len;
-	}
+		memcpy(p->p, smsg->buf, len);
 
-	memcpy(p->p, smsg->buf, len);
+		/* Messages not exactly 400 bytes are the end of a packet. */
+		if(len < 400)
+		{
+			p->buf[p->len] = '\0';
+			tmpbuf = p->buf;
+			tmplen = p->len;
+			p->buf = p->p = NULL;
+			p->len = 0;
+			sasl_packet(p, tmpbuf, tmplen);
+			free(tmpbuf);
+		}
+		return;
 
-	/* Messages not exactly 400 bytes are the end of a packet. */
-	if(len < 400)
-	{
-		p->buf[p->len] = '\0';
-		tmpbuf = p->buf;
-		tmplen = p->len;
-		p->buf = p->p = NULL;
-		p->len = 0;
-		sasl_packet(p, tmpbuf, tmplen);
-		free(tmpbuf);
+	case 'D':
+		/* (D)one -- when we receive it, means client abort */
+		destroy_session(p);
+		return;
 	}
 }
 
@@ -472,15 +483,18 @@ static void sasl_packet(sasl_session_t *p, char *buf, int len)
 				snprintf(description, BUFSIZE, "Unknown user (via SASL)");
 
 			struct sourceinfo_vtable sasl_vtable = {
-				.description = description
+				.description = description,
+				.get_source_name = sasl_get_source_name,
+				.get_source_mask = sasl_get_source_name
 			};
 
 			sourceinfo_t *si = sourceinfo_create();
 			si->service = saslsvs;
-			si->sourcedesc = p->uid;
 			si->connection = curr_uplink->conn;
 			si->v = &sasl_vtable;
 			si->force_language = language_find("en");
+			if (p->host)
+				si->sourcedesc = p->host;
 
 			bad_password(si, mu);
 
@@ -734,6 +748,17 @@ static void delete_stale(void *vptr)
 		} else
 			p->flags |= ASASL_MARKED_FOR_DELETION;
 	}
+}
+
+static const char *sasl_get_source_name(sourceinfo_t *si)
+{
+	static char result[HOSTLEN+NICKLEN+10];
+	/* we can reasonably assume that si->v is non-null as this is part of the SASL vtable */
+	if (si->sourcedesc)
+		snprintf(result, sizeof result, "<%s:%s>%s", si->v->description, si->sourcedesc, si->smu ? entity(si->smu)->name : "");
+	else
+		snprintf(result, sizeof result, "<%s>%s", si->v->description, si->smu ? entity(si->smu)->name : "");
+	return result;
 }
 
 static void on_shutdown(void *unused)
