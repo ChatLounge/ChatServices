@@ -46,6 +46,17 @@ static void on_shutdown(void *unused);
 
 sasl_mech_register_func_t sasl_mech_register_funcs = { &sasl_mech_register, &sasl_mech_unregister };
 
+typedef struct {
+	sourceinfo_t parent;
+	sasl_session_t *sess;
+} sasl_sourceinfo_t;
+
+static struct sourceinfo_vtable sasl_vtable = {
+	.description = "SASL",
+	.get_source_name = sasl_get_source_name,
+	.get_source_mask = sasl_get_source_name
+};
+
 /* main services client routine */
 static void saslserv(sourceinfo_t *si, int parc, char *parv[])
 {
@@ -253,32 +264,30 @@ void destroy_session(sasl_session_t *p)
 	free(p);
 }
 
+static void sasl_sourceinfo_delete(sasl_sourceinfo_t *ssi)
+{
+	return_if_fail(ssi != NULL);
+
+	free(ssi);
+}
+
 static sourceinfo_t *sasl_sourceinfo_create(sasl_session_t *p)
 {
-	char description[BUFSIZE];
-	sourceinfo_t *si;
+	sasl_sourceinfo_t *ssi;
 
-	if (p->server && !hide_server_names)
-		snprintf(description, BUFSIZE, "Unknown user on %s (via SASL)", p->server->name);
-	else
-		snprintf(description, BUFSIZE, "Unknown user (via SASL)");
+	ssi = smalloc(sizeof(sasl_sourceinfo_t));
+	object_init(object(ssi), "<sasl sourceinfo>", (destructor_t) sasl_sourceinfo_delete);
 
-	struct sourceinfo_vtable sasl_vtable = {
-		.description = description,
-		.get_source_name = sasl_get_source_name,
-		.get_source_mask = sasl_get_source_name
-	};
-
-	si = sourceinfo_create();
-	si->s = p->server;
-	si->connection = curr_uplink->conn;
+	ssi->parent.s = p->server;
+	ssi->parent.connection = curr_uplink->conn;
 	if (p->host)
-		si->sourcedesc = p->host;
-	si->service = saslsvs;
-	si->v = &sasl_vtable;
-	si->force_language = language_find("en");
+		ssi->parent.sourcedesc = p->host;
+	ssi->parent.service = saslsvs;
+	ssi->parent.v = &sasl_vtable;
+	ssi->parent.force_language = language_find("en");
+	ssi->sess = p;
 
-	return si;
+	return &ssi->parent;
 }
 
 /* interpret an AUTHENTICATE message */
@@ -784,11 +793,20 @@ static void delete_stale(void *vptr)
 static const char *sasl_get_source_name(sourceinfo_t *si)
 {
 	static char result[HOSTLEN+NICKLEN+10];
+	char description[BUFSIZE];
+	sasl_sourceinfo_t *ssi = (sasl_sourceinfo_t *) si;
+
+	if (ssi->sess->server && !hide_server_names)
+		snprintf(description, BUFSIZE, "Unknown user on %s (via SASL)", ssi->sess->server->name);
+	else
+		mowgli_strlcpy(description, "Unknown user (via SASL)", sizeof description);
+
 	/* we can reasonably assume that si->v is non-null as this is part of the SASL vtable */
 	if (si->sourcedesc)
-		snprintf(result, sizeof result, "<%s:%s>%s", si->v->description, si->sourcedesc, si->smu ? entity(si->smu)->name : "");
+		snprintf(result, sizeof result, "<%s:%s>%s", description, si->sourcedesc, si->smu ? entity(si->smu)->name : "");
 	else
-		snprintf(result, sizeof result, "<%s>%s", si->v->description, si->smu ? entity(si->smu)->name : "");
+		snprintf(result, sizeof result, "<%s>%s", description, si->smu ? entity(si->smu)->name : "");
+
 	return result;
 }
 
