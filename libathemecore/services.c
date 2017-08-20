@@ -580,6 +580,9 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 	mycertfp_t *mcfp;
 	service_t *svs;
 	char description[300];
+	hook_user_login_check_t req;
+
+	hook_add_event("user_can_login");
 
 	free(u->certfp);
 	u->certfp = sstrdup(certfp);
@@ -595,9 +598,19 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 	if (svs == NULL)
 		return;
 
+	req.si = si;
+	req.mu = mu;
+	req.allowed = true;
+	hook_call_user_can_login(&req);
+	if (!req.allowed)
+	{
+		logcommand(si, CMDLOG_LOGIN, "failed CERTFP login to \2%s\2 (denied by hook)", entity(mu)->name);
+		return;
+	}
+
 	if (metadata_find(mu, "private:freeze:freezer"))
 	{
-		notice(svs->me->nick, u->nick, nicksvs.no_nick_ownership ? "You cannot login as \2%s\2 because the account has been frozen." : "You cannot identify to \2%s\2 because the nickname has been frozen.", entity(mu)->name);
+		notice(svs->me->nick, u->nick, _("You cannot login as \2%s\2 because the account has been frozen."), entity(mu)->name);
 		logcommand_user(svs, u, CMDLOG_LOGIN, "failed LOGIN to %s (frozen) via CERTFP (%s)", entity(mu)->name, certfp);
 		return;
 	}

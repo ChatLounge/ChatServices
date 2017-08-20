@@ -28,6 +28,7 @@ void _modinit(module_t *m)
 {
 	service_named_bind_command("nickserv", &ns_cert);
 
+	hook_add_event("user_can_login");
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -43,6 +44,7 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 	mycertfp_t *cert;
 	user_t *cu;
 	service_t *ns;
+	hook_user_login_check_t req;
 
 	if (parc < 1)
 	{
@@ -181,22 +183,39 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 		{
 			command_fail(si, fault_nochange, _("You don't have a fingerprint."));
 		}
-		
+
 		cert = mycertfp_find(cu->certfp);
 		if (cert == NULL) // Fingerprint not in DB
 		{
 			command_fail(si, fault_nochange, _("Your current fingerprint doesn't match any accounts."));
 			return;
 		}
-		
+
 		ns = service_find("nickserv");
 		if (ns == NULL)
 		{
 			return;
 		}
-		
+
 		mu = cert->mu;
-		
+
+		req.si = si;
+		req.mu = mu;
+		req.allowed = true;
+		hook_call_user_can_login(&req);
+		if (!req.allowed)
+		{
+			logcommand(si, CMDLOG_LOGIN, "failed CERTFP login to \2%s\2 (denied by hook)", entity(mu)->name);
+			return;
+		}
+
+		if (metadata_find(mu, "private:freeze:freezer"))
+		{
+			command_fail(si, fault_authfail, _("You cannot login as \2%s\2 because the account has been frozen."), entity(mu)->name);
+			logcommand(si, CMDLOG_LOGIN, "failed LOGIN to %s (frozen) via CERTFP (%s)", entity(mu)->name, cu->certfp);
+			return;
+		}
+
 		if (cu->myuser != NULL) // Already logged in.
 		{
 			command_fail(si, fault_nochange, _("You are already logged in as: \2%s\2"), entity(cu->myuser)->name);
