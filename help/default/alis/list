@@ -6,7 +6,13 @@ Help for LIST:
 LIST gives a list of channels matching the
 pattern, modified by the other options.
 
-The pattern can contain * and ? wildcards.
+The pattern can contain * and ? wildcards.  The pattern has
+to match the channel name or a topic, depending on where it
+is used.  The pattern is also automatically surrounded by
+wildcards if:
+- A channel name pattern starts with a wildcard or a pound
+  sign ('#'), or
+- A topic pattern contains no asterisk ('*') wildcards.
 
 Options are:
     -min <n>: minimum users in channel
@@ -15,11 +21,19 @@ Options are:
     -show [m][t]: show modes/topicsetter
     -mode <+|-|=><modes>: modes set/unset/equal
     -topic <pattern>: topic matches pattern
+if priv chan:auspex
     -showsecret: show secret channels (requires chan:auspex)
+endif
 
 Syntax: LIST <pattern> [options]
 
 Examples:
-    /msg &nick& LIST *seachterm*
-    /msg &nick& LIST * -topic *seachterm*
+    /msg &nick& LIST *searchterm*
+    /msg &nick& LIST * -topic *searchterm*
+    /msg &nick& LIST searchterm
+    /msg &nick& LIST * -topic multiple*ordered*search*terms
     /msg &nick& LIST * -min 50
+    /msg &nick& LIST #foo*
+    /msg &nick& LIST -mode =n #foo*
+    /msg &nick& LIST -mode -t *freetopic* -show mt
+    /msg &nick& LIST -mode +c ##nocolors* -show t
