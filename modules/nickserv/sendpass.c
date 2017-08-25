@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService SENDPASS function.
@@ -12,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/sendpass", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void ns_cmd_sendpass(sourceinfo_t *si, int parc, char *parv[]);
@@ -47,6 +49,7 @@ static void ns_cmd_sendpass(sourceinfo_t *si, int parc, char *parv[])
 	enum specialoperation op = op_none;
 	bool ismarked = false;
 	char cmdtext[NICKLEN + 20];
+	hook_user_needforce_t needforce_hdata;
 
 	if (!name)
 	{
@@ -106,6 +109,35 @@ static void ns_cmd_sendpass(sourceinfo_t *si, int parc, char *parv[])
 		else if (!has_priv(si, PRIV_MARK))
 		{
 			logcommand(si, CMDLOG_ADMIN, "failed SENDPASS \2%s\2 (marked by \2%s\2)", entity(mu)->name, md->value);
+			command_fail(si, fault_noprivs, STR_NO_PRIVILEGE, PRIV_MARK);
+			return;
+		}
+	}
+
+	needforce_hdata.si = si;
+	needforce_hdata.mu = mu;
+	needforce_hdata.allowed = 1;
+
+	hook_call_user_needforce(&needforce_hdata);
+
+	if (!needforce_hdata.allowed)
+	{
+		ismarked = true;
+		if (op == op_none)
+		{
+			logcommand(si, CMDLOG_ADMIN, "failed SENDPASS \2%s\2 (marked)", entity(mu)->name);
+			command_fail(si, fault_badparams, _("This operation cannot be performed on %s, because the account has been marked."), entity(mu)->name);
+			if (has_priv(si, PRIV_MARK))
+			{
+				snprintf(cmdtext, sizeof cmdtext,
+						"SENDPASS %s FORCE", entity(mu)->name);
+				command_fail(si, fault_badparams, _("Use %s to override this restriction."), cmdtext);
+			}
+			return;
+		}
+		else if (!has_priv(si, PRIV_MARK))
+		{
+			logcommand(si, CMDLOG_ADMIN, "failed SENDPASS \2%s\2 (marked)", entity(mu)->name);
 			command_fail(si, fault_noprivs, STR_NO_PRIVILEGE, PRIV_MARK);
 			return;
 		}

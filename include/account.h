@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2009 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Data structures for account information.
@@ -361,6 +363,12 @@ typedef struct {
 	sourceinfo_t *si;
 	const char *nick;
 } hook_info_noexist_req_t;
+
+typedef struct {
+	sourceinfo_t *si;
+	myuser_t *mu;
+	int allowed;
+} hook_user_needforce_t;
 
 /* pmodule.c XXX */
 E bool backend_loaded;
