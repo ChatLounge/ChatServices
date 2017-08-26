@@ -1,15 +1,13 @@
 use strict;
 use Irssi;
-use vars qw($VERSION %IRSSI);
-# $Id$
-
 use MIME::Base64;
+use vars qw($VERSION %IRSSI);
+use constant CHALLENGE_SIZE => 32;
 
-$VERSION = "1.6";
-
+$VERSION = "1.8a";
 %IRSSI = (
-    authors     => 'Michael Tharp and Jilles Tjoelker',
-    contact     => 'gxti@partiallystapled.com',
+    authors     => 'Michael Tharp (gxti), Jilles Tjoelker (jilles), Mantas Mikulėnas (grawity)',
+    contact     => 'grawity@gmail.com',
     name        => 'cap_sasl.pl',
     description => 'Implements SASL authentication and enables CAP "multi-prefix"',
     license     => 'GNU General Public License',
@@ -56,10 +54,10 @@ sub event_cap {
 			if ($caps =~ / sasl /i) {
 				$sasl->{buffer} = '';
 				$sasl->{step} = 0;
-				if($mech{$sasl->{mech}}) {
+				if ($mech{$sasl->{mech}}) {
 					$server->send_raw_now("AUTHENTICATE " . $sasl->{mech});
 					Irssi::timeout_add_once(7500, \&timeout, $server->{tag});
-				}else{
+				} else {
 					$server->print('', 'SASL: attempted to start unknown mechanism "' . $sasl->{mech} . '"');
 				}
 			}
@@ -88,22 +86,27 @@ sub event_authenticate {
 	$sasl->{buffer} .= $args;
 	return if length($args) == 400;
 
-	my $data = $sasl->{buffer} eq '+' ? '' : decode_base64($sasl->{buffer});
+	my $data = ($sasl->{buffer} eq '+') ? '' : decode_base64($sasl->{buffer});
 	my $out = $mech{$sasl->{mech}}($sasl, $data);
-	$out = '' unless defined $out;
-	$out = $out eq '' ? '+' : encode_base64($out, '');
 
-	while(length $out >= 400) {
-		my $subout = substr($out, 0, 400, '');
-		$server->send_raw_now("AUTHENTICATE $subout");
-	}
-	if(length $out) {
-		$server->send_raw_now("AUTHENTICATE $out");
-	}else{ # Last piece was exactly 400 bytes, we have to send some padding to indicate we're done
-		$server->send_raw_now("AUTHENTICATE +");
+	if (defined $out) {
+		$out = ($out eq '') ? '+' : encode_base64($out, '');
+		while (length $out >= 400) {
+			my $subout = substr($out, 0, 400, '');
+			$server->send_raw_now("AUTHENTICATE $subout");
+		}
+		if (length $out) {
+			$server->send_raw_now("AUTHENTICATE $out");
+		} else {
+			# Last piece was exactly 400 bytes, we have to send
+			# some padding to indicate we're done.
+			$server->send_raw_now("AUTHENTICATE +");
+		}
+	} else {
+		$server->send_raw_now("AUTHENTICATE *");
 	}
 
-	$sasl->{buffer} = '';
+	$sasl->{buffer} = "";
 	Irssi::signal_stop();
 }
 
@@ -113,17 +116,35 @@ sub event_saslend {
 	my $data = $args;
 	$data =~ s/^\S+ :?//;
 	# need this to see it, ?? -- jilles
+
 	$server->print('', $data);
 	if (!$server->{connected}) {
 		$server->send_raw_now("CAP END");
 	}
 }
 
+sub event_saslfail {
+	my ($server, $args, $nick, $address) = @_;
+
+	my $data = $args;
+	$data =~ s/^\S+ :?//;
+
+	if (Irssi::settings_get_bool('sasl_disconnect_on_fail')) {
+		$server->print('', "$data - disconnecting from server", MSGLEVEL_CLIENTERROR);
+		$server->disconnect();
+	} else {
+		$server->print('', "$data - continuing anyway");
+		if (!$server->{connected}) {
+			$server->send_raw_now("CAP END");
+		}
+	}
+}
+
 sub timeout {
 	my $tag = shift;
 	my $server = Irssi::server_find_tag($tag);
-	if($server && !$server->{connected}) {
-		$server->print('', "SASL: authentication timed out");
+	if ($server && !$server->{connected}) {
+		$server->print('', "SASL: authentication timed out", MSGLEVEL_CLIENTERROR);
 		$server->send_raw_now("CAP END");
 	}
 }
@@ -141,13 +162,13 @@ sub cmd_sasl {
 sub cmd_sasl_set {
 	my ($data, $server, $item) = @_;
 
-	if (my($net, $u, $p, $m) = $data =~ /^(\S+) (\S+) (\S+) (\S+)$/) {
-		if($mech{uc $m}) {
+	if (my ($net, $u, $p, $m) = $data =~ /^(\S+) (\S+) (\S+) (\S+)$/) {
+		if ($mech{uc $m}) {
 			$sasl_auth{$net}{user} = $u;
 			$sasl_auth{$net}{password} = $p;
 			$sasl_auth{$net}{mech} = uc $m;
 			Irssi::print("SASL: added $net: [$m] $sasl_auth{$net}{user} *");
-		}else{
+		} else {
 			Irssi::print("SASL: unknown mechanism $m");
 		}
 	} elsif ($data =~ /^(\S+)$/) {
@@ -165,62 +186,68 @@ sub cmd_sasl_set {
 
 sub cmd_sasl_show {
 	#my ($data, $server, $item) = @_;
-	my $net;
-	my $count = 0;
-
-	foreach $net (keys %sasl_auth) {
+	my @nets = keys %sasl_auth;
+	for my $net (@nets) {
 		Irssi::print("SASL: $net: [$sasl_auth{$net}{mech}] $sasl_auth{$net}{user} *");
-		$count++;
 	}
-	Irssi::print("SASL: no networks defined") if !$count;
+	Irssi::print("SASL: no networks defined") if !@nets;
 }
 
 sub cmd_sasl_save {
 	#my ($data, $server, $item) = @_;
 	my $file = Irssi::get_irssi_dir()."/sasl.auth";
-	open FILE, "> $file" or return;
-	chmod(0600, $file);
-	foreach my $net (keys %sasl_auth) {
-		printf FILE ("%s\t%s\t%s\t%s\n", $net, $sasl_auth{$net}{user}, $sasl_auth{$net}{password}, $sasl_auth{$net}{mech});
+	if (open(my $fh, ">", $file)) {
+		chmod(0600, $file);
+		for my $net (keys %sasl_auth) {
+			printf $fh ("%s\t%s\t%s\t%s\n",
+				$net,
+				$sasl_auth{$net}{user},
+				$sasl_auth{$net}{password},
+				$sasl_auth{$net}{mech});
+		}
+		close($fh);
+		Irssi::print("SASL: auth saved to '$file'");
+	} else {
+		Irssi::print("SASL: couldn't access '$file': $@");
 	}
-	close FILE;
-	Irssi::print("SASL: auth saved to $file");
 }
 
 sub cmd_sasl_load {
 	#my ($data, $server, $item) = @_;
 	my $file = Irssi::get_irssi_dir()."/sasl.auth";
-
-	open FILE, "< $file" or return;
-	%sasl_auth = ();
-	while (<FILE>) {
-		chomp;
-		my ($net, $u, $p, $m) = split (/\t/, $_, 4);
-		$m ||= "PLAIN";
-		if($mech{uc $m}) {
-			$sasl_auth{$net}{user} = $u;
-			$sasl_auth{$net}{password} = $p;
-			$sasl_auth{$net}{mech} = uc $m;
-		}else{
-			Irssi::print("SASL: unknown mechanism $m");
+	if (open(my $fh, "<", $file)) {
+		%sasl_auth = ();
+		while (<$fh>) {
+			chomp;
+			my ($net, $u, $p, $m) = split(/\t/, $_, 4);
+			$m ||= "PLAIN";
+			if ($mech{uc $m}) {
+				$sasl_auth{$net}{user} = $u;
+				$sasl_auth{$net}{password} = $p;
+				$sasl_auth{$net}{mech} = uc $m;
+			} else {
+				Irssi::print("SASL: unknown mechanism $m", MSGLEVEL_CLIENTERROR);
+			}
 		}
+		close($fh);
+		Irssi::print("SASL: cap_sasl $VERSION, auth loaded from '$file'");
 	}
-	close FILE;
-	Irssi::print("SASL: auth loaded from $file");
 }
 
 sub cmd_sasl_mechanisms {
 	Irssi::print("SASL: mechanisms supported: " . join(", ", sort keys %mech));
 }
 
+Irssi::settings_add_bool('server', 'sasl_disconnect_on_fail', 1);
+
 Irssi::signal_add_first('server connected', \&server_connected);
 Irssi::signal_add('event cap', \&event_cap);
 Irssi::signal_add('event authenticate', \&event_authenticate);
-Irssi::signal_add('event 903', 'event_saslend');
-Irssi::signal_add('event 904', 'event_saslend');
-Irssi::signal_add('event 905', 'event_saslend');
-Irssi::signal_add('event 906', 'event_saslend');
-Irssi::signal_add('event 907', 'event_saslend');
+Irssi::signal_add('event 903', \&event_saslend);
+Irssi::signal_add('event 904', \&event_saslfail);
+Irssi::signal_add('event 905', \&event_saslend);
+Irssi::signal_add('event 906', \&event_saslfail);
+Irssi::signal_add('event 907', \&event_saslend);
 
 Irssi::command_bind('sasl', \&cmd_sasl);
 Irssi::command_bind('sasl load', \&cmd_sasl_load);
@@ -230,54 +257,127 @@ Irssi::command_bind('sasl show', \&cmd_sasl_show);
 Irssi::command_bind('sasl mechanisms', \&cmd_sasl_mechanisms);
 
 $mech{PLAIN} = sub {
-	my($sasl, $data) = @_;
+	my ($sasl, $data) = @_;
 	my $u = $sasl->{user};
 	my $p = $sasl->{password};
-
-	join("\0", $u, $u, $p);
+	return join("\0", $u, $u, $p);
 };
 
 $mech{EXTERNAL} = sub {
-	my($sasl, $data) = @_;
-
-	"";
+	my ($sasl, $data) = @_;
+	return $sasl->{user} // "";
 };
 
-sub in_path {
-	my $exe = shift;
-	return grep {-x "$_/$exe"}
-	       map {length $_ ? $_ : "."}
-	       split(":", $ENV{PATH});
-}
-
-if (in_path("ecdsatool")) {
-	my $ecdsa_sign = sub {
-		if (open(my $proc, "-|", "ecdsatool", "sign", @_)) {
-			chomp(my $resp = <$proc>);
-			close($proc);
-			return $resp;
-		}
-	};
+if (eval {require Crypt::PK::ECC}) {
 	$mech{'ECDSA-NIST256P-CHALLENGE'} = sub {
-		my($sasl, $data) = @_;
+		my ($sasl, $data) = @_;
 		my $u = $sasl->{user};
 		my $k = $sasl->{password};
+		if ($k !~ m!^/!) {
+			$k = Irssi::get_irssi_dir()."/".$k;
+		}
+		if (!-f $k) {
+			Irssi::print("SASL: key file '$k' not found", MSGLEVEL_CLIENTERROR);
+			return;
+		}
+		my $pk = eval {Crypt::PK::ECC->new($k)};
+		if ($@ || !$pk || !$pk->is_private) {
+			Irssi::print("SASL: no private key in file '$k'", MSGLEVEL_CLIENTERROR);
+			return;
+		}
 		my $step = ++$sasl->{step};
 		if ($step == 1) {
-			if (length $data) {
-				my $signpayload = encode_base64($data);
-				my $payload = $ecdsa_sign->($k, $signpayload);
-				return $u."\0".$u."\0".decode_base64($payload);
+			if (length $data == CHALLENGE_SIZE) {
+				my $sig = $pk->sign_hash($data);
+				return $u."\0".$u."\0".$sig;
+			} elsif (length $data) {
++				return;
 			} else {
 				return $u."\0".$u;
 			}
 		}
 		elsif ($step == 2) {
-			my $signpayload = encode_base64($data);
-			my $payload = $ecdsa_sign->($k, $signpayload);
-			return decode_base64($payload);
+			if (length $data == CHALLENGE_SIZE) {
+				return $pk->sign_hash($data);
+			} else {
+				return;
+			}
 		}
 	};
+
+	sub cmd_sasl_keygen {
+		my ($data, $server, $witem) = @_;
+
+		my $mech = "ECDSA-NIST256P-CHALLENGE";
+		my $net;
+		my $print;
+
+		if ($server) {
+			$net = $server->{tag};
+			$print = sub { $server->print("", shift) };
+		} else {
+			$net = $data;
+			$print = sub { Irssi::print(shift) };
+		}
+
+		if (!length $net) {
+			$print->("Please connect to a server first.");
+			return;
+		}
+
+		my $f_name = lc "sasl-ecdsa-$net";
+		   $f_name =~ s![ /]+!_!g;
+		my $f_priv = Irssi::get_irssi_dir()."/$f_name.key";
+		my $f_pub  = Irssi::get_irssi_dir()."/$f_name.pub";
+		if (-e $f_priv) {
+			$print->("SASL: refusing to overwrite '$f_priv'");
+			return;
+		}
+
+		$print->("SASL: generating keypair for '$net'...");
+		my $pk = Crypt::PK::ECC->new;
+		$pk->generate_key("prime256v1");
+
+		my $priv = $pk->export_key_pem("private");
+		my $pub = encode_base64($pk->export_key_raw("public_compressed"), "");
+		my $cmd = "/msg NickServ SET PROPERTY pubkey $pub";
+
+		if (open(my $fh, ">", $f_priv)) {
+			chmod(0600, $f_priv);
+			print $fh $priv;
+			close($fh);
+			$print->("SASL: wrote private key to '$f_priv'");
+		} else {
+			$print->("SASL: could not write '$f_priv': $!");
+			return;
+		}
+
+		if (open(my $fh, ">", $f_pub)) {
+			print $fh $pub."\n";
+			close($fh);
+		} else {
+			$print->("SASL: could not write '$f_pub': $!");
+		}
+
+		if ($server) {
+			$print->("SASL: updating your Irssi settings...");
+			$sasl_auth{$net}{user} //= $server->{nick};
+			$sasl_auth{$net}{password} = "$f_name.key";
+			$sasl_auth{$net}{mech} = $mech;
+			cmd_sasl_save(@_);
+
+			$print->("SASL: submitting key to NickServ...");
+			$server->command($cmd);
+		} else {
+			$print->("SASL: update your Irssi settings:");
+			$print->("%P/sasl set $net <nick> $f_name.key $mech");
+
+			$print->("SASL: submit your public key to $net:");
+			$print->("%P$cmd");
+		}
+	}
+
+	Irssi::command_bind('sasl keygen', \&cmd_sasl_keygen);
 };
 
 cmd_sasl_load();
