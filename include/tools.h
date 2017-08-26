@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2003-2004 E. Will et al.
  * Copyright (C) 2005-2006 Atheme Development Group
+ * Copyright (C) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Misc tools
@@ -27,6 +29,9 @@ E void arc4random_stir(void);
 E void arc4random_addrandom(unsigned char *dat, int datlen);
 E unsigned int arc4random(void);
 #endif /* !HAVE_ARC4RANDOM */
+
+/* cidr.c */
+E int valid_ip_or_mask(const char *src);
 
 typedef enum {
 	LOG_ANY = 0,

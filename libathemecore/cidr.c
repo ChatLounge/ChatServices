@@ -1,5 +1,5 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of IRC services
  * cidr.c: CIDR matching.
  *
  * Most code in this file has been copied from ratbox, src/match.c and
@@ -9,6 +9,7 @@
  * Copyright (c) 1996-2002 Hybrid Development Team
  * Copyright (c) 2002-2005 ircd-ratbox development team
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -208,8 +209,6 @@ inet_pton6(const char *src, u_char *dst)
 				break;	/* '\0' was seen by inet_pton4(). */
 			}
 		}
-		else
-			continue;
 		return (0);
 	}
 	if(saw_xdigit)
@@ -366,6 +365,52 @@ match_cidr(const char *s1, const char *s2)
 	}
 	else
 		return 1;
+}
+
+int valid_ip_or_mask(const char *src)
+{
+	char ipaddr[IN6ADDRSZ], buf[IN6ADDRSZ];
+	char *mask;
+
+	mowgli_strlcpy(ipaddr, src, sizeof ipaddr);
+
+	int is_ipv6 = (strchr(ipaddr, ':') != NULL);
+
+	if (mask = strchr(ipaddr, '/'))
+	{
+		*mask++ = '\0';
+
+		/* Multiple slashes */
+		if (strchr(mask, '/'))
+			return 0;
+
+		/* Trailing slash */
+		if (!strlen(mask))
+			return 0;
+
+		int i;
+		for (i = 0; i < strlen(mask); i++)
+		{
+			if (!isdigit(*(mask + i)))
+				return 0;
+		}
+
+		if (is_ipv6)
+		{
+			if (atoi(mask) > 128)
+				return 0;
+		}
+		else
+		{
+			if (atoi(mask) > 32)
+				return 0;
+		}
+	}
+
+	if (is_ipv6)
+		return inet_pton6(ipaddr, buf);
+	else
+		return inet_pton4(ipaddr, buf);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
