@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2005 Robin Burchell, et al.
  * Copyright (c) 2010 William Pitcock <nenolod@atheme.org>.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * List chanserv-controlled channels.
@@ -12,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/list", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void cs_cmd_list(sourceinfo_t *si, int parc, char *parv[]);
@@ -55,7 +57,7 @@ static time_t parse_age(char *s)
 	time_t duration;
 
 	duration = (atol(s) * 60);
-	while (isdigit(*s))
+	while (isdigit((unsigned char)*s))
 		s++;
 
 	if (*s == 'h' || *s == 'H')

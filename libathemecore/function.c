@@ -1,5 +1,5 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of IRC services
  * function.c: Miscellaneous functions.
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
@@ -330,7 +330,7 @@ int validemail(const char *email)
 	/* no mail to IP addresses, this should be done using [10.2.3.4]
 	 * like syntax but we do not allow that either
 	 */
-	if (isdigit(lastdot[1]))
+	if (isdigit((unsigned char)lastdot[1]))
 		return 0;
 
 	/* make sure there are at least 4 characters besides the above

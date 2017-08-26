@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2006 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains protocol support for bahamut-based ircd.
@@ -12,7 +14,12 @@
 #include "pmodule.h"
 #include "protocol/unreal.h"
 
-DECLARE_MODULE_V1("protocol/unreal", true, _modinit, NULL, PACKAGE_STRING, "Atheme Development Group <http://www.atheme.org>");
+DECLARE_MODULE_V1
+(
+	"protocol/unreal", true, _modinit, NULL,
+	PACKAGE_STRING,
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+);
 
 static bool has_protoctl = false;
 static bool use_esvid = false;
@@ -129,7 +136,7 @@ static bool check_jointhrottle(const char *value, channel_t *c, mychan_t *mc, us
 				return false;
 			arg2 = p + 1;
 		}
-		else if (!isdigit(*p))
+		else if (!isdigit((unsigned char)*p))
 			return false;
 		p++;
 	}
@@ -160,7 +167,7 @@ static inline bool check_flood_old(const char *value, channel_t *c, mychan_t *mc
 	{
 		if (*value == '*' && !found_colon)
 			found_colon = true;
-		else if (!isdigit(*value))
+		else if (!isdigit((unsigned char)*value))
 			return false;
 
 		value++;
@@ -205,7 +212,7 @@ static bool check_flood(const char *value, channel_t *c, mychan_t *mc, user_t *u
 
 	for (p = strtok(ep, ","); p != NULL; p = strtok(NULL, ","))
 	{
-		while (isdigit(*p))
+		while (isdigit((unsigned char)*p))
 			p++;
 
 		if (!VALID_FLOOD_CHAR(*p))

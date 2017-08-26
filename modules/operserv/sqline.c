@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2006 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains functionality which implements
@@ -14,7 +16,7 @@ DECLARE_MODULE_V1
 (
 	"operserv/sqline", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void os_sqline_newuser(hook_user_nick_t *data);
@@ -189,7 +191,7 @@ static void os_cmd_sqline_add(sourceinfo_t *si, int parc, char *parv[])
 		if (s)
 		{
 			duration = (atol(s) * 60);
-			while (isdigit(*s))
+			while (isdigit((unsigned char)*s))
 				s++;
 			if (*s == 'h' || *s == 'H')
 				duration *= 60;

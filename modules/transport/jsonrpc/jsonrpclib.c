@@ -1,6 +1,8 @@
 /* JSONRPC Library
  *
  * Copyright (c) 2014 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Please read COPYING and README for further details.
  *
  */
@@ -161,7 +163,7 @@ char *jsonrpc_normalizeBuffer(const char *buf)
 				/* Color ctrl char */
 			case 3:
 				/* If the next character is a digit, its also removed */
-				if (isdigit(buf[i + 1]))
+				if (isdigit((unsigned char)buf[i + 1]))
 				{
 					i++;
 
@@ -169,7 +171,7 @@ char *jsonrpc_normalizeBuffer(const char *buf)
 					 * which are two digit but no worse then
 					 * how the Unreal does with +S - TSL
 					 */
-					if (isdigit(buf[i + 1]))
+					if (isdigit((unsigned char)buf[i + 1]))
 					{
 						i++;
 					}
@@ -181,7 +183,7 @@ char *jsonrpc_normalizeBuffer(const char *buf)
 					{
 						i++;
 
-						if (isdigit(buf[i + 1]))
+						if (isdigit((unsigned char)buf[i + 1]))
 						{
 							i++;
 						}
@@ -189,7 +191,7 @@ char *jsonrpc_normalizeBuffer(const char *buf)
 						 * which are two digit but no worse then
 						 * how the Unreal does with +S - TSL
 						 */
-						if (isdigit(buf[i + 1]))
+						if (isdigit((unsigned char)buf[i + 1]))
 						{
 							i++;
 						}

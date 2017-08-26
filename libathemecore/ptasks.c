@@ -1,8 +1,9 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of IRC services
  * ptasks.c: Implementation of common protocol tasks.
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -590,11 +591,11 @@ void handle_message(sourceinfo_t *si, char *target, bool is_notice, char *messag
 			notice(target_u->nick, si->su->nick, "This is a registered nick enforcer, and not a real user.");
 			return;
 		}
-		if (!is_notice && (isalnum(target[0]) || strchr("[\\]^_`{|}~", target[0])))
+		if (!is_notice && (isalnum((unsigned char)target[0]) || strchr("[\\]^_`{|}~", target[0])))
 		{
 			/* If it's not a notice and looks like a nick or
 			 * user@server, send back an error message */
-			if (strchr(target, '@') || !ircd->uses_uid || (!ircd->uses_p10 && !isdigit(target[0])))
+			if (strchr(target, '@') || !ircd->uses_uid || (!ircd->uses_p10 && !isdigit((unsigned char)target[0])))
 				numeric_sts(me.me, 401, si->su, "%s :No such nick", target);
 			else
 				numeric_sts(me.me, 401, si->su, "* :Target left IRC. Failed to deliver: [%.20s]", message);

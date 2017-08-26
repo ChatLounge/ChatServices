@@ -1,8 +1,9 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of IRC services
  * logger.c: Logging routines
  *
  * Copyright (c) 2005-2009 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -160,7 +161,7 @@ logfile_strip_control_codes(const char *buf)
 		else if (*in == 3)
 		{
 			in++;
-			while (isdigit(*in))
+			while (isdigit((unsigned char)*in))
 				in++;
 		}
 	}

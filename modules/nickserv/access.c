@@ -49,11 +49,11 @@ static bool username_is_random(const char *name)
 	p = name;
 	while (*p != '\0')
 	{
-		if (isdigit(*p))
+		if (isdigit((unsigned char)*p))
 			digit++;
-		else if (isupper(*p))
+		else if (isupper((unsigned char)*p))
 			upper++;
-		else if (islower(*p))
+		else if (islower((unsigned char)*p))
 			lower++;
 		p++;
 	}
@@ -95,7 +95,7 @@ static char *construct_mask(user_t *u)
 				prevdot = p;
 				havedigits = false;
 			}
-			else if (isdigit(*p))
+			else if (isdigit((unsigned char)*p))
 				havedigits = true;
 			p++;
 		}
@@ -120,7 +120,7 @@ static bool mangle_wildcard_to_cidr(const char *host, char *dest, size_t destlen
 
 	if ((p[0] != '0' || p[1] != '.') && ((i = atoi(p)) < 1 || i > 255))
 		return false;
-	while (isdigit(*p))
+	while (isdigit((unsigned char)*p))
 		p++;
 	if (*p++ != '.')
 		return false;
@@ -132,7 +132,7 @@ static bool mangle_wildcard_to_cidr(const char *host, char *dest, size_t destlen
 
 	if ((p[0] != '0' || p[1] != '.') && ((i = atoi(p)) < 1 || i > 255))
 		return false;
-	while (isdigit(*p))
+	while (isdigit((unsigned char)*p))
 		p++;
 	if (*p++ != '.')
 		return false;
@@ -144,7 +144,7 @@ static bool mangle_wildcard_to_cidr(const char *host, char *dest, size_t destlen
 
 	if ((p[0] != '0' || p[1] != '.') && ((i = atoi(p)) < 1 || i > 255))
 		return false;
-	while (isdigit(*p))
+	while (isdigit((unsigned char)*p))
 		p++;
 	if (*p++ != '.')
 		return false;
@@ -283,7 +283,7 @@ static void ns_cmd_access(sourceinfo_t *si, int parc, char *parv[])
 		p = mask;
 		while (*p != '\0')
 		{
-			if (!isprint(*p) || *p == ' ' || *p == '!')
+			if (!isprint((unsigned char)*p) || *p == ' ' || *p == '!')
 			{
 				command_fail(si, fault_badparams, _("Invalid mask \2%s\2."), parv[1]);
 				return;
@@ -317,7 +317,7 @@ static void ns_cmd_access(sourceinfo_t *si, int parc, char *parv[])
 		}
 		else if ((p = strrchr(host, '/')) != NULL)
 		{
-			if (isdigit(p[1]) && (atoi(p + 1) < 16 || (mask[0] == '*' && mask[1] == '@')))
+			if (isdigit((unsigned char)p[1]) && (atoi(p + 1) < 16 || (mask[0] == '*' && mask[1] == '@')))
 			{
 				command_fail(si, fault_badparams, _("Too wide mask \2%s\2."), parv[1]);
 				return;
@@ -346,7 +346,7 @@ static void ns_cmd_access(sourceinfo_t *si, int parc, char *parv[])
 					p = host;
 
 				/* No wildcarded IPs */
-				if (isdigit(p[1]) && (strchr(host, '*') || strchr(host, '?')))
+				if (isdigit((unsigned char)p[1]) && (strchr(host, '*') || strchr(host, '?')))
 				{
 					command_fail(si, fault_badparams, _("Too wide mask \2%s\2."), parv[1]);
 					return;

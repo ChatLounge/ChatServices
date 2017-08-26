@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2007 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains protocol support for TS6-based ircd.
@@ -38,7 +40,12 @@
 #include "uplink.h"
 #include "pmodule.h"
 
-DECLARE_MODULE_V1("protocol/ts6-generic", true, _modinit, NULL, PACKAGE_STRING, "Atheme Development Group <http://www.atheme.org>");
+DECLARE_MODULE_V1
+(
+	"protocol/ts6-generic", true, _modinit, NULL,
+	PACKAGE_STRING,
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+);
 
 static bool use_rserv_support = false;
 static bool use_tb = false;
@@ -73,7 +80,7 @@ static unsigned int ts6_server_login(void)
 		ircd->uses_uid = false;
 		ret = sts("PASS %s :TS", curr_uplink->send_pass);
 	}
-	else if (strlen(me.numeric) == 3 && isdigit(*me.numeric))
+	else if (strlen(me.numeric) == 3 && isdigit((unsigned char)*me.numeric))
 	{
 		ircd->uses_uid = true;
 		ret = sts("PASS %s TS 6 :%s", curr_uplink->send_pass, me.numeric);

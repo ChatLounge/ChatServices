@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService AKICK functions.
@@ -20,7 +22,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/akick", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 command_t cs_akick = { "AKICK", N_("Manipulates a channel's AKICK list."),
@@ -224,7 +226,7 @@ void cs_cmd_akick_add(sourceinfo_t *si, int parc, char *parv[])
 			if (s)
 			{
 				duration = (atol(s) * 60);
-				while (isdigit(*s))
+				while (isdigit((unsigned char)*s))
 					s++;
 				if (*s == 'h' || *s == 'H')
 					duration *= 60;

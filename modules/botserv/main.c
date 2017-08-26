@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains the main() routine.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"botserv/main", true, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Rizon Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void bs_join(hook_channel_joinpart_t *hdata);
@@ -380,7 +382,7 @@ botserv_channel_handler(sourceinfo_t *si, int parc, char *parv[])
 	if ((sptr = service_find("chanserv")) == NULL)
 		return;
 
-	if (strlen(cmd) >= 2 && strchr(prefix, cmd[0]) && isalpha(*++cmd))
+	if (strlen(cmd) >= 2 && strchr(prefix, cmd[0]) && isalpha((unsigned char)*++cmd))
 	{
 		const char *realcmd = service_resolve_alias(chansvs.me, NULL, cmd);
 

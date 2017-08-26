@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2006 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * InspIRCd link support
@@ -10,7 +12,12 @@
 #include "pmodule.h"
 #include "protocol/inspircd.h"
 
-DECLARE_MODULE_V1("protocol/inspircd", true, _modinit, NULL, PACKAGE_STRING, "Atheme Development Group <http://www.atheme.org/>");
+DECLARE_MODULE_V1
+(
+	"protocol/inspircd", true, _modinit, NULL,
+	PACKAGE_STRING,
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+);
 
 /* *INDENT-OFF* */
 
@@ -255,7 +262,7 @@ static bool check_jointhrottle(const char *value, channel_t *c, mychan_t *mc, us
 				return false;
 			arg2 = p + 1;
 		}
-		else if (!isdigit(*p))
+		else if (!isdigit((unsigned char)*p))
 			return false;
 		p++;
 	}
@@ -293,7 +300,7 @@ static bool check_rejoindelay(const char *value, channel_t *c, mychan_t *mc, use
 
 	while (*ch)
 	{
-		if (!isdigit(*ch))
+		if (!isdigit((unsigned char)*ch))
 			return false;
 		ch++;
 	}
@@ -314,7 +321,7 @@ static bool check_delaymsg(const char *value, channel_t *c, mychan_t *mc, user_t
 
 	while (*ch)
 	{
-		if (!isdigit(*ch))
+		if (!isdigit((unsigned char)*ch))
 			return false;
 		ch++;
 	}

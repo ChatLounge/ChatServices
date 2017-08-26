@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2009 Atheme Development Group
  * Copyright (c) 2009 Rizon Development Team <http://redmine.rizon.net>
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team <http://www.chatlounge.net>
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains functionality which implements
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"operserv/sgline", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void os_sgline_newuser(hook_user_nick_t *data);
@@ -154,7 +156,7 @@ static void os_cmd_sgline_add(sourceinfo_t *si, int parc, char *parv[])
 		if (s)
 		{
 			duration = (atol(s) * 60);
-			while (isdigit(*s))
+			while (isdigit((unsigned char)*s))
 				s++;
 			if (*s == 'h' || *s == 'H')
 				duration *= 60;

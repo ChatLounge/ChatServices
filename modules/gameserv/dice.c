@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2005-2007 William Pitcock <nenolod@nenolod.net>
  * Copyright (c) 2006-2007 Jilles Tjoelker <jilles@stack.nl>
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -13,7 +14,12 @@
 
 #include <math.h>
 
-DECLARE_MODULE_V1("gameserv/dice", false, _modinit, _moddeinit, PACKAGE_STRING, "Atheme Development Group <http://www.atheme.org>");
+DECLARE_MODULE_V1
+(
+	"gameserv/dice", false, _modinit, _moddeinit,
+	PACKAGE_STRING,
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+);
 
 static void command_dice(sourceinfo_t *si, int parc, char *parv[]);
 static void command_calc(sourceinfo_t *si, int parc, char *parv[]);
@@ -100,7 +106,7 @@ static bool eval_calc(sourceinfo_t *si, char *s_input)
 	}
 
 	// Skip leading whitespace
-	while (*ci && isspace(*ci))
+	while (*ci && isspace((unsigned char)*ci))
 		ci++;
 
 	if (!*ci)
@@ -121,7 +127,7 @@ static bool eval_calc(sourceinfo_t *si, char *s_input)
 			if (--braces < 0)
 				break;	// mismatched!
 		}
-		else if (!isspace(*ci) && !isdigit(*ci) && *ci != '.' && !is_calcoper(*ci))
+		else if (!isspace((unsigned char)*ci) && !isdigit((unsigned char)*ci) && *ci != '.' && !is_calcoper(*ci))
 		{
 			command_fail(si, fault_badparams, _("Error: You typed an invalid expression."));
 			return false;
@@ -317,7 +323,7 @@ int do_calc_expr(sourceinfo_t *si, char *expr, char *errmsg, double *presult)
 			return 1;
 		}
 		// skip whitespace
-		while (*cur && isspace(*cur))
+		while (*cur && isspace((unsigned char)*cur))
 			cur++;
 	}
 
@@ -466,16 +472,16 @@ static bool eval_dice(sourceinfo_t *si, char *s_input)
 	unsigned int dice, roll, x, y, z = 0;
 	double total;
 
-	while (*c && isspace(*c))
+	while (*c && isspace((unsigned char)*c))
 		++c;
-	if (!*c || !isdigit(*c))
+	if (!*c || !isdigit((unsigned char)*c))
 	{
 		gs_command_report(si, _("Syntax: XdY [ {-|+|*|/} Z ]"));
 		return false;
 	}
 
 	x = strtoul(c, &c, 10);
-	if (x == 0 || c == NULL || ToLower(*c++) != 'd' || !isdigit(*c))
+	if (x == 0 || c == NULL || ToLower(*c++) != 'd' || !isdigit((unsigned char)*c))
 	{
 		if (x < 1 || x > DICE_MAX_DICE)
 		{
@@ -490,7 +496,7 @@ static bool eval_dice(sourceinfo_t *si, char *s_input)
 	y = strtoul(c, &c, 10);
 	if (c != NULL)
 	{
-		while (*c && isspace(*c))
+		while (*c && isspace((unsigned char)*c))
 			++c;
 
 		if (*c && strchr("-+*/", *c) == NULL)
@@ -518,7 +524,7 @@ static bool eval_dice(sourceinfo_t *si, char *s_input)
 
 		z = strtoul(c, &c, 10);
 
-		while (*c && isspace(*c))
+		while (*c && isspace((unsigned char)*c))
 			++c;
 
 		if (*c)

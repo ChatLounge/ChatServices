@@ -16,7 +16,12 @@
 #include "pmodule.h"
 #include "protocol/unreal.h"
 
-DECLARE_MODULE_V1("protocol/unreal40", true, _modinit, NULL, PACKAGE_STRING, "ChatLounge IRC Network Development Team <http://www.chatlounge.net/>");
+DECLARE_MODULE_V1
+(
+	"protocol/unreal40", true, _modinit, NULL,
+	PACKAGE_STRING,
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+);
 
 static bool has_protoctl = false;
 static bool use_esvid = false;

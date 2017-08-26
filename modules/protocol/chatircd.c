@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2014-2017 ChatLounge IRC Network Development Team
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2007 Atheme Development Group
  * Rights to this code are documented in doc/LICENSE.
@@ -13,7 +13,12 @@
 #include "pmodule.h"
 #include "protocol/chatircd.h"
 
-DECLARE_MODULE_V1("protocol/chatircd", true, _modinit, NULL, PACKAGE_STRING, "ChatLounge IRC Network Development Team <http://www.chatlounge.net>");
+DECLARE_MODULE_V1
+(
+	"protocol/chatircd", true, _modinit, NULL,
+	PACKAGE_STRING,
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+);
 
 /* *INDENT-OFF* */
 
@@ -159,7 +164,7 @@ static bool check_jointhrottle(const char *value, channel_t *c, mychan_t *mc, us
 				return false;
 			arg2 = p + 1;
 		}
-		else if (!isdigit(*p))
+		else if (!isdigit((unsigned char)*p))
 			return false;
 		p++;
 	}

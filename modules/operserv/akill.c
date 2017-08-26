@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2006 Atheme Development Group
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -16,7 +16,7 @@ DECLARE_MODULE_V1
 (
 	"operserv/akill", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void os_akill_newuser(hook_user_nick_t *data);
@@ -156,7 +156,7 @@ static void os_cmd_akill_add(sourceinfo_t *si, int parc, char *parv[])
 		if (s)
 		{
 			duration = (atol(s) * 60);
-			while (isdigit(*s))
+			while (isdigit((unsigned char)*s))
 				s++;
 			if (*s == 'h' || *s == 'H')
 				duration *= 60;
@@ -523,7 +523,7 @@ static void os_cmd_akill_list(sourceinfo_t *si, int parc, char *parv[])
 			host = param;
 			full = true;
 		}
-		else if (isdigit(param[0]) &&
+		else if (isdigit((unsigned char)param[0]) &&
 				(num = strtoul(param, NULL, 10)) != 0)
 			full = true;
 		else
