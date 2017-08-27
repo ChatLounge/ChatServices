@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2013 William Pitcock <nenolod@dereferenced.org>
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * ECDSA-NIST256P-CHALLENGE mechanism provider.
@@ -22,7 +24,7 @@ DECLARE_MODULE_V1
 (
 	"saslserv/ecdsa-nist256p-challenge", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 sasl_mech_register_func_t *regfuncs;
@@ -46,6 +48,7 @@ typedef struct {
 
 void _modinit(module_t *m)
 {
+	MODULE_TRY_REQUEST_DEPENDENCY(m, "nickserv/set_pubkey");
 	MODULE_TRY_REQUEST_SYMBOL(m, regfuncs, "saslserv/main", "sasl_mech_register_funcs");
 	regfuncs->mech_register(&mech);
 }
@@ -93,9 +96,13 @@ static int mech_step_accname(sasl_session_t *p, char *message, size_t len, char 
 	if (mu == NULL)
 		return ASASL_FAIL;
 
-	md = metadata_find(mu, "pubkey");
+	md = metadata_find(mu, "private:pubkey");
 	if (md == NULL)
-		return ASASL_FAIL;
+	{
+		md = metadata_find(mu, "pubkey");
+		if (md == NULL)
+			return ASASL_FAIL;
+	}
 
 	ret = base64_decode(md->value, (char *)pubkey_raw, BUFSIZE);
 	if (ret == -1)
