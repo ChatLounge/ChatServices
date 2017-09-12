@@ -1327,17 +1327,27 @@ chanserv {
 	 * This is mostly cosmetic and has no effect on operation, other than
 	 * perhaps preventing kicks on ChanServ, on IRCds that don't prohibit
 	 * this.  This takes precedence over use_admin, which is listed just below.
+	 * Default: false
 	 */
 	use_owner = false;
 
 	/* (*) use_admin
-	 * Similar to use_owner, but is for the admin channel mode, for IRCds
+	 * Similar to use_owner, but is for the admin/protect channel mode, for IRCds
 	 * that support it.  If enabled at the same time as use_owner, use_owner
 	 * will take precedence.
+	 * Default: false
 	 */
 	use_admin = false;
 
-	/* (*)flags_requires_account
+	/* (*) permit_self_autoop
+	 * If enabled, users with channel ACL flags +o, +h, and/or +v will be
+	 * able to set +O, +H, and/or +V on themselves, regardless of whether
+	 * the user has +f.  For the old behavior, set this option to false.
+	 * Default: true
+	 */
+	permit_self_autoop = true;
+
+	/* flags_requires_account
 	 * If set, this defines the channel flags that may not be set on
 	 * hostmasks.  Regardless of this setting, +F (founder) may never
 	 * be set on hostmasks, and +b (AKICK) may always be set on

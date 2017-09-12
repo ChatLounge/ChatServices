@@ -3,6 +3,8 @@
  * help.c: Help system implementation.
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -95,6 +97,8 @@ static bool evaluate_condition(sourceinfo_t *si, const char *s)
 		return has_any_privs(si);
 	else if (!strcmp(word, "no_leveled_flags"))
 		return chansvs.no_leveled_flags;
+	else if (!strcmp(word, "permit_self_autoop"))
+		return chansvs.permit_self_autoop;
 	else if (!strcmp(word, "soper"))
 		return (is_soper(si->smu) || is_conf_soper(si->smu));
 	else if (!strcmp(word, "kline_do_not_remove_more_specific"))

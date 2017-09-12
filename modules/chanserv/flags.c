@@ -163,6 +163,32 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 		logcommand(si, CMDLOG_GET, "FLAGS: \2%s\2", mc->name);
 }
 
+/* Check if a user is attempting to change his own flags.
+ *
+ * Inputs:
+ *   char *target - character array.
+ *   myuser_t *mu - User to check against.
+ * Returns:
+ *   true if yes, false if not.
+ * Side Effects:
+ *   None
+ */
+static bool check_self_match(const char *target, myuser_t *mu)
+{
+	mowgli_node_t *n;
+
+	if (mu == NULL)
+		return false;
+
+	MOWGLI_ITER_FOREACH(n, mu->nicks.head)
+	{
+		if (!irccasecmp(target, ((mynick_t *)(n->data))->nick))
+			return true;
+	}
+
+	return false;
+}
+
 /* FLAGS <channel> [user] [flags] */
 static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 {
@@ -176,6 +202,7 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	const char *str1;
 	unsigned int addflags, removeflags, restrictflags;
 	unsigned int oldlevel, newlevel;
+	bool selfautomode = false;
 	hook_channel_acl_req_t req;
 	mychan_t *mc;
 
@@ -265,23 +292,60 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 	{
 		if (!(restrictflags & CA_FLAGS))
 		{
+			if (chansvs.permit_self_autoop && check_self_match(target, si->smu))
+			{
+				/* Allow self autoop if +o, self autohalfop if +h,
+				 * and self autovoice if +v.  Admin and Owner aren't
+				 * here because they are controlled with +O like Op. */
+				if (si->smu != NULL &&
+					!(restrictflags & CA_AKICK && !(restrictflags & CA_EXEMPT) && !(restrictflags & CA_REMOVE)) && /* Not on AKICK, or is but with an exemption. */
+					//!irccasecmp(target, entity(si->smu)->name) &&
+					restrictflags & CA_OP) // &&
+					//(strcmp(flagstr, "+O") || strcmp(flagstr, "-O")))
+				{
+					selfautomode = true;
+					goto selfautomode;
+				}
+
+				if (ircd->uses_halfops && si->smu != NULL &&
+					!(restrictflags & CA_AKICK && !(restrictflags & CA_EXEMPT) && !(restrictflags & CA_REMOVE)) && /* Not on AKICK, or is but with an exemption. */
+					//!irccasecmp(target, entity(si->smu)->name) &&
+					restrictflags & CA_HALFOP) // &&
+					//(strcmp(flagstr, "+H") || strcmp(flagstr, "-H")))
+				{
+					selfautomode = true;
+					goto selfautomode;
+				}
+
+				if (si->smu != NULL &&
+					!(restrictflags & CA_AKICK && !(restrictflags & CA_EXEMPT) && !(restrictflags & CA_REMOVE)) && /* Not on AKICK, or is but with an exemption. */
+					//!irccasecmp(target, entity(si->smu)->name) &&
+					restrictflags & CA_VOICE) // &&
+					//(strcmp(flagstr, "+V") || strcmp(flagstr, "-V")))
+				{
+					selfautomode = true;
+					goto selfautomode;
+				}
+			}
+
 			/* allow a user to remove their own access
 			 * even without +f */
 			if (restrictflags & CA_AKICK ||
 					si->smu == NULL ||
-					irccasecmp(target, entity(si->smu)->name) ||
+					!check_self_match(target, si->smu) ||
 					strcmp(flagstr, "-*"))
 			{
 				command_fail(si, fault_noprivs, _("You are not authorized to execute this command."));
 				return;
 			}
 		}
-		if (irccasecmp(target, entity(si->smu)->name))
+		if (!check_self_match(target, si->smu))
 			restrictflags = allow_flags(mc, restrictflags);
 		else
 			restrictflags |= allow_flags(mc, restrictflags);
 	}
 
+selfautomode:
 	if (*flagstr == '+' || *flagstr == '-' || *flagstr == '=')
 	{
 		flags_make_bitmasks(flagstr, &addflags, &removeflags);
@@ -374,6 +438,16 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 		req.ca = ca;
 		req.oldlevel = ca->level;
 		oldlevel = ca->level;
+
+		if (selfautomode)
+		{
+			if (ca->level & CA_OP && (addflags & CA_AUTOOP || removeflags & CA_AUTOOP))
+				restrictflags |= CA_AUTOOP;
+			if (ca->level & CA_HALFOP && (addflags & CA_AUTOHALFOP || removeflags & CA_AUTOHALFOP))
+				restrictflags |= CA_AUTOHALFOP;
+			if (ca->level & CA_VOICE && (addflags & CA_AUTOVOICE || removeflags & CA_AUTOVOICE))
+				restrictflags |= CA_AUTOVOICE;
+		}
 
 		if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
 		{

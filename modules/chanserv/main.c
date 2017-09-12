@@ -351,6 +351,7 @@ void _modinit(module_t *m)
 	add_bool_conf_item("USE_OWNER", &chansvs.me->conf_table, 0, &chansvs.use_owner, false);
 	add_bool_conf_item("USE_ADMIN", &chansvs.me->conf_table, 0, &chansvs.use_admin, false);
 	add_conf_item("FLAGS_REQUIRES_ACCOUNT", &chansvs.me->conf_table, c_ci_flags_requires_account);
+	add_bool_conf_item("PERMIT_SELF_AUTOOP", &chansvs.me->conf_table, 0, &chansvs.permit_self_autoop, true);
 }
 
 void _moddeinit(module_unload_intent_t intent)

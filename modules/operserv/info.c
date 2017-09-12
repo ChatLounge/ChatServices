@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010 Atheme Development Group, et al.
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -133,6 +133,9 @@ static void os_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("Default channel fantasy trigger: %s"), chansvs.trigger);
 	command_success_nodata(si, _("Maximum number of entries allowed in a channel access list (if 0, unlimited): %d"), chansvs.maxchanacs);
 	command_success_nodata(si, _("Maximum number of founders allowed per channel: %d"), chansvs.maxfounders);
+	command_success_nodata(si, _("Users are permitted to self auto %s%sop/%svoice themselves without +f: %s"),
+		ircd->uses_owner ? "owner/" : "", ircd->uses_protect ? "protect/" : "",
+		ircd->uses_halfops ? "halfop/" : "", chansvs.permit_self_autoop ? "Yes" : "No");
 	command_success_nodata(si, _("===================================="));
 
 	hook_call_operserv_info(si);

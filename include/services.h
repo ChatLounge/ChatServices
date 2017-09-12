@@ -71,6 +71,8 @@ struct chansvs_
                                  */
   unsigned int flags_req_acct;  /* Integer representation of flags_requires_account.
                                  */
+  bool permit_self_autoop;      /* If enabled, users with ChanServ flags +v,
+                                 * +h, and/or +o */
 };
 
 /* authentication services */

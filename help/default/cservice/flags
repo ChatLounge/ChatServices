@@ -24,8 +24,8 @@ with -*.
 If you are not a founder, you may only manipulate flags you
 have yourself, with the following exceptions:
     - Only founders may add/remove +R.
-	- Only founders may add/remove +s.
-	- To add/remove +f, you must have +s and/or be a founder.
+    - Only founders may add/remove +s.
+    - To add/remove +f, you must have +s and/or be a founder.
 
 These restrictions do not apply in the case of removing your
 own access.
@@ -33,7 +33,19 @@ own access.
 If you are not a founder, you may only manipulate flags you
 have yourself.
 #endif
-	
+
+#if permit_self_autoop
+#if halfops
+If you hold the flags +o, +h, and/or +v, you may add or remove
++O, +H, and/or +V on yourself regardless of whether you have
++f.
+#else
+If you hold the flags +o and/or +v, you may add or remove
++O and/or +V on yourself regardless of whether you have
++f.
+#endif
+
+#endif
 #if !halfops
 You may not edit users that have flags you don't have. For
 this purpose, +v grants the ability to grant +V, +o grants
@@ -44,17 +56,16 @@ You may not edit users that have flags you don't have. For
 this purpose, +v grants the ability to grant +V, +h grants
 the ability to grant +H, +o grants the ability to grant +O,
 and +r grants the ability to grant +b.
-#endif
 
+#endif
 #if module chanserv/set_limitflags
 If the LIMITFLAGS option is set for the channel, this is
 restricted further, see help for SET LIMITFLAGS.
 
 #endif
-
 #if module exttarget/main
-As of Atheme 7.0, there are now extended entity targets
-which allow you to match chanacs against a situation instead
+Some extended entity targets are available which allow you
+to match chanacs against a situation instead
 of against a nickname, hostmask or group.
 
 Available exttargets are:
