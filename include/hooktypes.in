@@ -1,4 +1,4 @@
-# Atheme hooks system
+# ChatServices hooks system
 # 
 # hook_add_event("NAME")
 # hook_call_NAME(argument)
@@ -13,8 +13,8 @@
 # the object.
 # channel_join, user_add and user_nickchange may destroy the object, by
 # setting the pointer in the argument structure to NULL, deleting the object
-# from Atheme's state and sending an appropriate message to ircd. Note that
-# channel_join may kick the user but may not clear the channel.
+# from ChatServices's state and sending an appropriate message to ircd. Note
+# that channel_join may kick the user but may not clear the channel.
 # Most other hooks may not destroy the object or prevent the action.
 #
 # Current list of hooks
@@ -57,6 +57,8 @@ channel_info       hook_channel_req_t *
 channel_register   hook_channel_req_t *
 channel_check_expire  hook_expiry_req_t *
 channel_acl_change hook_channel_acl_req_t *
+group_drop         mygroup_t *
+group_register     mygroup_t *
 nick_can_register  hook_user_register_check_t *
 nick_group         hook_user_req_t *
 nick_check         user_t *

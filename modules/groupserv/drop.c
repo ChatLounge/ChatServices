@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the GroupServ HELP command.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/drop", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void gs_cmd_drop(sourceinfo_t *si, int parc, char *parv[]);
@@ -78,8 +80,9 @@ static void gs_cmd_drop(sourceinfo_t *si, int parc, char *parv[])
 
 	logcommand(si, CMDLOG_REGISTER, "DROP: \2%s\2", entity(mg)->name);
 	remove_group_chanacs(mg);
+	hook_call_group_drop(mg);
+	command_success_nodata(si, _("The group \2%s\2 has been dropped."), entity(mg)->name);
 	object_unref(mg);
-	command_success_nodata(si, _("The group \2%s\2 has been dropped."), name);
 	return;
 }
 
