@@ -307,12 +307,11 @@ static void db_h_mm(database_handle_t *db, const char *type)
 
 	mm->setter_uid = sstrdup(setter_uid);
 	mm->setter_name = sstrdup(setter_name);
-	mm->restored_from_uid = sstrdup(restored_from_uid);
 	mm->restored_from_account = sstrdup(restored_from_account);
 
-	if (!strcasecmp (mm->restored_from_uid, "NULL"))
+	if (strcasecmp(restored_from_uid, "NULL"))
 	{
-		mm->restored_from_uid = NULL;
+		mm->restored_from_uid = sstrdup(restored_from_uid);
 	}
 
 	mm->time = time;
@@ -348,8 +347,6 @@ static void db_h_rm(database_handle_t *db, const char *type)
 	rm->mark = sstrdup(mark);
 
 	mowgli_node_add(rm, &rm->node, l);
-
-	mowgli_patricia_add(restored_marks, nick, l);
 }
 
 /* Copy old style marks */
@@ -486,12 +483,16 @@ static void nick_ungroup_hook(hook_user_req_t *hdata)
 
 		mowgli_node_add(rm, &rm->node, rml);
 	}
-
-	mowgli_patricia_add(restored_marks, nick, rml);
 }
 
 static void account_drop_hook(myuser_t *mu)
 {
+	/* Let's turn old marks to new marks at this point,
+	 * so that they are preserved.
+	 */
+
+	migrate_user(mu);
+
 	mowgli_list_t *l = multimark_list(mu);
 
 	mowgli_node_t *n;
@@ -516,23 +517,28 @@ static void account_drop_hook(myuser_t *mu)
 
 		mowgli_node_add(rm, &rm->node, rml);
 	}
-
-	mowgli_patricia_add(restored_marks, name, rml);
 }
 
 static void account_register_hook(myuser_t *mu)
 {
-	mowgli_list_t *l = multimark_list(mu);
-
+	mowgli_list_t *l;
 	mowgli_node_t *n, *tn;
 	restored_mark_t *rm;
+	mowgli_list_t *rml;
 
 	const char *name = entity(mu)->name;
 
 	char *setter_name;
 	myuser_t *setter;
 
-	mowgli_list_t *rml = restored_mark_list(name);
+	/* Migrate any old-style marks that have already been restored at user
+	 * creation.
+	 */
+
+	migrate_user(mu);
+
+	l = multimark_list(mu);
+	rml = restored_mark_list(name);
 
 	MOWGLI_ITER_FOREACH_SAFE(n, tn, rml->head)
 	{
@@ -552,23 +558,26 @@ static void account_register_hook(myuser_t *mu)
 
 		mowgli_node_delete(&rm->node, rml);
 	}
-
-	mowgli_patricia_add(restored_marks, name, rml);
 }
 
 static void nick_group_hook(hook_user_req_t *hdata)
 {
 	myuser_t *smu = hdata->si->smu;
-	mowgli_list_t *l = multimark_list(smu);
+	mowgli_list_t *l;
 
 	mowgli_node_t *n, *tn, *n2;
 	multimark_t *mm2;
+
+	mowgli_list_t *rml;
 	restored_mark_t *rm;
 
 	char *uid = entity(smu)->id;
 	const char *name = hdata->mn->nick;
 
-	mowgli_list_t *rml = restored_mark_list(name);
+	migrate_user(smu);
+
+	l = multimark_list(smu);
+	rml = restored_mark_list(name);
 
 	MOWGLI_ITER_FOREACH_SAFE(n, tn, rml->head)
 	{
@@ -605,8 +614,6 @@ static void nick_group_hook(hook_user_req_t *hdata)
 
 		mowgli_node_add(mm, &mm->node, l);
 	}
-
-	mowgli_patricia_add(restored_marks, name, rml);
 }
 
 static void show_multimark(hook_user_req_t *hdata)
@@ -870,8 +877,6 @@ static void ns_cmd_multimark(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	l = multimark_list(mu);
-
 	if (!strcasecmp(action, "ADD"))
 	{
 		if (!info)
@@ -880,6 +885,8 @@ static void ns_cmd_multimark(sourceinfo_t *si, int parc, char *parv[])
 			command_fail(si, fault_needmoreparams, _("Usage: MARK <target> ADD <note>"));
 			return;
 		}
+
+		l = multimark_list(mu);
 
 		mm = smalloc(sizeof(multimark_t));
 		mm->setter_uid = sstrdup(entity(si->smu)->id);
@@ -952,6 +959,8 @@ static void ns_cmd_multimark(sourceinfo_t *si, int parc, char *parv[])
 		}
 
 		command_success_nodata(si, _("\2%s\2's marks:"), target);
+
+		l = multimark_list(mu);
 
 		MOWGLI_ITER_FOREACH(n, l->head)
 		{
@@ -1073,6 +1082,8 @@ static void ns_cmd_multimark(sourceinfo_t *si, int parc, char *parv[])
 
 		bool found = false;
 		int num = atoi(info);
+
+		l = multimark_list(mu);
 
 		MOWGLI_ITER_FOREACH(n, l->head)
 		{
