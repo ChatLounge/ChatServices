@@ -6,4 +6,4 @@
 	url = git://git.savannah.gnu.org/libunwind.git
 [submodule "modules/contrib"]
 	path = modules/contrib
-	url = https://bitbucket.org/chatlounge/chatservices-contrib-modules.git
+	url = https://github.com/ChatLounge/ChatServices-contrib-modules.git
