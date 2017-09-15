@@ -1,4 +1,6 @@
 # Copyright (c) 2003-2004 E. Will et al.
+# Copyright (c) 2017 ChatLounge IRC Network Development Team
+#
 # Rights to this code are documented in doc/LICENSE.
 #
 # This file contains build instructions.
@@ -10,6 +12,7 @@ MODULE = crypto
 
 SRCS =			\
 	pbkdf2.c	\
+	pbkdf2v2.c	\
 	posix.c		\
 	ircservices.c	\
 	rawmd5.c	\
