@@ -1,8 +1,9 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of minimalist IRC services
  * auth.c: Authentication.
  *
  * Copyright (c) 2005-2009 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -61,7 +62,17 @@ bool verify_password(myuser_t *mu, const char *password)
 			if (ci == NULL)
 				return false;
 
-			if (ci != NULL && ci != (ci_default = crypt_get_default_provider()))
+			if (ci == (ci_default = crypt_get_default_provider()))
+			{
+				if (ci->needs_param_upgrade != NULL && ci->needs_param_upgrade(mu->pass))
+				{
+					slog(LG_INFO, "verify_password(): transitioning to newer parameters for crypt scheme '%s' for account '%s'",
+							ci->id, entity(mu)->name);
+
+					mowgli_strlcpy(mu->pass, ci->crypt(password, ci->salt()), PASSLEN);
+				}
+			}
+			else
 			{
 				slog(LG_INFO, "verify_password(): transitioning from crypt scheme '%s' to '%s' for account '%s'",
 					      ci->id, ci_default->id, entity(mu)->name);

@@ -3,6 +3,7 @@
  * crypto.c: Cryptographic module support.
  *
  * Copyright (c) 2012 William Pitcock <nenolod@dereferenced.org>.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team <admin@chatlounge.net>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -45,10 +46,16 @@ static const char *generic_gen_salt(void)
 	return buf;
 }
 
+static bool generic_needs_param_upgrade(const char *user_pass_string)
+{
+	return 0;
+}
+
 static const crypt_impl_t fallback_crypt_impl = {
 	.id = "plaintext",
 	.crypt = &generic_crypt_string,
 	.salt = &generic_gen_salt,
+	.needs_param_upgrade = &generic_needs_param_upgrade,
 };
 
 const crypt_impl_t *crypt_get_default_provider(void)

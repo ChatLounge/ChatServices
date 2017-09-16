@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented under doc/LICENSE.
  *
  * Cryptographic module support.
@@ -17,6 +19,7 @@ typedef struct {
 	const char *id;
 	const char *(*crypt)(const char *key, const char *salt);
 	const char *(*salt)(void);
+	bool (*needs_param_upgrade)(const char *user_pass_string);
 
 	mowgli_node_t node;
 } crypt_impl_t;
