@@ -2,6 +2,7 @@
  * Copyright (c) 2014-2017 ChatLounge IRC Network Development Team
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2007 Atheme Development Group
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains protocol support for ChatIRCd, a charybdis fork.
@@ -306,6 +307,9 @@ static bool chatircd_is_extban(const char *mask)
 
 	if ((mask_len < 2 || mask[0] != '$'))
 		return NULL;
+
+	if (strchr(mask, ' '))
+		return false;
 
 	if (mask_len > 2 && mask[1] == '~')
 		offset = 1;

@@ -74,6 +74,7 @@ struct cmode_ charybdis_mode_list[] = {
   { 'A', CMODE_ADMINONLY },
   { 'c', CMODE_NOCOLOR   },
   { 'C', CMODE_NOCTCP    },
+  { 'T', CMODE_NONOTICE  },
 
   { '\0', 0 }
 };
@@ -300,6 +301,9 @@ static bool charybdis_is_extban(const char *mask)
 
 	if ((mask_len < 2 || mask[0] != '$'))
 		return NULL;
+
+	if (strchr(mask, ' '))
+		return false;
 
 	if (mask_len > 2 && mask[1] == '~')
 		offset = 1;
