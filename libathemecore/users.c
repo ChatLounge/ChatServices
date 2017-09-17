@@ -1,8 +1,10 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of minimalist IRC services
  * users.c: User management.
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -649,8 +651,17 @@ bool user_is_channel_banned(user_t *u, char ban_type)
 	{
 		chanuser_t *cu = n->data;
 
+		/* IRCds typically exempt users with a prefix (voice, halfop, op, etc.) even if banned. */
+		if (cu->modes != 0)
+			continue;
+
 		if (next_matching_ban(cu->chan, u, ban_type, cu->chan->bans.head) != NULL)
-			return true;
+		{
+			if (ircd->except_mchar == '\0' || next_matching_ban(cu->chan, u, ircd->except_mchar, cu->chan->bans.head) == NULL)
+				return true;
+			else
+				continue;
+		}
 	}
 
 	return false;
