@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2005 William Pitcock, et al.
+ * Copyright (C) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Data structures for channel information.
@@ -25,6 +27,7 @@ struct channel_
   char **extmodes; /* non-standard simple modes with param eg +j */
 
   unsigned int nummembers;
+  unsigned int numsvcmembers;
 
   time_t ts;
 

@@ -1,8 +1,9 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of minimalist IRC services
  * channels.c: Channel event and state tracking
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Tean (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -174,6 +175,7 @@ void channel_delete(channel_t *c)
 		cnt.chanuser--;
 	}
 	c->nummembers = 0;
+	c->numsvcmembers = 0;
 
 	hook_call_channel_delete(c);
 
@@ -400,6 +402,8 @@ chanuser_t *chanuser_add(channel_t *chan, const char *nick)
 	cu->modes = flags;
 
 	chan->nummembers++;
+	if (is_internal_client(u))
+		chan->numsvcmembers++;
 
 	mowgli_node_add(cu, &cu->cnode, &chan->members);
 	mowgli_node_add(cu, &cu->unode, &u->channels);
@@ -458,6 +462,9 @@ void chanuser_delete(channel_t *chan, user_t *user)
 
 	chan->nummembers--;
 	cnt.chanuser--;
+
+	if (is_internal_client(user))
+		chan->numsvcmembers--;
 
 	if (chan->nummembers == 0 && !(chan->modes & ircd->perm_mode))
 	{

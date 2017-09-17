@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2006 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService SYNC functions.
@@ -11,7 +13,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/sync", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 static void cs_cmd_sync(sourceinfo_t *si, int parc, char *parv[]);
@@ -48,10 +50,10 @@ static void do_chanuser_sync(mychan_t *mc, chanuser_t *cu, chanacs_t *ca,
 	if (take && !(fl & CA_ALLPRIVS) && (mc->flags & MC_RESTRICTED) && !has_priv_user(cu->user, PRIV_JOIN_STAFFONLY))
 	{
 		/* Stay on channel if this would empty it -- jilles */
-		if (mc->chan->nummembers <= (mc->flags & MC_GUARD ? 2 : 1))
+		if (mc->chan->nummembers - mc->chan->numsvcmembers == 1)
 		{
 			mc->flags |= MC_INHABIT;
-			if (!(mc->flags & MC_GUARD))
+			if (mc->chan->numsvcmembers == 0)
 				join(mc->chan->name, chansvs.nick);
 		}
 
@@ -77,10 +79,10 @@ static void do_chanuser_sync(mychan_t *mc, chanuser_t *cu, chanacs_t *ca,
 		metadata_t *md;
 
 		/* Stay on channel if this would empty it -- jilles */
-		if (mc->chan->nummembers <= (mc->flags & MC_GUARD ? 2 : 1))
+		if (mc->chan->nummembers - mc->chan->numsvcmembers == 1)
 		{
 			mc->flags |= MC_INHABIT;
-			if (!(mc->flags & MC_GUARD))
+			if (mc->chan->numsvcmembers == 0)
 				join(mc->chan->name, chansvs.nick);
 		}
 
