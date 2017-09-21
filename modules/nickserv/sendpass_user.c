@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains code for the CService SENDPASS function.
@@ -12,8 +14,10 @@ DECLARE_MODULE_V1
 (
 	"nickserv/sendpass_user", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
+
+void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
 
 static void ns_cmd_sendpass(sourceinfo_t *si, int parc, char *parv[]);
 
@@ -23,6 +27,9 @@ void _modinit(module_t *m)
 {
 	MODULE_CONFLICT(m, "nickserv/sendpass")
 	MODULE_TRY_REQUEST_DEPENDENCY(m, "nickserv/setpass");
+
+	if (module_request("nickserv/main"))
+		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 
 	service_named_bind_command("nickserv", &ns_sendpass);
 }
@@ -100,6 +107,7 @@ static void ns_cmd_sendpass(sourceinfo_t *si, int parc, char *parv[])
 			metadata_delete(mu, "private:sendpass:timestamp");
 			logcommand(si, CMDLOG_ADMIN, "SENDPASS:CLEAR: \2%s\2", entity(mu)->name);
 			command_success_nodata(si, _("The password change key for \2%s\2 has been cleared."), entity(mu)->name);
+			add_history_entry_setting(si->smu, mu, "SENDPASS", "Clear");
 		}
 		else
 			command_fail(si, fault_nochange, _("\2%s\2 did not have a password change key outstanding."), entity(mu)->name);
@@ -114,7 +122,7 @@ static void ns_cmd_sendpass(sourceinfo_t *si, int parc, char *parv[])
 
 	if (metadata_find(mu, "private:freeze:freezer"))
 	{
-		command_success_nodata(si, _("%s has been frozen by the %s administration."), entity(mu)->name, me.netname);
+		command_fail(si, fault_noprivs, _("%s has been frozen by the %s administration."), entity(mu)->name, me.netname);
 		return;
 	}
 
@@ -132,10 +140,12 @@ static void ns_cmd_sendpass(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_ADMIN, "SENDPASS: \2%s\2 (change key)", name);
 		command_success_nodata(si, _("The password change key for \2%s\2 has been sent to the corresponding email address."), entity(mu)->name);
 		if (ismarked)
-			wallops("%s sent the password for the \2MARKED\2 account %s.", get_oper_name(si), entity(mu)->name);
+			wallops("%s sent the password for the \2MARKED\2 account: %s", get_oper_name(si), entity(mu)->name);
 
 		metadata_add(mu, "private:sendpass:sender", get_oper_name(si));
 		metadata_add(mu, "private:sendpass:timestamp", number_to_string(time(NULL)));
+
+		add_history_entry_setting(si->smu, mu, "SENDPASS", "Sent");
 	}
 	else
 		command_fail(si, fault_emailfail, _("Email send failed."));

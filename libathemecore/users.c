@@ -690,12 +690,24 @@ void user_show_all_logins(myuser_t *mu, user_t *source, user_t *target)
 	{
 		user_t *ul = (user_t *)(n->data);
 
-		if (ul->ip == NULL)
-			notice(source->nick, target->nick, "  %s (%s@%s)",
-				ul->nick, ul->user, ul->host);
+		if (ul->flags & UF_USEDCERT)
+		{
+			if (ul->ip == NULL)
+				notice(source->nick, target->nick, "  %s (%s@%s) (fingerprint: %s)",
+					ul->nick, ul->user, ul->host, ul->certfp);
+			else
+				notice(source->nick, target->nick, "  %s (%s@%s) [%s] (fingerprint: %s)",
+					ul->nick, ul->user, ul->host, ul->ip, ul->certfp);
+		}
 		else
-			notice(source->nick, target->nick, "  %s (%s@%s) [%s]",
-				ul->nick, ul->user, ul->host, ul->ip);
+		{
+			if (ul->ip == NULL)
+				notice(source->nick, target->nick, "  %s (%s@%s)",
+					ul->nick, ul->user, ul->host);
+			else
+				notice(source->nick, target->nick, "  %s (%s@%s) [%s]",
+					ul->nick, ul->user, ul->host, ul->ip);
+		}
 	}
 
 	notice(source->nick, target->nick, _("End of logins list."));

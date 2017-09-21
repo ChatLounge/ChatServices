@@ -352,12 +352,12 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		strcat(buf, "NEVEROP");
 	}
 	if (MU_NOGREET & mu->flags)
-    {
-        if (*buf)
-            strcat(buf, " ");
+	{
+		if (*buf)
+			strcat(buf, " ");
 
-        strcat(buf, "NOGREET");
-    }
+		strcat(buf, "NOGREET");
+	}
 	if (MU_NOMEMO & mu->flags)
 	{
 		if (*buf)
@@ -371,6 +371,13 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 			strcat(buf, " ");
 
 		strcat(buf, "NOOP");
+	}
+	if (MU_NOPASSWORD & mu->flags)
+	{
+		if (*buf)
+			strcat(buf, " ");
+
+		strcat(buf, "NOPASSWORD");
 	}
 	if (MU_NOTIFYACL & mu->flags)
 	{

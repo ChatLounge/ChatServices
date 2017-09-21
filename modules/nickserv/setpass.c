@@ -87,30 +87,30 @@ static void ns_cmd_setpass(sourceinfo_t *si, int parc, char *parv[])
 	}
 
 	md = metadata_find(mu, "private:setpass:key");
-	if (md != NULL && crypt_verify_password(key, md->value) != NULL)
+	if (md == NULL || crypt_verify_password(key, md->value) == NULL)
 	{
-		logcommand(si, CMDLOG_SET, "SETPASS: \2%s\2", entity(mu)->name);
-		set_password(mu, password);
-		metadata_delete(mu, "private:setpass:key");
-		metadata_delete(mu, "private:sendpass:sender");
-		metadata_delete(mu, "private:sendpass:timestamp");
-
-
-		command_success_nodata(si, _("The password for \2%s\2 has been changed to \2%s\2."), entity(mu)->name, password);
-
-		add_history_entry_setting(si->smu, mu, "PASSWORD", "<Changed>");
+		if (md != NULL)
+			logcommand(si, CMDLOG_SET, "failed SETPASS (invalid key)");
+		command_fail(si, fault_badparams, _("Verification failed. Invalid key for \2%s\2."), entity(mu)->name);
 
 		return;
 	}
 
-	if (md != NULL)
-	{
-		logcommand(si, CMDLOG_SET, "failed SETPASS (invalid key)");
-	}
-	command_fail(si, fault_badparams, _("Verification failed. Invalid key for \2%s\2."),
-		entity(mu)->name);
+	logcommand(si, CMDLOG_SET, "SETPASS: \2%s\2", entity(mu)->name);
+	metadata_delete(mu, "private:setpass:key");
+	metadata_delete(mu, "private:sendpass:sender");
+	metadata_delete(mu, "private:sendpass:timestamp");
+	set_password(mu, password);
+	command_success_nodata(si, _("The password for \2%s\2 has been changed to \2%s\2."), entity(mu)->name, password);
 
-	return;
+	if (mu->flags & MU_NOPASSWORD)
+	{
+		mu->flags &= ~MU_NOPASSWORD;
+		command_success_nodata(si, _("The \2%s\2 flag has been removed for the account: \2%s\2"), "NOPASSWORD", entity(mu)->name);
+		add_history_entry_setting(si->smu, mu, "NOPASSWORD", "OFF");
+	}
+
+	add_history_entry_setting(si->smu, mu, "PASSWORD", "<Changed>");
 }
 
 static void clear_setpass_key(user_t *u)

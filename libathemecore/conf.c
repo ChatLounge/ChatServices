@@ -4,6 +4,7 @@
  *
  * Copyright (c) 2005-2008 Atheme Project (http://www.atheme.org)
  * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -62,6 +63,7 @@ struct Token uflags[] = {
   { "PRIVATE",   MU_PRIVATE      },
   { "QUIETCHG",  MU_QUIETCHG     },
   { "NEVERGROUP", MU_NEVERGROUP  },
+  { "NOPASSWORD", MU_NOPASSWORD  },
   { "NONE",      0               },
   { NULL, 0 }
 };
@@ -707,6 +709,17 @@ static int c_gi_uflags(mowgli_config_file_entry_t *ce)
 		else
 			conf_report_warning(flce, "unknown flag: %s", flce->varname);
 	}
+
+	/*     Setting NOPASSWORD on new NickServ accounts is not
+	 * presently supported, so strip it out.  This prevents
+	 * instant lockout.
+	 *
+	 * TODO: Optionally permit a default setting of NOPASSWORD
+	 *   only for users who has connected with a certificate
+	 *   fingerprint added?
+	 */
+	if (config_options.defuflags & MU_NOPASSWORD)
+		config_options.defuflags &= ~MU_NOPASSWORD;
 
 	return 0;
 }

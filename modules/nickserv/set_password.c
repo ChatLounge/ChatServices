@@ -77,6 +77,13 @@ static void ns_cmd_set_password(sourceinfo_t *si, int parc, char *parv[])
 
 	set_password(si->smu, password);
 
+	if (si->smu->flags & MU_NOPASSWORD)
+	{
+		si->smu->flags &= ~MU_NOPASSWORD;
+		command_success_nodata(si, _("The \2%s\2 flag has been removed for account \2%s\2."), "NOPASSWORD", entity(si->smu)->name);
+		add_history_entry_setting(si->smu, si->smu, "NOPASSWORD", "OFF");
+	}
+
 	command_success_nodata(si, _("The password for \2%s\2 has been changed to: \2%s\2"), entity(si->smu)->name, password);
 
 	add_history_entry_setting(si->smu, si->smu, "PASSWORD", "<Changed>");

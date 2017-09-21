@@ -202,6 +202,7 @@ loadmodule "modules/crypto/posix";
  * SET NOGREET command                          modules/nickserv/set_nogreet
  * SET NOMEMO command                           modules/nickserv/set_nomemo
  * SET NOOP command                             modules/nickserv/set_noop
+ * SET NOPASSWORD command                       modules/nickserv/set_nopassword
  * SET PASSWORD command                         modules/nickserv/set_password
  * PRIVMSG instead of NOTICE (SET PRIVMSG cmd)  modules/nickserv/set_privmsg
  * Account info hiding (SET PRIVATE command)    modules/nickserv/set_private
@@ -260,6 +261,7 @@ loadmodule "modules/nickserv/set_neverop";
 loadmodule "modules/nickserv/set_nogreet";
 loadmodule "modules/nickserv/set_nomemo";
 loadmodule "modules/nickserv/set_noop";
+#loadmodule "modules/nickserv/set_nopassword";
 loadmodule "modules/nickserv/set_password";
 #loadmodule "modules/nickserv/set_privmsg";
 #loadmodule "modules/nickserv/set_private";

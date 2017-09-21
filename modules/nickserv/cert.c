@@ -79,20 +79,25 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 			}
 		}
 
-		if (mu != si->smu)
-			logcommand(si, CMDLOG_ADMIN, "CERT:LIST: \2%s\2", entity(mu)->name);
-		else
-			logcommand(si, CMDLOG_GET, "CERT:LIST");
-
-		command_success_nodata(si, _("Fingerprint list for \2%s\2:"), entity(mu)->name);
-
-		MOWGLI_ITER_FOREACH(n, mu->cert_fingerprints.head)
+		if (MOWGLI_LIST_LENGTH(&mu->cert_fingerprints) > 0)
 		{
-			mcfp = ((mycertfp_t*)n->data)->certfp;
-			command_success_nodata(si, "- %s", mcfp);
-		}
+			if (mu != si->smu)
+				logcommand(si, CMDLOG_ADMIN, "CERT:LIST: \2%s\2", entity(mu)->name);
+			else
+				logcommand(si, CMDLOG_GET, "CERT:LIST");
 
-		command_success_nodata(si, _("End of \2%s\2 fingerprint list."), entity(mu)->name);
+			command_success_nodata(si, _("Fingerprint list for \2%s\2:"), entity(mu)->name);
+
+			MOWGLI_ITER_FOREACH(n, mu->cert_fingerprints.head)
+			{
+				mcfp = ((mycertfp_t*)n->data)->certfp;
+				command_success_nodata(si, "- %s", mcfp);
+			}
+
+			command_success_nodata(si, _("End of \2%s\2 fingerprint list."), entity(mu)->name);
+		}
+		else
+			command_fail(si, fault_nosuch_key, "The fingerprint list for \2%s\2 is empty.");
 	}
 	else if (!strcasecmp(parv[0], "ADD"))
 	{
@@ -154,18 +159,35 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 			command_fail(si, fault_needmoreparams, _("Syntax: CERT DEL <fingerprint>"));
 			return;
 		}
+
 		mu = si->smu;
+
 		if (mu == NULL)
 		{
 			command_fail(si, fault_noprivs, _("You are not logged in."));
 			return;
 		}
+
 		cert = mycertfp_find(parv[1]);
+
 		if (cert == NULL || cert->mu != mu)
 		{
 			command_fail(si, fault_nochange, _("Fingerprint \2%s\2 is not on your fingerprint list."), parv[1]);
 			return;
 		}
+
+		if (mu->flags & MU_NOPASSWORD && MOWGLI_LIST_LENGTH(&mu->cert_fingerprints) < 2)
+		{
+			command_fail(si, fault_noprivs, _("The \2NOPASSWORD\2 option has been enabled so removing the last certificate fingerprint is not permitted since it will cause account lockout."));
+			return;
+		}
+
+		if (si->su->flags & UF_USEDCERT && mu->flags & MU_NOPASSWORD && !strcmp(si->su->certfp, parv[1]))
+		{
+			command_fail(si, fault_noprivs, _("The \2NOPASSWORD\2 option has been enabled and you have attempted to remove the certificate fingerprint you identified with.  Please disable \2NOPASSWORD\2 or identify from another connection."));
+			return;
+		}
+
 		command_success_nodata(si, _("Deleted fingerprint \2%s\2 from your fingerprint list."), parv[1]);
 		logcommand(si, CMDLOG_SET, "CERT:DEL: \2%s\2", parv[1]);
 		mycertfp_delete(cert);
@@ -240,6 +262,8 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 			command_fail(si, fault_toomany, _("There are already \2%zu\2 sessions logged in to \2%s\2 (maximum allowed: %u)."), MOWGLI_LIST_LENGTH(&mu->logins), entity(mu)->name, me.maxlogins);
 			return;
 		}
+
+		cu->flags |= UF_USEDCERT;
 
 		myuser_login(ns, cu, mu, true);
 		logcommand_user(ns, cu, CMDLOG_LOGIN, "LOGIN via CERT IDENTIFY (%s)", cu->certfp);

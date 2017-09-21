@@ -731,6 +731,8 @@ static void sasl_newuser(hook_user_nick_t *data)
 	sasl_mechanism_t *mptr;
 	sasl_session_t *p;
 	myuser_t *mu;
+	// Debug
+	sourceinfo_t *si;
 	char buf[BUFSIZE];
 	char description[300];
 
@@ -760,11 +762,25 @@ static void sasl_newuser(hook_user_nick_t *data)
 
 	mptr = p->mechptr;
 
-	destroy_session(p);
+	// Debug
+	//si = sasl_sourceinfo_create(p);
+	//si->su = u;
+
+	// Debug
+	//logcommand(si, CMDLOG_LOGIN, "DEBUG: p->certfp: %s | mptr->name: %s | !strcmp(\"EXTERNAL\", mptr->name): %s",
+	//	p->certfp ? p->certfp : "<NULL>", mptr->name ? mptr->name : "<NULL>", !strcmp("EXTERNAL", mptr->name) ? "True" : "False");
+
+	if (p->certfp && !strcmp("EXTERNAL", mptr->name))
+		u->flags |= UF_USEDCERT;
 
 	myuser_login(saslsvs, u, mu, false);
 
-	logcommand_user(saslsvs, u, CMDLOG_LOGIN, "LOGIN (%s)", mptr->name);
+	if (p->certfp && !strcmp("EXTERNAL", mptr->name))
+		logcommand_user(saslsvs, u, CMDLOG_LOGIN, "LOGIN (%s) [%s]", mptr->name, p->certfp);
+	else
+		logcommand_user(saslsvs, u, CMDLOG_LOGIN, "LOGIN (%s)", mptr->name);
+
+	destroy_session(p);
 
 	notice(saslsvs->nick, u->nick, _("You are now logged in to: %s"), entity(mu)->name);
 

@@ -1,8 +1,10 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of minimalist IRC services
  * flags.c: Functions to convert a flags table into a bitmask.
  *
  * Copyright (c) 2005-2010 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *     (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -73,6 +75,7 @@ struct gflags mu_flags[] = {
 	{ 'a', MU_NOTIFYACL },
 	{ 'S', MU_NOTIFYSET },
 	{ 'e', MU_EMAILNOTIFY },
+	{ 'M', MU_NOPASSWORD },
 	{ 0, 0 },
 };
 
