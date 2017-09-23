@@ -66,6 +66,8 @@ void _moddeinit(module_unload_intent_t intent)
 static void ns_cmd_set_nopassword(sourceinfo_t *si, int parc, char *parv[])
 {
 	char *setting = parv[0];
+	mowgli_node_t *n;
+	bool match = false;
 
 	if (!setting)
 	{
@@ -75,15 +77,40 @@ static void ns_cmd_set_nopassword(sourceinfo_t *si, int parc, char *parv[])
 
 	if (!strcasecmp("ON", setting) || !strcasecmp("1", setting) || !strcasecmp("TRUE", setting))
 	{
+		if (MU_NOPASSWORD & si->smu->flags)
+		{
+			command_fail(si, fault_nochange, _("The \2%s\2 flag is already set for account \2%s\2."), "NOPASSWORD", entity(si->smu)->name);
+			return;
+		}
+
 		if (MOWGLI_LIST_LENGTH(&si->smu->cert_fingerprints) == 0)
 		{
 			command_fail(si, fault_noprivs, _("You may not enable the \2NOPASSWORD\2 flag because your certificate fingerprint list is empty.  Please see: \2/msg %s HELP CERT\2"), nicksvs.nick);
 			return;
 		}
 
-		if (MU_NOPASSWORD & si->smu->flags)
+		if (!(si->su->certfp))
 		{
-			command_fail(si, fault_nochange, _("The \2%s\2 flag is already set for account \2%s\2."), "NOPASSWORD", entity(si->smu)->name);
+			command_fail(si, fault_noprivs, _("You may not enable the NOPASSWORD option from a connection that doesn't have a certificate fingerprint."));
+			return;
+		}
+
+		/* Loop in lieu of checking for UF_USEDCERT because the user may
+		 * have added the fingerprint recently and not necessarily used it
+		 * to identify to the account.
+		 */
+		MOWGLI_ITER_FOREACH(n, si->smu->cert_fingerprints.head)
+		{
+				if (!strcmp(((mycertfp_t*)n->data)->certfp, si->su->certfp))
+				{
+					match = true;
+					break;
+				}
+		}
+
+		if (!match)
+		{
+			command_fail(si, fault_noprivs, _("You may not enable the NOPASSWORD option from a connection that doesn't have a matching certificate fingerprint."));
 			return;
 		}
 
@@ -102,6 +129,32 @@ static void ns_cmd_set_nopassword(sourceinfo_t *si, int parc, char *parv[])
 		if (!(MU_NOPASSWORD & si->smu->flags))
 		{
 			command_fail(si, fault_nochange, _("The \2%s\2 flag is not set for account \2%s\2."), "NOPASSWORD", entity(si->smu)->name);
+			return;
+		}
+
+		if (!(si->su->certfp))
+		{
+			command_fail(si, fault_noprivs, _("You may not disable the NOPASSWORD option from a connection that doesn't have a certificate fingerprint."));
+			return;
+		}
+
+		/* Loop in lieu of checking for UF_USEDCERT because the user may
+		 * have added the fingerprint recently and not necessarily used it
+		 * to identify to the account.
+		 */
+
+		MOWGLI_ITER_FOREACH(n, si->smu->cert_fingerprints.head)
+		{
+				if (!strcmp(((mycertfp_t*)n->data)->certfp, si->su->certfp))
+				{
+					match = true;
+					break;
+				}
+		}
+
+		if (!match)
+		{
+			command_fail(si, fault_noprivs, _("You may not disable the NOPASSWORD option from a connection that doesn't have a matching certificate fingerprint."));
 			return;
 		}
 
