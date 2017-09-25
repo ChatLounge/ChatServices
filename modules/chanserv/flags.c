@@ -460,6 +460,17 @@ selfautomode:
 		newlevel = ca->level;
 
 		hook_call_channel_acl_change(&req);
+
+		if (isuser(mt))
+		{
+			myuser_t *tmu = myuser_find(target);
+
+			char flagstr2[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
+			mowgli_strlcpy(flagstr2, flagstr, 54);
+			notify_target_acl_change(si, tmu, mc, flagstr2, newlevel);
+			notify_channel_acl_change(si, tmu, mc, flagstr2, newlevel);
+		}
+
 		chanacs_close(ca);
 	}
 	else
@@ -557,16 +568,6 @@ selfautomode:
 		else
 			verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) on: \2%s\2",
 				get_source_name(si), flagstr, oldtemplate, newtemplate, target);
-	}
-
-	if (isuser(mt))
-	{
-		myuser_t *tmu = myuser_find(target);
-
-		char flagstr2[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sigh. -> 54
-		mowgli_strlcpy(flagstr2, flagstr, 54);
-		notify_target_acl_change(si, tmu, mc, flagstr2, newlevel);
-		notify_channel_acl_change(si, tmu, mc, flagstr2, newlevel);
 	}
 
 	free(target);
