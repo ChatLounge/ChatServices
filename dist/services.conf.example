@@ -2214,14 +2214,20 @@ general {
 	 * /
 	#kline_verified_ident;
 
-	/* (*)kline_remove_more_specific
+	/* (*)kline_do_not_remove_more_specific
 	 * If enabled, more specific AKILLs are NOT removed when a matching wider
 	 * AKILL is added.  e.g. if script@kiddiez.lamerz.net, punkz@*.lamerz.net,
 	 * and *@badhost.lamerz.net are AKILL'd, they will be removed when an AKILL
-	 * on *@*.lamerz.net are added.  Default setting is disabled.
+	 * on *@*.lamerz.net are added.  Only AKILLs that have an expiry time of
+	 * LESS than the AKILL being added will be removed as a result of this.
+	 * Notices are generated for AKILLs that are removed as a result of this.
+	 * This may be desireable to help keep the AKILL list to a manageable size,
+	 * however it may result 
+	 *
+	 * Default setting is disabled.
 	 */
 	#kline_do_not_remove_more_specific;
-	
+
 	/* (*)clone_time
 	 * This is the default expiry time for CLONE exemptions in minutes.
 	 * Setting this to 0 makes all CLONE exemptions permanent.
