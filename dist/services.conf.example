@@ -2223,7 +2223,7 @@ general {
 	 * Notices are generated for AKILLs that are removed as a result of this.
 	 * This may be desirable to help keep the AKILL list to a manageable size.
 	 * However, it may also result in AKILLs being removed if a wider AKILL is
-	 * added, which may not be desirable behavior.
+	 * added by mistake, which may not be desirable behavior.
 	 *
 	 * Default setting is enabled.
 	 */
