@@ -2221,12 +2221,13 @@ general {
 	 * on *@*.lamerz.net are added.  Only AKILLs that have an expiry time of
 	 * LESS than the AKILL being added will be removed as a result of this.
 	 * Notices are generated for AKILLs that are removed as a result of this.
-	 * This may be desireable to help keep the AKILL list to a manageable size,
-	 * however it may result 
+	 * This may be desirable to help keep the AKILL list to a manageable size.
+	 * However, it may also result in AKILLs being removed if a wider AKILL is
+	 * added, which may not be desirable behavior.
 	 *
-	 * Default setting is disabled.
+	 * Default setting is enabled.
 	 */
-	#kline_do_not_remove_more_specific;
+	kline_do_not_remove_more_specific = true;
 
 	/* (*)clone_time
 	 * This is the default expiry time for CLONE exemptions in minutes.
