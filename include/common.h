@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005-2006 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Defines needed by multiple header files.
@@ -80,7 +82,7 @@ typedef enum {
 #endif
 
 #ifndef TIME_FORMAT
-#define TIME_FORMAT		"%b %d %H:%M:%S %Y"
+#define TIME_FORMAT		"%a, %b %d %Y %I:%M:%S %p %Z"
 #endif
 
 #define HASH_COMMAND		256
