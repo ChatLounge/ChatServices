@@ -1,9 +1,9 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of IRC services
  * atheme.c: Initialization and startup of the services system
  *
- * Copyright (c) 2014-2016 ChatLounge IRC Network Development Team
- *     (http://www.chatlounge.net/)
+ * Copyright (c) 2014-2017 ChatLounge IRC Network Development Team
+ *     (https://www.chatlounge.net/)
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -90,12 +90,6 @@ static void print_version(void)
 
 	for (i = 0; infotext[i] != NULL; i++)
 		printf("%s\n", infotext[i]);
-}
-
-static void rng_reseed(void *unused)
-{
-	(void)unused;
-	arc4random_addrandom((uint8_t *)&cnt, sizeof cnt);
 }
 
 static void process_mowgli_log(const char *line)
@@ -441,9 +435,6 @@ int atheme_main(int argc, char *argv[])
 
 	/* check authcookie expires every ten minutes */
 	mowgli_timer_add(base_eventloop, "authcookie_expire", authcookie_expire, NULL, 600);
-
-	/* reseed rng a little every five minutes */
-	mowgli_timer_add(base_eventloop, "rng_reseed", rng_reseed, NULL, 293);
 
 	me.connected = false;
 	uplink_connect();

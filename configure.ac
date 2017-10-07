@@ -1,4 +1,4 @@
-dnl Copyright (c) 2014-2016 ChatLounge IRC Network Development Team
+dnl Copyright (c) 2014-2017 ChatLounge IRC Network Development Team
 dnl Rights to this code are documented in doc/LICENSE.
 dnl
 dnl This file is the autoconf stub.
@@ -70,7 +70,7 @@ dnl Checks for header files.
 AC_CHECK_HEADERS(link.h,,,[-])
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS([inet_pton inet_ntop gettimeofday umask arc4random getrlimit fork getpid execve strtok_r inet_ntop strcasestr])
+AC_CHECK_FUNCS([inet_pton inet_ntop gettimeofday umask arc4random arc4random_buf arc4random_uniform explicit_bzero memset_s getrlimit fork getpid execve strtok_r inet_ntop strcasestr])
 AC_CHECK_FUNC(socket,, AC_CHECK_LIB(socket, socket))
 AC_CHECK_FUNC(gethostbyname,, AC_CHECK_LIB(nsl, gethostbyname))
 AC_SEARCH_LIBS(crypt, crypt, [AC_DEFINE([HAVE_CRYPT], [], [Define if crypt() is available])])
