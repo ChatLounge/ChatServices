@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2005 William Pitcock, et al.
+ * Copyright (C) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Data structures for connected clients.
@@ -56,6 +58,7 @@ struct user_
 #define UF_DEAF        0x00004000 /* user does not receive channel msgs */
 #define UF_SERVICE     0x00008000 /* user is a service (e.g. +S on charybdis) */
 #define UF_USEDCERT    0x00010000 /* user used a certificate fingerprint to login to services. */
+#define UF_KLINESENT   0x00020000 /* have sent a kline for this user. */
 
 #define CLIENT_NAME(user)	((user)->uid != NULL ? (user)->uid : (user)->nick)
 

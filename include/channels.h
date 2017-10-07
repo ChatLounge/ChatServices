@@ -71,7 +71,7 @@ struct chanban_
 #define CMODE_PRIV      0x00000040      /* AKA PARA */
 #define CMODE_SEC       0x00000080
 #define CMODE_TOPIC     0x00000100
-#define CMODE_CHANREG	0x00000200
+#define CMODE_CHANREG   0x00000200
 
 /* channel_t.flags */
 #define CHAN_LOG        0x00000001 /* logs sent to here */
@@ -82,6 +82,7 @@ struct chanban_
 #define CSTATUS_OWNER   0x00000004      /* unreal/inspircd +q */
 #define CSTATUS_PROTECT 0x00000008      /* unreal/inspircd +a */
 #define CSTATUS_HALFOP  0x00000010      /* unreal/inspircd +h */
+#define CSTATUS_IMMUNE  0x00000020      /* per-user kick immunity */
 
 /* chanban_t.flags */
 #define CBAN_ANTIFLOOD  0x00000001	/* chanserv/antiflood set this */

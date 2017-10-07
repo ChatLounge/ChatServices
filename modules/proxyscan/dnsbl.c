@@ -65,7 +65,7 @@
 
 DECLARE_MODULE_V1
 (
-	"contrib/dnsbl", false, _modinit, _moddeinit,
+	"proxyscan/dnsbl", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
 	"Atheme Development Group <http://www.atheme.org>"
 );
@@ -499,10 +499,14 @@ static void dnsbl_hit(user_t *u, struct Blacklist *blptr)
 	}
 	else if (!strcasecmp("KLINE", action))
 	{
-		slog(LG_INFO, "DNSBL: k-lining \2%s\2!%s@%s [%s] who is listed in DNS Blacklist %s.", u->nick, u->user, u->host, u->gecos, blptr->host);
-		/* abort_blacklist_queries(u); */
-		notice(svs->nick, u->nick, "Your IP address %s is listed in DNS Blacklist %s", u->ip, blptr->host);
-		kline_sts("*", "*", u->host, 86400, "Banned (DNS Blacklist)");
+		if (! (u->flags & UF_KLINESENT))
+		{
+			slog(LG_INFO, "DNSBL: k-lining \2%s\2!%s@%s [%s] who is listed in DNS Blacklist %s.", u->nick, u->user, u->host, u->gecos, blptr->host);
+			/* abort_blacklist_queries(u); */
+			notice(svs->nick, u->nick, "Your IP address %s is listed in DNS Blacklist %s", u->ip, blptr->host);
+			kline_sts("*", "*", u->host, 86400, "Banned (DNS Blacklist)");
+			u->flags |= UF_KLINESENT;
+		}
 		return;
 	}
 }

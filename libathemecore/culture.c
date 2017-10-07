@@ -1,8 +1,10 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of minimalist IRC services
  * culture.c: Translation framework.
  *
  * Copyright (c) 2005-2009 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *     (https://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -231,7 +233,7 @@ language_add(const char *name)
 {
 	language_t *lang;
 
-	if (!strcmp(name, "default"))
+	if (name == NULL || !strcmp(name, "default"))
 		return NULL;
 	lang = language_find(name);
 	if (lang != NULL)
@@ -248,6 +250,9 @@ language_find(const char *name)
 {
 	mowgli_node_t *n;
 	language_t *lang;
+
+	if (name == NULL)
+		return NULL;
 
 	MOWGLI_ITER_FOREACH(n, language_list.head)
 	{

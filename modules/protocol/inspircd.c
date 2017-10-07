@@ -31,7 +31,7 @@ ircd_t InspIRCd = {
 	true,                           /* Whether or not we support halfops. */
 	false,                          /* Whether or not we use P10 */
 	true,                           /* Whether or not we use vHosts. */
-	CMODE_OPERONLY | CMODE_PERM | CMODE_IMMUNE,	    /* Oper-only cmodes */
+	CMODE_OPERONLY | CMODE_PERM,    /* Oper-only cmodes */
 	CSTATUS_OWNER,                  /* Integer flag for owner channel flag. */
 	CSTATUS_PROTECT,                /* Integer flag for protect channel flag. */
 	CSTATUS_HALFOP,                 /* Integer flag for halfops. */
@@ -40,7 +40,7 @@ ircd_t InspIRCd = {
 	"+h",                           /* Mode we set for halfops. */
 	PROTOCOL_INSPIRCD,              /* Protocol type */
 	CMODE_PERM,                     /* Permanent cmodes */
-	CMODE_IMMUNE,                   /* Oper-immune cmode */
+	0,                              /* Oper-immune cmode */
 	"beIgXw",                       /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
@@ -73,7 +73,6 @@ struct cmode_ inspircd_mode_list[] = {
   { 'T', CMODE_NONOTICE },
   { 'u', CMODE_HIDING   },
   { 'Q', CMODE_PEACE    },
-  { 'Y', CMODE_IMMUNE	},
   { 'D', CMODE_DELAYJOIN },
   { '\0', 0 }
 };
@@ -100,6 +99,7 @@ struct extmode inspircd_ignore_mode_list[] = {
 };
 
 struct cmode_ inspircd_status_mode_list[] = {
+  { 'Y', CSTATUS_IMMUNE  },
   { 'q', CSTATUS_OWNER   },
   { 'a', CSTATUS_PROTECT },
   { 'o', CSTATUS_OP      },
@@ -109,6 +109,7 @@ struct cmode_ inspircd_status_mode_list[] = {
 };
 
 struct cmode_ inspircd_prefix_mode_list[] = {
+  { '!', CSTATUS_IMMUNE  },
   { '~', CSTATUS_OWNER   },
   { '&', CSTATUS_PROTECT },
   { '@', CSTATUS_OP      },

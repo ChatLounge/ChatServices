@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2006 Robin Burchell <surreal.w00t@gmail.com>
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENCE.
  *
  * This file contains functionality implementing OperServ CLEARCHAN.
@@ -12,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"operserv/clearchan", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Robin Burchell <surreal.w00t@gmail.com>"
+	"ChatLounge IRC Network Development Team <admin@chatlounge.net>"
 );
 
 #define CLEAR_KICK 1
@@ -120,7 +122,13 @@ static void os_cmd_clearchan(sourceinfo_t *si, int parc, char *parv[])
 						command_success_nodata(si, _("\2CLEARCHAN\2: Not klining exempt user %s!%s@%s"),
 								cu->user->nick, cu->user->user, cu->user->host);
 					else
-						kline_sts("*", "*", cu->user->host, 604800, reason);
+					{
+						if (! (cu->user->flags & UF_KLINESENT))
+						{
+							kline_sts("*", "*", cu->user->host, 604800, reason);
+							cu->user->flags |= UF_KLINESENT;
+						}
+					}
 			}
 		}
 	}
