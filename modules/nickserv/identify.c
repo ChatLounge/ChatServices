@@ -100,6 +100,7 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 	hook_call_user_can_login(&req);
 	if (!req.allowed)
 	{
+		command_fail(si, fault_authfail, "You may not login as \2%s\2 because the server configuration disallows it.", entity(mu)->name);
 		logcommand(si, CMDLOG_LOGIN, "failed " COMMAND_UC " to \2%s\2 (denied by hook)", entity(mu)->name);
 		return;
 	}
