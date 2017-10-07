@@ -7,37 +7,90 @@ LIST shows registered users that match the given criteria.
 Multiple criteria may be used in the same command.
 
 Current criteria are:
-PATTERN       - All users that match a given pattern.
-EMAIL         - All accounts registered with an email address
-                that matches a given pattern.
-MARK-REASON   - All accounts whose mark reason matches a
-                given pattern.
-FROZEN-REASON - All frozen accounts whose freeze reason matches
-                a given pattern.
+EMAIL             - All accounts registered with an email address
+                    that matches a given pattern.
+PATTERN           - All users that match a given pattern.
+#if module nickserv/freeze
+FROZEN-REASON     - All frozen accounts whose freeze reason matches
+                    a given pattern.
+#endif
+#if module nickserv/mark
+MARK-REASON       - All accounts whose mark reason matches a
+                    given pattern.
+#endif
+#if module nickserv/multimark
+MARK-REASON       - All accounts whose mark reason matches a
+                    given pattern.
+#endif
 #if module nickserv/restrict
 RESTRICTED-REASON - All restricted accounts whose restrict reason matches
-                a given pattern.
+                    a given pattern.
 #endif
-HOLD          - All users with the HOLD flag set.
-NOOP          - All users with the NOOP flag set.
-NEVEROP       - All users with the NEVEROP flag set.
-WAITAUTH      - All users with the WAITAUTH flag set.
-HIDEMAIL      - All users with the HIDEMAIL flag set.
-NOMEMO        - All users with the NOMEMO flag set.
-EMAILMEMOS    - All users with the EMAILMEMOS flag set.
-USE-PRIVMSG   - All users with the USEPRIVMSG flag set.
-QUIETCHG      - All users with the QUIETCHG flag set.
-NOGREET       - All users with the NOGREET flag set.
-PRIVATE       - All users with the PRIVATE flag set.
-REGNOLIMIT    - All users with the REGNOLIMIT flag set.
 
-FROZEN        - All users frozen by network staff.
-MARKED        - All users marked by network staff.
-#if module nickserv/restrict
-RESTRICTED    - All users restricted by network staff.
+#if module nickserv/set_emailmemos
+EMAILMEMOS        - All users with the EMAILMEMOS flag set.
 #endif
-REGISTERED    - User accounts registered longer ago than a given age.
-LASTLOGIN     - User accounts last used longer ago than a given age.
+#if module nickserv/set_hidemail
+HIDEMAIL          - All users with the HIDEMAIL flag set.
+#endif
+#if module nickserv/hold
+HOLD              - All users with the HOLD flag set.
+#endif
+#if module nickserv/set_neverop
+NEVEROP           - All users with the NEVEROP flag set.
+#endif
+#if module nickserv/set_nogreet
+NOGREET           - All users with the NOGREET flag set.
+#endif
+#if module nickserv/set_nomemo
+NOMEMO            - All users with the NOMEMO flag set.
+#endif
+#if module nickserv/set_noop
+NOOP              - All users with the NOOP flag set.
+#endif
+#if module nickserv/set_nopassword
+NOPASSWORD        - All users with the NOPASSWORD flag set.
+#endif
+#if module nickserv/set_notofyacl
+NOTIFYACL         - All users with the NOTIFYACL flag set.
+#endif
+#if module nickserv/set_notifymemo
+NOTIFYMEMO        - All users with the NOTIFYMEMO flag set.
+#endif
+#if module nickserv/set_notifyset
+NOTIFYSET         - All users with the NOTIFYSET flag set.
+#endif
+#if module nickserv/set_private
+PRIVATE           - All users with the PRIVATE flag set.
+#endif
+#if module nickserv/set_quietchg
+QUIETCHG          - All users with the QUIETCHG flag set.
+#endif
+#if module nickserv/set_regnolimit
+REGNOLIMIT        - All users with the REGNOLIMIT flag set.
+#endif
+#if module nickserv/set_privmsg
+USE-PRIVMSG       - All users with the USEPRIVMSG flag set.
+#endif
+WAITAUTH          - All users with the WAITAUTH flag set.
+
+#if module nickserv/freeze
+FROZEN            - All users frozen by network staff.
+#endif
+#if module nickserv/mark
+MARKED            - All users marked by network staff.
+#endif
+#if module nickserv/multimark
+MARKED            - All users marked by network staff.
+#endif
+#if module nickserv/restrict
+RESTRICTED        - All users restricted by network staff.
+#endif
+#if module nickserv/vacation
+VACATION          - All users marked as being on vacation.
+#endif
+REGISTERED        - User accounts registered longer ago than a given age.
+LASTLOGIN         - User accounts last used longer ago than a given age.
 
 Syntax: LIST <criteria>
 
