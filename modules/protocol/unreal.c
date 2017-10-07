@@ -29,32 +29,32 @@ static char ts6sid[3 + 1] = "";
 /* *INDENT-OFF* */
 
 ircd_t Unreal = {
-        "UnrealIRCd 3.1 or later",      /* IRCd name */
-        "$",                            /* TLD Prefix, used by Global. */
-        true,                           /* Whether or not we use IRCNet/TS6 UID */
-        false,                          /* Whether or not we use RCOMMAND */
-        true,                           /* Whether or not we support channel owners. */
-        true,                           /* Whether or not we support channel protection. */
-        true,                           /* Whether or not we support halfops. */
-	false,				/* Whether or not we use P10 */
-	true,				/* Whether or not we use vHosts. */
+	"UnrealIRCd 3.1 or later",      /* IRCd name */
+	"$",                            /* TLD Prefix, used by Global. */
+	true,                           /* Whether or not we use IRCNet/TS6 UID */
+	false,                          /* Whether or not we use RCOMMAND */
+	true,                           /* Whether or not we support channel owners. */
+	true,                           /* Whether or not we support channel protection. */
+	true,                           /* Whether or not we support halfops. */
+	false,                          /* Whether or not we use P10 */
+	true,                           /* Whether or not we use vHosts. */
 	CMODE_OPERONLY | CMODE_ADMONLY, /* Oper-only cmodes */
-        CSTATUS_OWNER,                    /* Integer flag for owner channel flag. */
-        CSTATUS_PROTECT,                  /* Integer flag for protect channel flag. */
-        CSTATUS_HALFOP,                   /* Integer flag for halfops. */
-        "+q",                           /* Mode we set for owner. */
-        "+a",                           /* Mode we set for protect. */
-        "+h",                           /* Mode we set for halfops. */
-	PROTOCOL_UNREAL,		/* Protocol type */
+	CSTATUS_OWNER,                  /* Integer flag for owner channel flag. */
+	CSTATUS_PROTECT,                /* Integer flag for protect channel flag. */
+	CSTATUS_HALFOP,                 /* Integer flag for halfops. */
+	"+q",                           /* Mode we set for owner. */
+	"+a",                           /* Mode we set for protect. */
+	"+h",                           /* Mode we set for halfops. */
+	PROTOCOL_UNREAL,                /* Protocol type */
 	CMODE_PERM,                     /* Permanent cmodes */
 	0,                              /* Oper-immune cmode */
 	"beI",                          /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
 	IRCD_HOLDNICK | IRCD_SASL_USE_PUID, /* Flags */
-	true,					/* Uses quiets */
-	"b",					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	"~q:"						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	true,                           /* Uses quiets */
+	"b",                            /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	"~q:"                           /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ unreal_mode_list[] = {
@@ -1353,7 +1353,20 @@ static void m_server(sourceinfo_t *si, int parc, char *parv[])
 	if (has_protoctl)
 	{
 		if (ts6sid[0] == '\0')
+		{
 			ircd->uses_uid = false;
+			if (me.me->sid)
+			{
+				/* XXX: this is a hack that fixes *most*, though not
+				 * all, of the brokenness when linking to Unreal 3.2
+				 *
+				 * (the EOB is sent before this, therefore still with
+				 * a SID, but apparently still works) --grawity */
+				slog(LG_DEBUG, "m_server(): erasing our SID");
+				free(me.me->sid);
+				me.me->sid = NULL;
+			}
+		}
 
 		services_init();
 		has_protoctl = false;	/* only once after PROTOCTL message. */
