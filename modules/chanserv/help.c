@@ -62,7 +62,12 @@ static void cs_cmd_help(sourceinfo_t *si, int parc, char *parv[])
 		{
 			command_success_nodata(si, _("Please note that channels will expire if there are no eligible channel successors."));
 		}
-		command_success_nodata(si, _("Successors are primarily those who have the +R flag\n"
+		if (module_find_published("chanserv/successor_acl"))
+			command_success_nodata(si, _("Successors are primarily those who have the +S flag, followed by the +R flag\n"
+					"set on their account in the channel, although other people may be chosen\n"
+					"depending on their access level and activity."));
+		else
+			command_success_nodata(si, _("Successors are primarily those who have the +R flag\n"
 					"set on their account in the channel, although other\n"
 					"people may be chosen depending on their access\n"
 					"level and activity."));
