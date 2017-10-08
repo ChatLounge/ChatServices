@@ -38,11 +38,11 @@ static void cs_cmd_waiting(sourceinfo_t *si, int parc, char *parv[]);
 static void can_register(hook_channel_register_check_t *req);
 
 static command_t cs_activate = { "ACTIVATE", N_("Activates a pending registration"), PRIV_CHAN_ADMIN,
-				 2, cs_cmd_activate, { .path = "chanserv/activate" } };
+				 2, cs_cmd_activate, { .path = "cservice/activate" } };
 static command_t cs_reject   = { "REJECT", N_("Rejects a pending registration"), PRIV_CHAN_ADMIN,
-				 2, cs_cmd_reject, { .path = "chanserv/reject" } };
+				 2, cs_cmd_reject, { .path = "cservice/reject" } };
 static command_t cs_waiting  = { "WAITING", N_("View pending registrations"), PRIV_CHAN_ADMIN,
-				 1, cs_cmd_waiting, { .path = "chanserv/waiting" } };
+				 1, cs_cmd_waiting, { .path = "cservice/waiting" } };
 
 typedef struct {
 	char *name;
@@ -197,11 +197,11 @@ static void can_register(hook_channel_register_check_t *req)
 	req->approved++;
 
 	cs = csreq_create(req->name, entity(req->si->smu));
-	command_success_nodata(req->si, _("\2%s\2 has channel moderation enabled.  Your request to register \2%s\2 has been received and should be processed shortly."),
+	command_success_nodata(req->si, _("\2%s\2 reviews every channel registration request.  Your request to register \2%s\2 has been received and should be reviewed shortly."),
 			       me.netname, cs->name);
 
 	if (groupmemo != NULL)
-		send_group_memo(req->si, "[auto memo] Please register \2%s\2 for me!", req->name);
+		send_group_memo(req->si, "[auto memo] Please review the channel registration for \2%s\2 for me.", req->name);
 
 	logcommand(req->si, CMDLOG_REGISTER, "REGISTER: \2%s\2 (pending)", req->name);
 }
@@ -287,14 +287,14 @@ static void cs_cmd_activate(sourceinfo_t *si, int parc, char *parv[])
 					!(cu->modes & CSTATUS_OWNER))
 			{
 				modestack_mode_param(si->service->nick, mc->chan, MTYPE_ADD,
-						ircd->owner_mchar[1], CLIENT_NAME(si->su));
+						ircd->owner_mchar[1], CLIENT_NAME(u));
 				cu->modes |= CSTATUS_OWNER;
 			}
 			else if (ircd->uses_protect && fl & CA_USEPROTECT && fl & CA_AUTOOP &&
 					!(cu->modes & CSTATUS_PROTECT))
 			{
 				modestack_mode_param(si->service->nick, mc->chan, MTYPE_ADD,
-						ircd->protect_mchar[1], CLIENT_NAME(si->su));
+						ircd->protect_mchar[1], CLIENT_NAME(u));
 				cu->modes |= CSTATUS_PROTECT;
 			}
 		}
@@ -315,6 +315,11 @@ static void cs_cmd_activate(sourceinfo_t *si, int parc, char *parv[])
 	}
 
 	csreq_destroy(cs);
+	/* Check if GUARD is enabled by default and if so, ChanServ should join even 
+	 * if the founder is no longer present or identified. --siniStar
+	 */
+	if (mc->flags & MC_GUARD)
+		join(mc->name, chansvs.nick);
 	logcommand(si, CMDLOG_ADMIN, "ACTIVATE: \2%s\2", parv[0]);
 }
 
