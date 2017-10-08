@@ -503,96 +503,101 @@ bool validhostmask(const char *host)
 char *pretty_mask(char *mask)
 {
 	static char mask_buf[BUFSIZE];
-        int old_mask_pos;
-        char star[] = "*";
-        char *nick = star, *user = star, *host = star;
+	int old_mask_pos;
+	char star[] = "*";
+	char *nick = star, *user = star, *host = star;
 	int mask_pos = 0;
 
-        char *t, *at, *ex;
-        char ne = 0, ue = 0, he = 0;    /* save values at nick[NICKLEN], et all */
+	char *t, *at, *ex;
+	char ne = 0, ue = 0, he = 0;    /* save values at nick[NICKLEN], et all */
 
 	/* No point wasting CPU time if the mask is already valid */
 	if (validhostmask(mask))
 		return mask;
 
-        if((size_t) (BUFSIZE - mask_pos) < strlen(mask) + 5)
-                return (NULL);
+	if ((size_t) (BUFSIZE - mask_pos) < strlen(mask) + 5)
+		return (NULL);
 
-        old_mask_pos = mask_pos;
+	old_mask_pos = mask_pos;
 
-        at = ex = NULL;
-        if((t = strchr(mask, '@')) != NULL)
+	at = ex = NULL;
+	if (is_valid_host(mask))
 	{
-                at = t;
-                *t++ = '\0';
-                if(*t != '\0')
-                        host = t;
+		if (*mask != '\0')
+			host = mask;
+	}
+	else if ((t = strchr(mask, '@')) != NULL)
+	{
+		at = t;
+		*t++ = '\0';
+		if(*t != '\0')
+			host = t;
 
-                if((t = strchr(mask, '!')) != NULL)
-                {
-                        ex = t;
-                        *t++ = '\0';
-                        if(*t != '\0')
-                                user = t;
-                        if(*mask != '\0')
-                                nick = mask;
-                }
-                else
-                {
-                        if(*mask != '\0')
-                                user = mask;
-                }
-        }
-        else if((t = strchr(mask, '!')) != NULL)
-        {
-                ex = t;
-                *t++ = '\0';
-                if(*mask != '\0')
-                        nick = mask;
-                if(*t != '\0')
-                        user = t;
-        }
-        else if(strchr(mask, '.') != NULL && strchr(mask, ':') != NULL)
-        {
-                if(*mask != '\0')
-                        host = mask;
-        }
-        else
-        {
-                if(*mask != '\0')
-                        nick = mask;
-        }
+		if((t = strchr(mask, '!')) != NULL)
+		{
+			ex = t;
+			*t++ = '\0';
+			if(*t != '\0')
+				user = t;
+			if(*mask != '\0')
+				nick = mask;
+		}
+		else
+		{
+			if(*mask != '\0')
+				user = mask;
+		}
+	}
+	else if((t = strchr(mask, '!')) != NULL)
+	{
+		ex = t;
+		*t++ = '\0';
+		if(*mask != '\0')
+			nick = mask;
+		if(*t != '\0')
+			user = t;
+	}
+	else if(strchr(mask, '.') != NULL && strchr(mask, ':') != NULL)
+	{
+		if(*mask != '\0')
+			host = mask;
+	}
+	else
+	{
+		if(*mask != '\0')
+			nick = mask;
+	}
 
-        /* truncate values to max lengths */
-        if(strlen(nick) > NICKLEN - 1)
-        {
-                ne = nick[NICKLEN - 1];
-                nick[NICKLEN - 1] = '\0';
-        }
-        if(strlen(user) > USERLEN)
-        {
-                ue = user[USERLEN];
-                user[USERLEN] = '\0';
-        }
-        if(strlen(host) > HOSTLEN)
-        {
-                he = host[HOSTLEN];
-                host[HOSTLEN] = '\0';
-        }
+	/* truncate values to max lengths */
+	if(strlen(nick) > NICKLEN - 1)
+	{
+		ne = nick[NICKLEN - 1];
+		nick[NICKLEN - 1] = '\0';
+	}
+	if(strlen(user) > USERLEN)
+	{
+		ue = user[USERLEN];
+		user[USERLEN] = '\0';
+	}
+	if(strlen(host) > HOSTLEN)
+	{
+		he = host[HOSTLEN];
+		host[HOSTLEN] = '\0';
+	}
 
 	snprintf(mask_buf, sizeof mask_buf, "%s!%s@%s", nick, user, host);
 
-        /* restore mask, since we may need to use it again later */
-        if(at)
-                *at = '@';
-        if(ex)
-                *ex = '!';
-        if(ne)
-                nick[NICKLEN - 1] = ne;
-        if(ue)
-                user[USERLEN] = ue;
-        if(he)
-                host[HOSTLEN] = he;
+	/* restore mask, since we may need to use it again later */
+	if(at)
+		*at = '@';
+	if(ex)
+		*ex = '!';
+	if(ne)
+		nick[NICKLEN - 1] = ne;
+	if(ue)
+		user[USERLEN] = ue;
+	if(he)
+		host[HOSTLEN] = he;
 
 	return mask_buf;
 }
