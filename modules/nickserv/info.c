@@ -518,7 +518,10 @@ static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 
 	command_success_nodata(si, _("*** \2End of Info for the account %s\2 ***"), entity(mu)->name);
 
-	logcommand(si, CMDLOG_GET, "INFO: \2%s\2", mn != NULL ? mn->nick : entity(mu)->name);
+	if (mn == NULL)
+		logcommand(si, CMDLOG_GET, "INFO: \2%s\2", entity(mu)->name);
+	else
+		logcommand(si, CMDLOG_GET, "INFO: \2%s\2 (account: \2%s\2)", mn->nick, entity(mu)->name);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
