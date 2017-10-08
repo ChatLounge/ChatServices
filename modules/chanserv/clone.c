@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Atheme Development Group
+ * Copyright (c) 2010-2016 Atheme Development Group
  * Copyright (c) 2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
@@ -130,13 +130,24 @@ static void cs_cmd_clone(sourceinfo_t *si, int parc, char *parv[])
 	MOWGLI_PATRICIA_FOREACH(md, &state, object(mc)->metadata)
 	{
 		if(!strncmp(md->name, "private:topic:", 14))
-				continue;
+			continue;
+
+		/* Replace ANTIFLOOD AKILL with QUIET if it exists --shaynejellesma */
+		if((strcasecmp(md->name, "private:antiflood:enforce-method") == 0) && (strcasecmp(md->value, "AKILL") == 0))
+		{
+			metadata_add(mc2, md->name, "QUIET");
+			continue;
+		}
 
 		metadata_add(mc2, md->name, md->value);
 	}
 
 	/* Copy channel flags */
 	mc2->flags = mc->flags;
+
+	/* Remove HOLD flag if it exists --shaynejellesma */
+	if (mc2->flags & MC_HOLD)
+		mc2->flags &= ~MC_HOLD;
 
 	command_add_flood(si, FLOOD_MODERATE);
 
