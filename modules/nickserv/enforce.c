@@ -242,6 +242,12 @@ static void ns_cmd_release(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_DO, "failed RELEASE \2%s\2 (password authentication disabled)", target);
 		return;
 	}
+	if (!is_valid_nick(target))
+	{
+		command_fail(si, fault_badparams, "\2%s\2 is not a valid nick.", target);
+		logcommand(si, CMDLOG_DO, "failed REGAIN \2%s\2 (not a valid nickname)", target);
+		return;
+	}
 	if ((si->smu == mn->owner) || verify_password(mn->owner, password))
 	{
 		/* if this (nick, host) is waiting to be enforced, remove it */
