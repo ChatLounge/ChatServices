@@ -18,32 +18,32 @@ DECLARE_MODULE_V1("protocol/shadowircd", true, _modinit, NULL, PACKAGE_STRING, "
 /* *INDENT-OFF* */
 
 ircd_t ShadowIRCd = {
-        "ShadowIRCd 6+",		/* IRCd name */
-        "$$",                           /* TLD Prefix, used by Global. */
-        true,                           /* Whether or not we use IRCNet/TS6 UID */
-        false,                          /* Whether or not we use RCOMMAND */
-        false,                           /* Whether or not we support channel owners. */
-        true,                           /* Whether or not we support channel protection. */
-        true,                           /* Whether or not we support halfops. */
-	false,				/* Whether or not we use P10 */
-	false,				/* Whether or not we use vHosts. */
-	CMODE_EXLIMIT | CMODE_PERM | CMODE_IMMUNE, /* Oper-only cmodes */
-        0,                  /* Integer flag for owner channel flag. */
-        CSTATUS_PROTECT,                  /* Integer flag for protect channel flag. */
-        CSTATUS_HALFOP,                   /* Integer flag for halfops. */
-        "+",                           /* Mode we set for owner. */
-        "+a",                           /* Mode we set for protect. */
-        "+h",                           /* Mode we set for halfops. */
-	PROTOCOL_SHADOWIRCD,		/* Protocol type */
+	"ShadowIRCd 6+",                /* IRCd name */
+	"$$",                           /* TLD Prefix, used by Global. */
+	true,                           /* Whether or not we use IRCNet/TS6 UID */
+	false,                          /* Whether or not we use RCOMMAND */
+	false,                          /* Whether or not we support channel owners. */
+	true,                           /* Whether or not we support channel protection. */
+	true,                           /* Whether or not we support halfops. */
+	false,                          /* Whether or not we use P10 */
+	false,                          /* Whether or not we use vHosts. */
+	CMODE_EXLIMIT | CMODE_PERM | CMODE_IMMUNE | CMODE_ADMINONLY | CMODE_OPERONLY, /* Oper-only cmodes */
+	0,                  /* Integer flag for owner channel flag. */
+	CSTATUS_PROTECT,                /* Integer flag for protect channel flag. */
+	CSTATUS_HALFOP,                 /* Integer flag for halfops. */
+	"+",                            /* Mode we set for owner. */
+	"+a",                           /* Mode we set for protect. */
+	"+h",                           /* Mode we set for halfops. */
+	PROTOCOL_SHADOWIRCD,            /* Protocol type */
 	CMODE_PERM,                     /* Permanent cmodes */
 	CMODE_IMMUNE,                   /* Oper-immune cmode */
 	"beIq",                         /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
 	IRCD_CIDR_BANS | IRCD_HOLDNICK, /* Flags */
-	true,					/* Uses quiets */
-	"q",					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	""						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	true,                           /* Uses quiets */
+	"q",                            /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	""                              /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ shadowircd_mode_list[] = {
