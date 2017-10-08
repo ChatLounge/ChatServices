@@ -73,9 +73,9 @@ struct gflags mu_flags[] = {
 	{ 'N', MU_NEVERGROUP },
 	{ 'A', MU_STRICTACCESS },
 	{ 'a', MU_NOTIFYACL },
-	{ 'S', MU_NOTIFYSET },
+	{ '$', MU_NOTIFYSET },
 	{ 'e', MU_EMAILNOTIFY },
-	{ 'M', MU_NOPASSWORD },
+	{ 'S', MU_NOPASSWORD },
 	{ 0, 0 },
 };
 
