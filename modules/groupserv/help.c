@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the GroupServ HELP command.
@@ -12,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/help", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <https://www.chatlounge.net>"
 );
 
 static void gs_cmd_help(sourceinfo_t *si, int parc, char *parv[]);
@@ -27,7 +29,7 @@ void gs_cmd_help(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("\2%s\2 provides tools for managing groups of users and channels."), si->service->nick);
 		command_success_nodata(si, " ");
 		command_success_nodata(si, _("For more information on a command, type:"));
-		command_success_nodata(si, "\2/%s%s help <command>\2", (ircd->uses_rcommand == false) ? "msg " : "", si->service->disp);
+		command_success_nodata(si, "    \2/%s%s help <command>\2", (ircd->uses_rcommand == false) ? "msg " : "", si->service->disp);
 		command_success_nodata(si, " ");
 
 		command_help(si, si->service->commands);

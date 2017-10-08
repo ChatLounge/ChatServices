@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the NickServ HELP command.
@@ -12,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/help", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <https://www.chatlounge.net>"
 );
 
 static void ns_cmd_help(sourceinfo_t *si, int parc, char *parv[]);
@@ -43,7 +45,7 @@ void ns_cmd_help(sourceinfo_t *si, int parc, char *parv[])
 			if (nicksvs.expiry > 0)
 			{
 				command_success_nodata(si, _("If a registered account is not used by the owner for %d days,\n"
-							"\2%s\2 will drop the account, allowing it to be reregistered."),
+							"\2%s\2 will drop the account, allowing it to be reregistered.\n" "\n" ""),
 						(nicksvs.expiry / 86400), nicksvs.nick);
 			}
 		}
@@ -53,21 +55,22 @@ void ns_cmd_help(sourceinfo_t *si, int parc, char *parv[])
 						"others from using that nick. \2%s\2 allows the owner of a\n"
 						"nickname to disconnect a user from the network that is using\n"
 						"their nickname."), nicksvs.nick, nicksvs.nick);
+			command_success_nodata(si, "");
 			if (nicksvs.expiry > 0)
 			{
 				command_success_nodata(si, _("If a registered nick is not used by the owner for %d days,\n"
-							"\2%s\2 will drop the nickname, allowing it to be reregistered."),
+							"\2%s\2 will drop the nickname, allowing it to be reregistered.\n" "\n" ""),
 						(nicksvs.expiry / 86400), nicksvs.nick);
 			}
 		}
 		command_success_nodata(si, " ");
 		command_success_nodata(si, _("For more information on a command, type:"));
-		command_success_nodata(si, "\2/%s%s help <command>\2", (ircd->uses_rcommand == false) ? "msg " : "", nicksvs.me->disp);
+		command_success_nodata(si, "    \2/%s%s help <command>\2", (ircd->uses_rcommand == false) ? "msg " : "", nicksvs.me->disp);
 		command_success_nodata(si, _("For a verbose listing of all commands, type:"));
-		command_success_nodata(si, "\2/%s%s help commands\2", (ircd->uses_rcommand == false) ? "msg " : "", nicksvs.me->disp);
+		command_success_nodata(si, "    \2/%s%s help commands\2", (ircd->uses_rcommand == false) ? "msg " : "", nicksvs.me->disp);
 		command_success_nodata(si, " ");
 
-		command_help_short(si, si->service->commands, "REGISTER IDENTIFY GHOST RELEASE INFO LISTCHANS SET GROUP UNGROUP FDROP FUNGROUP MARK FREEZE SENDPASS VHOST");
+		command_help_short(si, si->service->commands, "REGISTER IDENTIFY GHOST RELEASE INFO LISTCHANS SET GROUP UNGROUP LOGINHISTORY HISTORY FDROP FUNGROUP MARK FREEZE SENDPASS VHOST");
 
 		command_success_nodata(si, _("***** \2End of Help\2 *****"));
 

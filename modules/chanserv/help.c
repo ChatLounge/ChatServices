@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains routines to handle the CService HELP command.
@@ -12,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/help", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <https://www.chatlounge.net>"
 );
 
 static void cs_cmd_help(sourceinfo_t *si, int parc, char *parv[]);
@@ -48,14 +50,14 @@ static void cs_cmd_help(sourceinfo_t *si, int parc, char *parv[])
 		command_success_nodata(si, _("***** \2%s Help\2 *****"), chansvs.nick);
 		command_success_nodata(si, _("\2%s\2 gives normal users the ability to maintain control\n"
 					"of a channel, without the need of a bot. Channel takeovers are\n"
-					"virtually impossible when a channel is registered with \2%s\2.\n"
+					"virtually impossible when a channel is registered with \2%s\2.\n" "\n"
 					"Registration is a quick and painless process. Once registered,\n"
-					"the founder can maintain complete and total control over the channel."),
+					"the founder can maintain complete and total control over the channel.\n" "\n" ""),
 				chansvs.nick, chansvs.nick);
 		if (chansvs.expiry > 0)
 		{
 			command_success_nodata(si, _("Please note that channels will expire after %d days of inactivity,\n"
-						"or if there are no eligible channel successors.\n"
+						"or if there are no eligible channel successors.\n" "\n"
 						"Activity is defined as a user with one of %s being on the channel."), (chansvs.expiry / 86400), bitmask_to_flags2(CA_USEDUPDATE & ca_all, 0));
 		}
 		else
@@ -80,12 +82,12 @@ static void cs_cmd_help(sourceinfo_t *si, int parc, char *parv[])
 			command_success_nodata(si, " ");
 		}
 		command_success_nodata(si, _("For more information on a command, type:"));
-		command_success_nodata(si, "\2/%s%s help <command>\2", (ircd->uses_rcommand == false) ? "msg " : "", chansvs.me->disp);
+		command_success_nodata(si, "    \2/%s%s help <command>\2", (ircd->uses_rcommand == false) ? "msg " : "", chansvs.me->disp);
 		command_success_nodata(si, _("For a verbose listing of all commands, type:"));
-		command_success_nodata(si, "\2/%s%s help commands\2", (ircd->uses_rcommand == false) ? "msg " : "", chansvs.me->disp);
+		command_success_nodata(si, "    \2/%s%s help commands\2", (ircd->uses_rcommand == false) ? "msg " : "", chansvs.me->disp);
 		command_success_nodata(si, " ");
 
-		command_help_short(si, chansvs.me->commands, "REGISTER OP INVITE UNBAN FLAGS RECOVER SET CLOSE FDROP FFLAGS FTRANSFER");
+		command_help_short(si, chansvs.me->commands, "REGISTER OP VOICE INVITE UNBAN FLAGS RECOVER SET CLOSE HISTORY FDROP FFLAGS FTRANSFER");
 
 		command_success_nodata(si, _("***** \2End of Help\2 *****"));
 
