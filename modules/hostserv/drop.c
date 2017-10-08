@@ -20,28 +20,28 @@
 
 DECLARE_MODULE_V1
 (
-	"hostserv/disable", false, _modinit, _moddeinit,
+	"hostserv/drop", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
 void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
 
-static void hs_cmd_disable(sourceinfo_t *si, int parc, char *parv[]);
+static void hs_cmd_drop(sourceinfo_t *si, int parc, char *parv[]);
 
-command_t hs_disable = { "DISABLE", N_("Disables your account's vhost permanently."), AC_AUTHENTICATED, 1, hs_cmd_disable, { .path = "hostserv/disable" } };
+command_t hs_drop = { "DROP", N_("Disables your account's vhost permanently."), AC_AUTHENTICATED, 1, hs_cmd_drop, { .path = "hostserv/drop" } };
 
 void _modinit(module_t *m)
 {
-	service_named_bind_command("hostserv", &hs_disable);
+	service_named_bind_command("hostserv", &hs_drop);
 }
 
 void _moddeinit(module_unload_intent_t intent)
 {
-	service_named_unbind_command("hostserv", &hs_disable);
+	service_named_unbind_command("hostserv", &hs_drop);
 }
 
-static void hs_cmd_disable(sourceinfo_t *si, int parc, char *parv[])
+static void hs_cmd_drop(sourceinfo_t *si, int parc, char *parv[])
 {
 	char description[300];
 

@@ -1,16 +1,19 @@
 #if soper
-Command provided by: hostserv/disable
+Command provided by: hostserv/drop
 #endif
-Help for DISABLE:
+Help for DROP:
 
 Permanently deactivates and removes your vhost.  After using
 this command, your real hostname will be visible in /whois.
 This action is irreversible, unless you ask network staff to
-set it again.
+set it again or you REQUEST or TAKE another one.
+
+You may use DROP at any time, but there may be a cooldown period
+before you may have another one.
 
 If you only want to turn it off temporarily, use the OFF command.
 
-Syntax: DISABLE
+Syntax: DROP
 
 Examples:
-    /msg &nick& DISABLE
+    /msg &nick& DROP
