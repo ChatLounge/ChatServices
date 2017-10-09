@@ -89,15 +89,19 @@ static void cs_cmd_set_property(sourceinfo_t *si, int parc, char *parv[])
 			return;
 		}
 
-		metadata_delete(mc, property);
-		logcommand(si, CMDLOG_SET, "SET:PROPERTY: \2%s\2 \2%s\2 (deleted)", mc->name, property);
-		command_success_nodata(si, _("Metadata entry \2%s\2 has been deleted."), property);
+		logcommand(si, CMDLOG_SET, "SET:PROPERTY: \2%s\2 \2%s\2 (deleted) (Former value: \2%s\2)", mc->name, property, md->value);
+		verbose(mc, _("\2%s\2 deleted the metadata entry \2%s\2 that had the value: \2%s\2"), get_source_name(si), property, md->value);
+		command_success_nodata(si, _("Metadata entry \2%s\2 that had the value \2%s\2 has been deleted."), property, md->value);
 
 		char metadatadesc[100];
+		char metadatavalue[200];
 
 		snprintf(metadatadesc, sizeof metadatadesc, "metadata entry %s", property);
+		snprintf(metadatavalue, sizeof metadatavalue, "<Deleted> (Former value: \2%s\2)", md->value);
 
-		notify_channel_set_change(si, si->smu, mc, metadatadesc, "<Deleted>");
+		notify_channel_set_change(si, si->smu, mc, metadatadesc, metadatavalue);
+
+		metadata_delete(mc, property);
 
 		return;
 	}
@@ -126,6 +130,7 @@ static void cs_cmd_set_property(sourceinfo_t *si, int parc, char *parv[])
 
 	metadata_add(mc, property, value);
 	logcommand(si, CMDLOG_SET, "SET:PROPERTY: \2%s\2 on \2%s\2 to \2%s\2", property, mc->name, value);
+	verbose(mc, _("\2%s\2 added the metadata entry \2%s\2 with the value: \2%s\2"), get_source_name(si), property, value);
 	command_success_nodata(si, _("Metadata entry \2%s\2 set on channel: \2%s\2 (Value: %s)"), property, mc->name, value);
 
 	char metadatadesc[100];

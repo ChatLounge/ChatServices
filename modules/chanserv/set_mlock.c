@@ -300,6 +300,7 @@ static void cs_cmd_set_mlock(sourceinfo_t *si, int parc, char *parv[])
 	if (*modebuf)
 	{
 		command_success_nodata(si, _("The MLOCK for \2%s\2 has been set to: \2%s\2"), mc->name, modebuf);
+		verbose(mc, _("\2%s\2 set the mode lock to \2%s\2"), get_source_name(si), modebuf);
 		logcommand(si, CMDLOG_SET, "SET:MLOCK: \2%s\2 to \2%s\2", mc->name, modebuf);
 
 		notify_channel_set_change(si, si->smu, mc, "MLOCK", modebuf);
@@ -307,6 +308,7 @@ static void cs_cmd_set_mlock(sourceinfo_t *si, int parc, char *parv[])
 	else
 	{
 		command_success_nodata(si, _("The MLOCK for \2%s\2 has been removed."), mc->name);
+		verbose(mc, _("\2%s\2 disabled the mode lock."), get_source_name(si));
 		logcommand(si, CMDLOG_SET, "SET:MLOCK:NONE: \2%s\2", mc->name);
 
 		notify_channel_set_change(si, si->smu, mc, "MLOCK", "Disabled");

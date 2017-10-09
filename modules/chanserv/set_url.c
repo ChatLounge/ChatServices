@@ -68,6 +68,7 @@ static void cs_cmd_set_url(sourceinfo_t *si, int parc, char *parv[])
 		{
 			metadata_delete(mc, "url");
 			logcommand(si, CMDLOG_SET, "SET:URL:NONE: \2%s\2", mc->name);
+			verbose(mc, _("\2%s\2 cleared the channel URL."), get_source_name(si));
 			command_success_nodata(si, _("The URL for \2%s\2 has been cleared."), mc->name);
 
 			notify_channel_set_change(si, si->smu, mc, "URL", "Cleared");
@@ -83,6 +84,7 @@ static void cs_cmd_set_url(sourceinfo_t *si, int parc, char *parv[])
 	metadata_add(mc, "url", url);
 
 	logcommand(si, CMDLOG_SET, "SET:URL: \2%s\2 \2%s\2", mc->name, url);
+	verbose(mc, _("\2%s\2 set the channel URL to \2%s\2"), get_source_name(si), url);
 	command_success_nodata(si, _("The URL of \2%s\2 has been set to: \2%s\2"), mc->name, url);
 
 	notify_channel_set_change(si, si->smu, mc, "URL", url);
