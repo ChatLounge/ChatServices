@@ -47,7 +47,7 @@ static void cs_cmd_clear_bans(sourceinfo_t *si, int parc, char *parv[])
 	chanban_t *cb;
 	mowgli_node_t *n, *tn;
 	const char *item = parv[1], *p;
-	int hits;
+	int changes;
 
 	if (item == NULL)
 		item = "b";
@@ -93,7 +93,7 @@ static void cs_cmd_clear_bans(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	hits = 0;
+	changes = 0;
 	MOWGLI_ITER_FOREACH_SAFE(n, tn, c->bans.head)
 	{
 		cb = n->data;
@@ -101,17 +101,27 @@ static void cs_cmd_clear_bans(sourceinfo_t *si, int parc, char *parv[])
 			continue;
 		modestack_mode_param(chansvs.nick, c, MTYPE_DEL, cb->type, cb->mask);
 		chanban_delete(cb);
-		hits++;
+		changes++;
 	}
 
-	if (hits > 4)
+	if (changes > 4)
 		command_add_flood(si, FLOOD_MODERATE);
 
 	logcommand(si, CMDLOG_DO, "CLEAR:BANS: \2%s\2 on \2%s\2",
 			item, mc->name);
 
 	command_success_nodata(si, _("Cleared %s modes on \2%s\2 (%d removed)."),
-			item, mc->name, hits);
+			item, mc->name, changes);
+
+	if (changes > 0)
+	{
+		if (changes > 1)
+			verbose(mc, "\2%s\2 removed all %d channel modes of type: %s",
+				get_source_name(si), changes, item);
+		else
+			verbose(mc, "\2%s\2 removed 1 channel mode of type: %s",
+				get_source_name(si), item);
+	}
 
 	if (module_locate_symbol("chanserv/history", "add_history_entry"))
 	{
@@ -122,7 +132,7 @@ static void cs_cmd_clear_bans(sourceinfo_t *si, int parc, char *parv[])
 	{
 		char desc[350];
 
-		snprintf(desc, sizeof desc, "Cleared all %s modes (removed %d).", item, hits);
+		snprintf(desc, sizeof desc, "Cleared all %s modes (removed %d).", item, changes);
 
 		add_history_entry(si, mc, desc);
 	}

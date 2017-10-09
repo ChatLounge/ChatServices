@@ -45,7 +45,7 @@ static void cs_cmd_clear_excepts(sourceinfo_t *si, int parc, char *parv[])
 	mychan_t *mc = mychan_find(parv[0]);
 	chanban_t *cb;
 	mowgli_node_t *n, *tn;
-	int hits;
+	int changes;
 
 	if (!mc)
 	{
@@ -77,7 +77,7 @@ static void cs_cmd_clear_excepts(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	hits = 0;
+	changes = 0;
 	MOWGLI_ITER_FOREACH_SAFE(n, tn, c->bans.head)
 	{
 		cb = n->data;
@@ -85,17 +85,27 @@ static void cs_cmd_clear_excepts(sourceinfo_t *si, int parc, char *parv[])
 			continue;
 		modestack_mode_param(chansvs.nick, c, MTYPE_DEL, cb->type, cb->mask);
 		chanban_delete(cb);
-		hits++;
+		changes++;
 	}
 
-	if (hits > 4)
+	if (changes > 4)
 		command_add_flood(si, FLOOD_MODERATE);
 
 	logcommand(si, CMDLOG_DO, "CLEAR:EXCEPTS: \2%s\2",
 			mc->name);
 
 	command_success_nodata(si, _("Cleared channel ban exceptions on \2%s\2 (%d removed)."),
-			mc->name, hits);
+			mc->name, changes);
+
+	if (changes > 0)
+	{
+		if (changes > 1)
+			verbose(mc, "\2%s\2 removed all %d channel ban exceptions.",
+				get_source_name(si), changes);
+		else
+			verbose(mc, "\2%s\2 removed 1 channel ban exception.",
+				get_source_name(si));
+	}
 
 	if (module_locate_symbol("chanserv/history", "add_history_entry"))
 	{
@@ -106,7 +116,7 @@ static void cs_cmd_clear_excepts(sourceinfo_t *si, int parc, char *parv[])
 	{
 		char desc[350];
 
-		snprintf(desc, sizeof desc, "Cleared all ban exceptions (removed %d).", hits);
+		snprintf(desc, sizeof desc, "Cleared all ban exceptions (removed %d).", changes);
 
 		add_history_entry(si, mc, desc);
 	}
