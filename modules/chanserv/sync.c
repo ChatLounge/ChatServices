@@ -16,6 +16,9 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
 
+void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *settingname, const char *setting) = NULL;
+
 static void cs_cmd_sync(sourceinfo_t *si, int parc, char *parv[]);
 
 command_t cs_sync = { "SYNC", "Forces channel statuses to flags.",
@@ -370,7 +373,7 @@ static void cs_cmd_set_nosync(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!strcasecmp("ON", parv[1]))
+	if (!strcasecmp("ON", parv[1]) || !strcasecmp("1", parv[1]) || !strcasecmp("TRUE", parv[1]))
 	{
 		if (MC_NOSYNC & mc->flags)
 		{
@@ -379,13 +382,17 @@ static void cs_cmd_set_nosync(sourceinfo_t *si, int parc, char *parv[])
 		}
 
 		logcommand(si, CMDLOG_SET, "SET:NOSYNC:ON: \2%s\2", mc->name);
+		verbose(mc, _("\2%s\2 enabled the NOSYNC flag."), get_source_name(si));
 
 		mc->flags |= MC_NOSYNC;
 
 		command_success_nodata(si, _("The \2%s\2 flag has been set for channel \2%s\2."), "NOSYNC", mc->name);
+
+		notify_channel_set_change(si, si->smu, mc, "NOSYNC", "ON");
+
 		return;
 	}
-	else if (!strcasecmp("OFF", parv[1]))
+	else if (!strcasecmp("OFF", parv[1]) || !strcasecmp("0", parv[1]) || !strcasecmp("FALSE", parv[1]))
 	{
 		if (!(MC_NOSYNC & mc->flags))
 		{
@@ -394,10 +401,14 @@ static void cs_cmd_set_nosync(sourceinfo_t *si, int parc, char *parv[])
 		}
 
 		logcommand(si, CMDLOG_SET, "SET:NOSYNC:OFF: \2%s\2", mc->name);
+		verbose(mc, _("\2%s\2 disabled the NOSYNC flag."), get_source_name(si));
 
 		mc->flags &= ~MC_NOSYNC;
 
 		command_success_nodata(si, _("The \2%s\2 flag has been removed for channel \2%s\2."), "NOSYNC", mc->name);
+
+		notify_channel_set_change(si, si->smu, mc, "NOSYNC", "OFF");
+
 		return;
 	}
 	else
@@ -411,6 +422,9 @@ void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_set_cmdtree, "chanserv/set_core", "cs_set_cmdtree");
 	service_named_bind_command("chanserv", &cs_sync);
+
+	if (module_request("chanserv/main"))
+		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
 
 	command_add(&cs_set_nosync, *cs_set_cmdtree);
 
