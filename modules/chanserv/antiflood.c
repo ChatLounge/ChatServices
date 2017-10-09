@@ -431,13 +431,14 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 		metadata_delete(mc, METADATA_KEY_ENFORCE_METHOD);
 
 		logcommand(si, CMDLOG_SET, "ANTIFLOOD:NONE: \2%s\2",  mc->name);
+		verbose(mc, _("\2%s\2 disabled the ANTIFLOOD flag."), get_source_name(si));
 		command_success_nodata(si, _("Flood protection turned off for \2%s\2."), mc->name);
 
 		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "OFF");
 
 		return;
 	}
-	else if (!strcasecmp("ON", parv[1]) || !strcasecmp("1", parv[1]) || !strcasecmp("TRUE", parv[1]))
+	else if (!strcasecmp("ON", parv[1]) || !strcasecmp("1", parv[1]) || !strcasecmp("TRUE", parv[1]) || !strcasecmp("DEFAULT", parv[1]))
 	{
 		if (MC_ANTIFLOOD & mc->flags)
 		{
@@ -448,6 +449,7 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 		metadata_delete(mc, METADATA_KEY_ENFORCE_METHOD);
 
 		logcommand(si, CMDLOG_SET, "ANTIFLOOD: %s (%s)",  mc->name, "DEFAULT");
+		verbose(mc, _("\2%s\2 set the ANTIFLOOD flag to: \2%s\2"), get_source_name(si), "DEFAULT");
 		command_success_nodata(si, _("Flood protection turned on for \2%s\2 with default settings."), mc->name);
 
 		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "Default");
@@ -460,6 +462,7 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 		metadata_add(mc, METADATA_KEY_ENFORCE_METHOD, "QUIET");
 
 		logcommand(si, CMDLOG_SET, "ANTIFLOOD: %s (%s)",  mc->name, "QUIET");
+		verbose(mc, _("\2%s\2 set the ANTIFLOOD flag to: \2%s\2"), get_source_name(si), "QUIET");
 		command_success_nodata(si, _("Flood protection turned on for \2%s\2 with \2%s\2 action."), mc->name, "QUIET");
 
 		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "QUIET");
@@ -472,6 +475,7 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 		metadata_add(mc, METADATA_KEY_ENFORCE_METHOD, "KICKBAN");
 
 		logcommand(si, CMDLOG_SET, "ANTIFLOOD: %s (%s)",  mc->name, "KICKBAN");
+		verbose(mc, _("\2%s\2 set the ANTIFLOOD flag to: \2%s\2"), get_source_name(si), "KICKBAN");
 		command_success_nodata(si, _("Flood protection turned on for \2%s\2 with \2%s\2 action."), mc->name, "KICKBAN");
 
 		notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "KICKBAN");
@@ -486,6 +490,7 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 			metadata_add(mc, METADATA_KEY_ENFORCE_METHOD, "AKILL");
 
 			logcommand(si, CMDLOG_SET, "ANTIFLOOD: %s (%s)",  mc->name, "AKILL");
+			verbose(mc, _("\2%s\2 set the ANTIFLOOD flag to: \2%s\2"), get_source_name(si), "AKILL");
 			command_success_nodata(si, _("Flood protection turned on for \2%s\2 with \2%s\2 action."), mc->name, "AKILL");
 
 			notify_channel_set_change(si, si->smu, mc, "ANTIFLOOD", "AKILL");
@@ -497,6 +502,11 @@ cs_set_cmd_antiflood(sourceinfo_t *si, int parc, char *parv[])
 			command_fail(si, fault_noprivs, _("You are not authorized to perform this command."));
 			return;
 		}
+	}
+	else
+	{
+		command_fail(si, fault_badparams, STR_INVALID_PARAMS, "ANTIFLOOD");
+		return;
 	}
 }
 
