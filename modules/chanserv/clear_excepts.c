@@ -29,6 +29,8 @@ mowgli_patricia_t **cs_clear_cmds;
 
 void _modinit(module_t *m)
 {
+	MODULE_CONFLICT(m, "chanserv/clear_bans_any");
+
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_clear_cmds, "chanserv/clear", "cs_clear_cmds");
 
 	command_add(&cs_clear_excepts, *cs_clear_cmds);

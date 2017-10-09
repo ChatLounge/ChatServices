@@ -14,7 +14,7 @@
 
 DECLARE_MODULE_V1
 (
-	"chanserv/clear_bans", false, _modinit, _moddeinit,
+	"chanserv/clear_bans_any", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
@@ -24,12 +24,17 @@ void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NU
 static void cs_cmd_clear_bans(sourceinfo_t *si, int parc, char *parv[]);
 
 command_t cs_clear_bans = { "BANS", N_("Clears bans or other lists of a channel."),
-	AC_NONE, 2, cs_cmd_clear_bans, { .path = "cservice/clear_bans" } };
+	AC_NONE, 2, cs_cmd_clear_bans, { .path = "cservice/clear_bans_any" } };
 
 mowgli_patricia_t **cs_clear_cmds;
 
 void _modinit(module_t *m)
 {
+	MODULE_CONFLICT(m, "chanserv/clear_bans");
+	MODULE_CONFLICT(m, "chanserv/clear_excepts");
+	MODULE_CONFLICT(m, "chanserv/clear_invex");
+	MODULE_CONFLICT(m, "chanserv/clear_quiets");
+
 	MODULE_TRY_REQUEST_SYMBOL(m, cs_clear_cmds, "chanserv/clear", "cs_clear_cmds");
 
 	command_add(&cs_clear_bans, *cs_clear_cmds);
