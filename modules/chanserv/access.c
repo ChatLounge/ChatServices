@@ -967,6 +967,7 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 	const char *role = parv[2];
 	const char *oldtemplate = NULL;
 	const char *newtemplate;
+	char bitmask2flags[54];
 
 	mc = mychan_find(channel);
 	if (!mc)
@@ -1117,25 +1118,26 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 	hook_call_channel_acl_change(&req);
 	chanacs_close(ca);
 
-	command_success_nodata(si, _("\2%s\2 was added to the access list of \2%s\2 with the \2%s\2 role."),
-		target, channel, newtemplate);
-	verbose(mc, "\2%s\2 added \2%s\2 to the access list with the \2%s\2 role.", get_source_name(si), target, newtemplate);
+	mowgli_strlcpy(bitmask2flags, bitmask_to_flags2(addflags, removeflags), 54);
 
-	logcommand(si, CMDLOG_SET, "ACCESS:ADD: \2%s\2 on \2%s\2 as \2%s\2", target, mc->name, newtemplate);
-
-	if (isuser(mt))
+	if (strcmp(bitmask2flags, ""))
 	{
-		myuser_t *tmu = myuser_find(mt->name);
-		//unsigned int addflags = newflags;
-		//unsigned int removeflags = ca_all & ~addflags;
-		//addflags &= ~oldflags;
-		//removeflags &= oldflags & ~addflags;
+		command_success_nodata(si, _("\2%s\2 was added to the access list of \2%s\2 with the \2%s\2 role."),
+			target, channel, newtemplate);
+		verbose(mc, "\2%s\2 added \2%s\2 to the access list with the \2%s\2 role.", get_source_name(si), target, newtemplate);
 
-		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sign. -> 54
-		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
-		notify_channel_acl_change(si, tmu, mc, flagstr, newflags);
-		notify_target_acl_change(si, tmu, mc, flagstr, newflags);
+		logcommand(si, CMDLOG_SET, "ACCESS:ADD: \2%s\2 on \2%s\2 as \2%s\2", target, mc->name, newtemplate);
+
+		if (isuser(mt))
+		{
+			myuser_t *tmu = myuser_find(mt->name);
+
+			notify_channel_acl_change(si, tmu, mc, bitmask2flags, newflags);
+			notify_target_acl_change(si, tmu, mc, bitmask2flags, newflags);
+		}
 	}
+	else
+		command_fail(si, fault_nochange, _("Channel access to \2%s\2 for \2%s\2 unchanged."), channel, target);
 }
 
 /*
@@ -1157,6 +1159,7 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 	const char *target = parv[1];
 	const char *role = parv[2];
 	const char *oldtemplate, *newtemplate;
+	char bitmask2flags[54];
 
 	mc = mychan_find(channel);
 	if (!mc)
@@ -1298,31 +1301,32 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 
 	newtemplate = get_template_name(mc, newflags);
 
-	if (oldflags == 0)
-		command_success_nodata(si, _("\2%s\2 now has the \2%s\2 role on: \2%s\2"), target, newtemplate, channel);
-	else
-		command_success_nodata(si, _("\2%s\2 has been moved from the \2%s\2 role to the \2%s\2 role on: \2%s\2"), target,
-			oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate, channel);
+	mowgli_strlcpy(bitmask2flags, bitmask_to_flags2(addflags, removeflags), 54);
 
-	verbose(mc, "\2%s\2 changed the access list role for \2%s\2 from \2%s\2 to \2%s\2.", get_source_name(si), target,
-		oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate);
-
-	logcommand(si, CMDLOG_SET, "ACCESS:SET: \2%s\2 on \2%s\2 from \2%s\2 to \2%s\2", target, mc->name,
-		oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate);
-
-	if (isuser(mt))
+	if (strcmp(bitmask2flags, ""))
 	{
-		myuser_t *tmu = myuser_find(mt->name);
-		//unsigned int addflags = newflags;
-		//unsigned int removeflags = ca_all & ~addflags;
-		//addflags &= ~oldflags;
-		//removeflags &= oldflags & ~addflags;
+		if (oldflags == 0)
+			command_success_nodata(si, _("\2%s\2 now has the \2%s\2 role on: \2%s\2"), target, newtemplate, channel);
+		else
+			command_success_nodata(si, _("\2%s\2 has been moved from the \2%s\2 role to the \2%s\2 role on: \2%s\2"), target,
+				oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate, channel);
 
-		char flagstr[54]; // 26 characters, * 2 for upper and lower case, then add a potential plus and minus sign. -> 54
-		mowgli_strlcpy(flagstr, bitmask_to_flags2(addflags, removeflags), 54);
-		notify_channel_acl_change(si, tmu, mc, flagstr, newflags);
-		notify_target_acl_change(si, tmu, mc, flagstr, newflags);
+		verbose(mc, "\2%s\2 changed the access list role for \2%s\2 from \2%s\2 to \2%s\2.", get_source_name(si), target,
+			oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate);
+
+		logcommand(si, CMDLOG_SET, "ACCESS:SET: \2%s\2 on \2%s\2 from \2%s\2 to \2%s\2", target, mc->name,
+			oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate);
+
+		if (isuser(mt))
+		{
+			myuser_t *tmu = myuser_find(mt->name);
+
+			notify_channel_acl_change(si, tmu, mc, bitmask2flags, newflags);
+			notify_target_acl_change(si, tmu, mc, bitmask2flags, newflags);
+		}
 	}
+	else
+		command_fail(si, fault_nochange, _("Channel access to \2%s\2 for \2%s\2 unchanged."), channel, target);
 }
 
 /*
