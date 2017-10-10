@@ -92,41 +92,155 @@ Syntax: FLAGS <#channel> [nickname|hostmask|group template]
 Syntax: FLAGS <#channel> [nickname|hostmask|group flag_changes]
 
 Permissions:
-    +v - Enables use of the voice/devoice commands.
-    +V - Enables automatic voice.
-#if halfops
-    +h - Enables use of the halfop/dehalfop commands.
-    +H - Enables automatic halfop.
+#if module chanserv/voice
+    +v - Enables use of the DEVOICE and VOICE commands.
+#else
+    +v - This flag is useless.  Consider asking network staff to load chanserv/voice.
 #endif
-    +o - Enables use of the op/deop commands.
-    +O - Enables automatic op.
+    +V - Enables automatic voice on join.
+#if halfops
+#if module chanserv/halfop
+    +h - Enables use of the DEHALFOP and HALFOP commands.
+#else
+    +h - This flag is useless.  Consider asking network staff to load chanserv/halfop.
+#endif
+    +H - Enables automatic halfop on join.
+#endif
+#if module chanserv/op
+    +o - Enables use of the DEOP and OP commands.
+#else
+    +o - This flag is useless.  Consider asking network staff to load chanserv/op.
+#endif
+    +O - Enables automatic op on join.
 #if protect
-    +a - Enables use of the protect/deprotect commands.
+#if module chanserv/protect
+    +a - Enables use of the DEPROTECT and PROTECT commands.
+#else
+    +a - Used in conjunction with +O, grants protect channel status on join.
+#endif
 #endif
 #if owner
-    +q - Enables use of the owner/deowner commands.
+#if module chanserv/owner
+    +q - Enables use of the DEOWNER and OWNER commands.
+#else
+    +q - Used on conjunction with +O, grants owner channel status on join.
 #endif
-    +s - Enables use of the set command.
-    +i - Enables use of the invite and getkey commands.
+#endif
+#if module chanserv/set_core
+    +s - Enables use of the SET commands.
+#endif
+#if module chanserv/invite
+#if module chanserv/getkey
+    +i - Enables use of the GETKEY and INVITE commands.
+#else
+    +i - Enables use of the INVITE command.
+#endif
+#else
+#if module chanserv/getkey
+    +i - Enables use of the GETKEY command.
+#else
+    +i - This flag is useless.  Consider asking network staff to load chanserv/invite.
+#endif
+#endif
+#if module chanserv/ban
 #if module chanserv/kick
-    +r - Enables use of the kick, kickban, ban and unban commands.
+#if module chanserv/quiet
+    +r - Enables use of the BAN, KICK, KICKBAN, QUIET, UNBAN, and UNQUIET commands.
 #else
-#if !module chanserv/unban_self
-    +r - Enables use of the ban and unban commands.
+    +r - Enables use of the BAN, KICK, KICKBAN, and UNBAN commands.
+#endif
 #else
-    +r - Enables use of the unban command.
+#if module chanserv/quiet
+    +r - Enables use of the BAN, QUIET, UNBAN, and UNQUIET commands.
+#else //1DD. chanserv/quiet not loaded
+    +r - Enables use of the BAN and UNBAN commands.
 #endif
 #endif
-    +R - Enables use of the recover, sync and clear commands.
+#else
+#if module chanserv/unban_self
+#if module chanserv/kick
+#if module chanserv/quiet
+    +r - Enables use of the KICK, KICKBAN, QUIET, UNBAN, and UNQUIET commands.
+#else
+    +r - Enables use of the BAN, KICK, KICKBAN, and UNBAN commands.
+#endif
+#else 2D. chanserv/kick not loaded
+#if module chanserv/quiet
+    +r - Enables use of the QUIET, UNBAN, and UNQUIET commands.
+#else
+    +r - Enables use of the UNBAN command.
+#endif
+#endif
+#else
+#if module chanserv/kick
+#if module chanserv/quiet
+    +r - Enables use of the KICK, KICKBAN, QUIET, and UNQUIET commands.
+#else
+    +r - Enables use of the KICK and KICKBAN commands.
+#endif
+#else
+#if module chanserv/quiet
+    +r - Enables use of the QUIET and UNQUIET commands.
+#else
+    +r - This flag is useless.  Please notify staff or the services sponsor immediately in order to correct this epic fail by loading the correct modules.  At least chanserv/unban_self is recommended.  If staff fail to comply, you should probably think twice before putting any faith in them.
+#endif
+#endif
+#endif
+#endif
+#if module chanserv/recover
+#if module chanserv/sync
+#if module chanserv/clear
+    +R - Enables use of the RECOVER, SYNC and CLEAR commands.
+#else
+    +R - Enables use of the RECOVER and SYNC commands.
+#endif
+#else
+#if module chanserv/clear
+    +R - Enables use of the RECOVER and CLEAR commands.
+#else
+    +R - Enables use of the RECOVER command.
+#endif
+#endif
+#else
+#if module chanserv/sync
+#if module chanserv/clear
+    +R - Enables use of the SYNC and CLEAR commands.
+#else
+    +R - Enables use of the CLEAR command.
+#endif
+#else
+#if module chanserv/clear
+    +R - Enables use of the CLEAR commands.
+#else
+    +R - This flag is useless.  Consider asking network staff to load chanserv/recover.
+#endif
+#endif
+#endif
     +f - Enables modification of channel access lists.
-    +t - Enables use of the topic and topicappend commands.
+#if module chanserv/topic
+    +t - Enables use of the TOPIC, TOPICAPPEND, TOPICPREPEND, and TOPICSWAP commands.
+#else
+    +t - Permits changing the topic of the channel in spite of the TOPICLOCK setting.
+#endif
+#if module chanserv/set_pubacl
+    +A - Enables viewing of channel access lists without the PUBACL setting.
+#else
     +A - Enables viewing of channel access lists.
+#endif
 #if module chanserv/successor_acl
     +S - Marks the user as a successor.
 #endif
     +F - Grants full founder access.
     +b - Enables automatic kickban.
-    +e - Exempts from +b and enables unbanning self.
+#if module chanserv/ban
+    +e - Exempts from +b and enables unbanning self with UNBAN.
+#else
+#if module chanserv/unban_self
+    +e - Exempts from +b and enables unbanning self with UNBAN.
+#else
+    +e - Exempts from +b.
+#endif
+#endif
 
 #if module chanserv/successor_acl
 The special permission +* adds all permissions except +b, +S, and +F.
