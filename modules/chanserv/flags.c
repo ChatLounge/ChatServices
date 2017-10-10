@@ -467,7 +467,7 @@ selfautomode:
 
 		hook_call_channel_acl_change(&req);
 
-		if (isuser(mt))
+		if (isuser(mt) && (addflags | removeflags) != 0)
 		{
 			myuser_t *tmu = myuser_find(target);
 
