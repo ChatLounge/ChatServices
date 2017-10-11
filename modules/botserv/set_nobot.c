@@ -68,7 +68,7 @@ static void bs_cmd_set_nobot(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!irccasecmp(option, "ON"))
+	if (!irccasecmp(option, "ON") || !irccasecmp(option, "1") || !irccasecmp(option, "TRUE"))
 	{
 		metadata_add(mc, "private:botserv:no-bot", "ON");
 		if ((md = metadata_find(mc, "private:botserv:bot-assigned")) != NULL)
@@ -85,7 +85,7 @@ static void bs_cmd_set_nobot(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_SET, "SET:NOBOT:ON: \2%s\2", mc->name);
 		command_success_nodata(si, _("No Bot mode is now \2ON\2 on channel %s."), mc->name);
 	}
-	else if(!irccasecmp(option, "OFF"))
+	else if(!irccasecmp(option, "OFF") || !irccasecmp(option, "0") || !irccasecmp(option, "FALSE"))
 	{
 		metadata_delete(mc, "private:botserv:no-bot");
 		logcommand(si, CMDLOG_SET, "SET:NOBOT:OFF: \2%s\2", mc->name);

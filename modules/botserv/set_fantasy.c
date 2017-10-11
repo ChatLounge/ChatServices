@@ -77,7 +77,7 @@ static void bs_cmd_set_fantasy(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!irccasecmp(option, "ON"))
+	if (!irccasecmp(option, "ON") || !irccasecmp(option, "1") || !irccasecmp(option, "TRUE"))
 	{
 		if ((md = metadata_find(mc, "private:botserv:bot-assigned")) != NULL)
 			metadata_add(mc, "private:botserv:bot-handle-fantasy", md->value);
@@ -86,7 +86,7 @@ static void bs_cmd_set_fantasy(sourceinfo_t *si, int parc, char *parv[])
 
 		command_success_nodata(si, _("Fantasy mode is now \2ON\2 on channel %s."), mc->name);
 	}
-	else if(!irccasecmp(option, "OFF"))
+	else if(!irccasecmp(option, "OFF") || !irccasecmp(option, "0") || !irccasecmp(option, "FALSE"))
 	{
 		metadata_delete(mc, "private:botserv:bot-handle-fantasy");
 		logcommand(si, CMDLOG_SET, "SET:FANTASY:OFF: \2%s\2", mc->name);

@@ -73,13 +73,13 @@ static void bs_cmd_set_private(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	if (!irccasecmp(option, "ON"))
+	if (!irccasecmp(option, "ON") || !irccasecmp(option, "1") || !irccasecmp(option, "TRUE"))
 	{
 		bot->private = true;
 		logcommand(si, CMDLOG_SET, "SET:PRIVATE:ON: \2%s\2", bot->nick);
 		command_success_nodata(si, _("Private mode of bot %s is now \2ON\2."), bot->nick);
 	}
-	else if(!irccasecmp(option, "OFF"))
+	else if(!irccasecmp(option, "OFF") || !irccasecmp(option, "0") || !irccasecmp(option, "FALSE"))
 	{
 		bot->private = false;
 		logcommand(si, CMDLOG_SET, "SET:PRIVATE:OFF: \2%s\2", bot->nick);
