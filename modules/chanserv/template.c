@@ -428,7 +428,7 @@ static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 			logcommand(si, CMDLOG_SET, "TEMPLATE: \2%s\2 \2%s\2 !\2%s\2 (\2%d\2 changes)", mc->name, target, flagstr, changes);
 			mowgli_strlcpy(flagstr2, flagstr, sizeof flagstr2);
 			if (changes > 0)
-				verbose(mc, "\2%s\2 set \2%s\2 on %d access entr%s with flags \2%s\2.", get_source_name(si),
+				verbose(mc, _("\2%s\2 set \2%s\2 on %d access entr%s with flags \2%s\2."), get_source_name(si),
 					flagstr2, changes, changes == 1 ? "y" : "ies",bitmask_to_flags(oldflags));
 			command_success_nodata(si, _("%d access entr%s updated accordingly."), changes, changes == 1 ? "y" : "ies");
 			if (founderskipped)

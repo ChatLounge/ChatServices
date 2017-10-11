@@ -928,7 +928,7 @@ static void cs_cmd_access_del(sourceinfo_t *si, int parc, char *parv[])
 	chanacs_close(ca);
 
 	command_success_nodata(si, _("\2%s\2 was removed from the access list of \2%s\2 (had role: \2%s\2)."), target, channel, role);
-	verbose(mc, "\2%s\2 deleted \2%s\2 from the access list (had role: \2%s\2).", get_source_name(si), target, role);
+	verbose(mc, _("\2%s\2 deleted \2%s\2 from the access list (had role: \2%s\2)."), get_source_name(si), target, role);
 
 	logcommand(si, CMDLOG_SET, "ACCESS:DEL: \2%s\2 from \2%s\2 (had role: \2%s\2)", target, mc->name, role);
 
@@ -1124,7 +1124,7 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 	{
 		command_success_nodata(si, _("\2%s\2 was added to the access list of \2%s\2 with the \2%s\2 role."),
 			target, channel, newtemplate);
-		verbose(mc, "\2%s\2 added \2%s\2 to the access list with the \2%s\2 role.", get_source_name(si), target, newtemplate);
+		verbose(mc, _("\2%s\2 added \2%s\2 to the access list with the \2%s\2 role."), get_source_name(si), target, newtemplate);
 
 		logcommand(si, CMDLOG_SET, "ACCESS:ADD: \2%s\2 on \2%s\2 as \2%s\2", target, mc->name, newtemplate);
 
@@ -1311,7 +1311,7 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 			command_success_nodata(si, _("\2%s\2 has been moved from the \2%s\2 role to the \2%s\2 role on: \2%s\2"), target,
 				oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate, channel);
 
-		verbose(mc, "\2%s\2 changed the access list role for \2%s\2 from \2%s\2 to \2%s\2.", get_source_name(si), target,
+		verbose(mc, _("\2%s\2 changed the access list role for \2%s\2 from \2%s\2 to \2%s\2."), get_source_name(si), target,
 			oldtemplate == NULL ? "<Custom>" : oldtemplate, newtemplate);
 
 		logcommand(si, CMDLOG_SET, "ACCESS:SET: \2%s\2 on \2%s\2 from \2%s\2 to \2%s\2", target, mc->name,

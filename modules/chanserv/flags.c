@@ -561,18 +561,18 @@ selfautomode:
 	if (oldtemplate == NULL)
 	{
 		if (newtemplate == NULL)
-			verbose(mc, "\2%s\2 set flags \2%s\2 on: \2%s\2", get_source_name(si), flagstr, target);
+			verbose(mc, _("\2%s\2 set flags \2%s\2 on: \2%s\2"), get_source_name(si), flagstr, target);
 		else
-			verbose(mc, "\2%s\2 set flags \2%s\2 (New template: \2%s\2) on: \2%s\2",
+			verbose(mc, _("\2%s\2 set flags \2%s\2 (New template: \2%s\2) on: \2%s\2"),
 				get_source_name(si), flagstr, newtemplate, target);
 	}
 	else
 	{
 		if (newtemplate == NULL)
-			verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2) on: \2%s\2",
+			verbose(mc, _("\2%s\2 set flags \2%s\2 (Old template: \2%s\2) on: \2%s\2"),
 				get_source_name(si), flagstr, oldtemplate, target);
 		else
-			verbose(mc, "\2%s\2 set flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) on: \2%s\2",
+			verbose(mc, _("\2%s\2 set flags \2%s\2 (Old template: \2%s\2 New template: \2%s\2) on: \2%s\2"),
 				get_source_name(si), flagstr, oldtemplate, newtemplate, target);
 	}
 

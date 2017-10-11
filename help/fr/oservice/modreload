@@ -1,6 +1,6 @@
-Aide pour ^BMODRELOAD^B:
+Aide pour MODRELOAD:
 
-MODRELOAD recharge un module actuellement chargé. Si la commande
+MODRELOAD recharge un module actuellement chargé.  Si la commande
 échoue, le module en question sera déchargé jusqu'à ce que les
 erreurs soient corrigées.
 

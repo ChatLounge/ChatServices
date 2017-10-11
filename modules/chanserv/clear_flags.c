@@ -116,8 +116,8 @@ static void cs_cmd_clear_flags(sourceinfo_t *si, int parc, char *parv[])
 	logcommand(si, CMDLOG_DO, "CLEAR:FLAGS: \2%s\2", mc->name);
 	command_success_nodata(si, _("Cleared flags in: \2%s\2"), mc->name);
 	if (changes > 0)
-		verbose(mc, "\2%s\2 removed all %d non-founder access entries.",
-				get_source_name(si), changes);
+		verbose(mc, "\2%s\2 cleared the FLAGS list, removing %d non-founder access entr%s.",
+				get_source_name(si), changes, changes == 1 ? "y" : "ies");
 
 	if (module_locate_symbol("chanserv/history", "add_history_entry"))
 	{
