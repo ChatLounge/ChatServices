@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Enable fantasy commands.
@@ -14,7 +16,7 @@ DECLARE_MODULE_V1
 (
 	"botserv/set_fantasy", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	"ChatLounge IRC Network Development Team <https://www.chatlounge.net>"
 );
 
 mowgli_patricia_t **bs_set_cmdtree;

@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2016 Austin Ellis
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Enable say/act caller ID.
@@ -13,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"botserv/set_saycaller", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group"
+	"ChatLounge IRC Network Development Team <https://www.chatlounge.net>"
 );
 
 mowgli_patricia_t **bs_set_cmdtree;
