@@ -228,6 +228,14 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		strcat(buf, "ANTIFLOOD");
 	}
 
+	if (metadata_find(mc, "private:botserv:no-bot"))
+	{
+		if (*buf)
+			strcat(buf, " ");
+
+		strcat(buf, "NOBOT");
+	}
+
 	if (MC_NOSYNC & mc->flags)
 	{
 		if (*buf)
@@ -258,6 +266,14 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 			strcat(buf, " ");
 
 		strcat(buf, "PRIVATE");
+	}
+
+	if (metadata_find(mc, "private:botserv:saycaller"))
+	{
+		if (*buf)
+			strcat(buf, " ");
+
+		strcat(buf, "SAYCALLER");
 	}
 
 	if (use_limitflags && MC_LIMITFLAGS & mc->flags)
