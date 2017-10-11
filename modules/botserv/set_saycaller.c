@@ -18,6 +18,9 @@ DECLARE_MODULE_V1
 	"ChatLounge IRC Network Development Team <https://www.chatlounge.net>"
 );
 
+void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
+	const char *settingname, const char *setting) = NULL;
+
 mowgli_patricia_t **bs_set_cmdtree;
 
 static void bs_cmd_set_saycaller(sourceinfo_t *si, int parc, char *parv[]);
@@ -28,8 +31,10 @@ void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, bs_set_cmdtree, "botserv/set_core", "bs_set_cmdtree");
 
-	command_add(&bs_set_saycaller, *bs_set_cmdtree);
+	if (module_request("chanserv/main"))
+		notify_channel_set_change = module_locate_symbol("chanserv/main", "notify_channel_set_change");
 
+	command_add(&bs_set_saycaller, *bs_set_cmdtree);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -74,17 +79,40 @@ static void bs_cmd_set_saycaller(sourceinfo_t *si, int parc, char *parv[])
 	if (!irccasecmp(option, "ON") || !irccasecmp(option, "1") || !irccasecmp(option, "TRUE"))
 	{
 		if ((md = metadata_find(mc, "private:botserv:bot-assigned")) != NULL)
-			metadata_add(mc, "private:botserv:saycaller", md->value);
+		{
+			if (metadata_find(mc, "private:botserv:saycaller"))
+			{
+				command_fail(si, fault_nochange, _("The \2%s\2 flag is already set for channel: \2%s\2"), "SAYCALLER", mc->name);
+				return;
+			}
+			else
+				metadata_add(mc, "private:botserv:saycaller", "ON");
+		}
+		else
+		{
+			command_fail(si, fault_noprivs, _("The channel \2%s\2 does not have a bot assigned to it.  You may not enable this option until you assign a bot to the channel."));
+			return;
+		}
 
 		logcommand(si, CMDLOG_SET, "SET:SAYCALLER:ON: \2%s\2", mc->name);
-
+		verbose(mc, _("\2%s\2 enabled the SAYCALLER flag."), get_source_name(si));
 		command_success_nodata(si, _("Say Caller is now \2ON\2 on channel %s."), mc->name);
+
+		notify_channel_set_change(si, si->smu, mc, "SAYCALLER", "ON");
 	}
 	else if(!irccasecmp(option, "OFF") || !irccasecmp(option, "0") || !irccasecmp(option, "FALSE"))
 	{
+		if (!metadata_find(mc, "private:botserv:saycaller"))
+		{
+			command_fail(si, fault_nochange, _("The \2%s\2 flag is not set for channel: \2%s\2"), "SAYCALLER", mc->name);
+			return;
+		}
+
 		metadata_delete(mc, "private:botserv:saycaller");
 		logcommand(si, CMDLOG_SET, "SET:SAYCALLER:OFF: \2%s\2", mc->name);
 		command_success_nodata(si, _("Say Caller is now \2OFF\2 on channel %s."), mc->name);
+		verbose(mc, _("\2%s\2 disabled the SAYCALLER flag."), get_source_name(si));
+		notify_channel_set_change(si, si->smu, mc, "SAYCALLER", "OFF");
 	}
 	else
 	{
