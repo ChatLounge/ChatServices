@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2016 Austin Ellis
  * Copyright (c) 2009 Celestin, et al.
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -38,6 +39,7 @@ static void bs_cmd_say(sourceinfo_t *si, int parc, char *parv[])
 {
 	char *channel = parv[0];
 	char *message = parv[1];
+	char saybuf[BUFSIZE];
 	metadata_t *bs;
 	user_t *bot;
 
@@ -69,6 +71,12 @@ static void bs_cmd_say(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
+	if (metadata_find(mc, "private:frozen:freezer"))
+	{
+		command_fail(si, fault_noprivs, _("\2%s\2 is frozen."), mc->name);
+		return;
+	}
+
 	if ((bs = metadata_find(mc, "private:botserv:bot-assigned")) != NULL)
 		bot = user_find_named(bs->value);
 	else
@@ -79,14 +87,24 @@ static void bs_cmd_say(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
-	msg(bot->nick, channel, "%s", message);
-	logcommand(si, CMDLOG_DO, "SAY:\2%s\2: \2%s\2", channel, message);
+	if (metadata_find(mc, "private:botserv:saycaller"))
+	{
+		snprintf(saybuf, BUFSIZE, "%s", get_source_name(si));
+		msg(bot->nick, channel, "(%s) %s", saybuf, message);
+		logcommand(si, CMDLOG_DO, "SAY:\2%s\2: \2%s\2", channel, message);
+	}
+	else 
+	{
+		msg(bot->nick, channel, "%s", message);
+		logcommand(si, CMDLOG_DO, "SAY:\2%s\2: \2%s\2", channel, message);
+	}
 }
 
 static void bs_cmd_act(sourceinfo_t *si, int parc, char *parv[])
 {
 	char *channel = parv[0];
 	char *message = parv[1];
+	char actbuf[BUFSIZE];
 	metadata_t *bs;
 	user_t *bot;
 
@@ -118,6 +136,12 @@ static void bs_cmd_act(sourceinfo_t *si, int parc, char *parv[])
 		return;
 	}
 
+	if (metadata_find(mc, "private:frozen:freezer"))
+	{
+		command_fail(si, fault_noprivs, _("\2%s\2 is frozen."), mc->name);
+		return;
+	}
+
 	if ((bs = metadata_find(mc, "private:botserv:bot-assigned")) != NULL)
 		bot = user_find_named(bs->value);
 	else
@@ -127,9 +151,17 @@ static void bs_cmd_act(sourceinfo_t *si, int parc, char *parv[])
 		command_fail(si, fault_nosuch_key, _("\2%s\2 does not have a bot assigned."), mc->name);
 		return;
 	}
-
-	msg(bot->nick, channel, "\001ACTION %s\001", message);
-	logcommand(si, CMDLOG_DO, "ACT:\2%s\2: \2%s\2", channel, message);
+	if (metadata_find(mc, "private:botserv:saycaller"))
+	{
+		snprintf(actbuf, BUFSIZE, "%s", get_source_name(si));
+		msg(bot->nick, channel, "\001ACTION (%s) %s\001", actbuf, message);
+		logcommand(si, CMDLOG_DO, "ACT:\2%s\2: \2%s\2", channel, message);
+	}
+	else
+	{
+		msg(bot->nick, channel, "\001ACTION %s\001", message);
+		logcommand(si, CMDLOG_DO, "ACT:\2%s\2: \2%s\2", channel, message);
+	}
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
