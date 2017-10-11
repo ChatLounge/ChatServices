@@ -90,7 +90,7 @@ static void bs_cmd_set_saycaller(sourceinfo_t *si, int parc, char *parv[])
 		}
 		else
 		{
-			command_fail(si, fault_noprivs, _("The channel \2%s\2 does not have a bot assigned to it.  You may not enable this option until you assign a bot to the channel."));
+			command_fail(si, fault_noprivs, _("The channel \2%s\2 does not have a bot assigned to it.  You may not enable this option until you assign a bot to the channel."), mc->name);
 			return;
 		}
 
