@@ -42,7 +42,7 @@ ircd_t Charybdis = {
 	"+",                            /* Mode we set for halfops. */
 	PROTOCOL_CHARYBDIS,             /* Protocol type */
 	CMODE_PERM,                     /* Permanent cmodes */
-	0,                              /* Oper-immune cmode */
+	CMODE_IMMUNE,                   /* Oper-immune cmode */
 	"beIq",                         /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
