@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2009 Celestin, et al.
+ *
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file contains a BService INFO which can show
@@ -116,6 +118,11 @@ static void bs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 		if (metadata_find(mc, "private:botserv:no-bot"))
 		{
 			end += snprintf(end, sizeof(buf) - (end - buf), "%s%s", (comma) ? ", " : "", "No bot");
+			comma = 1;
+		}
+		if (metadata_find(mc, "private:botserv:saycaller"))
+		{
+			end += snprintf(end, sizeof(buf) - (end - buf), "%s%s", (comma) ? ", " : "", "Say caller");
 			comma = 1;
 		}
 		command_success_nodata(si, _("          Options : %s"), (*buf) ? buf : "None");
