@@ -27,6 +27,10 @@ void _modinit(module_t *m)
 {
 	MODULE_CONFLICT(m, "nickserv/sendpass")
 	MODULE_TRY_REQUEST_DEPENDENCY(m, "nickserv/setpass");
+	/* While nickserv/set_password isn't technically required for this
+	 * module to work, it simply doesn't make sense to load this without
+	 * nickserv/set_password as well. */
+	MODULE_TRY_REQUEST_DEPENDENCY(m, "nickserv/set_password");
 
 	if (module_request("nickserv/main"))
 		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
@@ -116,7 +120,10 @@ static void ns_cmd_sendpass(sourceinfo_t *si, int parc, char *parv[])
 
 	if (MOWGLI_LIST_LENGTH(&mu->logins) > 0)
 	{
-		command_fail(si, fault_noprivs, _("This operation cannot be performed on %s, because someone is logged in to it."), entity(mu)->name);
+		if (si->smu == mu)
+			command_fail(si, fault_already_authed, _("You are logged in and can change your password using the SET PASSWORD command.  The password key has not been sent."));
+		else
+			command_fail(si, fault_noprivs, _("This operation cannot be performed on %s because someone is logged in to this account."), entity(mu)->name);
 		return;
 	}
 
