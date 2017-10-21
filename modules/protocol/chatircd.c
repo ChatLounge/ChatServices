@@ -285,11 +285,6 @@ static mowgli_node_t *chatircd_next_matching_ban(channel_t *c, user_t *u, int ty
 						continue;
 					matched = !match(p, u->gecos);
 					break;
-				case 's':
-					if (p == NULL)
-						continue;
-					matched = !match(p, u->server->name);
-					break;
 				case 'u':
 					if (p == NULL)
 						continue;
@@ -330,9 +325,9 @@ static void chatircd_notice_channel_sts(user_t *from, channel_t *target, const c
 static bool chatircd_is_extban(const char *mask)
 {
 	const char without_param[] = "oza";
-	const char with_param[] = "ajcxr";
+	const char with_param[] = "ajcxru";
 	const size_t mask_len = strlen(mask);
-	unsigned char offset = 0;
+	unsigned int offset = 0;
 
 	if ((mask_len < 2 || mask[0] != '$'))
 		return NULL;
