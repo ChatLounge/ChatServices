@@ -9,13 +9,20 @@ modules/botserv/set_core.c
 modules/botserv/set_fantasy.c
 modules/botserv/set_nobot.c
 modules/botserv/set_private.c
+modules/botserv/set_saycaller.c
 modules/chanfix/fix.c
 modules/chanserv/access.c
 modules/chanserv/akick.c
+modules/chanserv/antiflood.c
 modules/chanserv/ban.c
-modules/chanserv/clear_bans.c
 modules/chanserv/clear.c
+modules/chanserv/clear_akicks.c
+modules/chanserv/clear_bans.c
+modules/chanserv/clear_bans_any.c
+modules/chanserv/clear_excepts.c
 modules/chanserv/clear_flags.c
+modules/chanserv/clear_invex.c
+modules/chanserv/clear_quiets.c
 modules/chanserv/clear_users.c
 modules/chanserv/clone.c
 modules/chanserv/close.c
@@ -27,6 +34,7 @@ modules/chanserv/ftransfer.c
 modules/chanserv/getkey.c
 modules/chanserv/halfop.c
 modules/chanserv/help.c
+modules/chanserv/history.c
 modules/chanserv/hold.c
 modules/chanserv/info.c
 modules/chanserv/invite.c
@@ -53,6 +61,7 @@ modules/chanserv/set_mlock.c
 modules/chanserv/set_prefix.c
 modules/chanserv/set_private.c
 modules/chanserv/set_property.c
+modules/chanserv/set_pubacl.c
 modules/chanserv/set_restricted.c
 modules/chanserv/set_secure.c
 modules/chanserv/set_topiclock.c
@@ -67,7 +76,7 @@ modules/chanserv/unban_self.c
 modules/chanserv/version.c
 modules/chanserv/voice.c
 modules/chanserv/why.c
-modules/chanserv/xop.c
+modules/chanserv/xop_manager.c
 modules/contrib/cs_access_alias.c
 modules/contrib/cs_badwords.c
 modules/contrib/cs_fregister.c
@@ -79,8 +88,10 @@ modules/contrib/ms_fsend.c
 modules/contrib/ns_fenforce.c
 modules/contrib/ns_forbid.c
 modules/contrib/ns_generatehash.c
+modules/contrib/ns_goodmail.c
 modules/contrib/ns_guestnoreg.c
 modules/contrib/ns_listlogins.c
+modules/contrib/ns_sendpassmail.c
 modules/contrib/ns_waitreg.c
 modules/contrib/os_defcon.c
 modules/contrib/os_helpme.c
@@ -119,6 +130,7 @@ modules/groupserv/set.c
 modules/groupserv/set_channel.c
 modules/groupserv/set_description.c
 modules/groupserv/set_email.c
+modules/groupserv/set_groupname.c
 modules/groupserv/set_joinflags.c
 modules/groupserv/set_open.c
 modules/groupserv/set_public.c
@@ -127,6 +139,7 @@ modules/helpserv/helpme.c
 modules/helpserv/main.c
 modules/helpserv/services.c
 modules/helpserv/ticket.c
+modules/hostserv/drop.c
 modules/hostserv/group.c
 modules/hostserv/help.c
 modules/hostserv/offer.c
@@ -167,6 +180,7 @@ modules/nickserv/listownmail.c
 modules/nickserv/logout.c
 modules/nickserv/main.c
 modules/nickserv/mark.c
+modules/nickserv/multimark.c
 modules/nickserv/register.c
 modules/nickserv/regnolimit.c
 modules/nickserv/resetpass.c
@@ -184,6 +198,7 @@ modules/nickserv/set_language.c
 modules/nickserv/set_nevergroup.c
 modules/nickserv/set_neverop.c
 modules/nickserv/set_nogreet.c
+modules/nickserv/set_nopassword.c
 modules/nickserv/set_nomemo.c
 modules/nickserv/set_noop.c
 modules/nickserv/setpass.c
@@ -191,6 +206,7 @@ modules/nickserv/set_password.c
 modules/nickserv/set_private.c
 modules/nickserv/set_privmsg.c
 modules/nickserv/set_property.c
+modules/nickserv/set_pubkey.c
 modules/nickserv/set_quietchg.c
 modules/nickserv/status.c
 modules/nickserv/taxonomy.c
