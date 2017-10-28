@@ -89,8 +89,8 @@ static int mech_step(sasl_session_t *p, char *message, size_t len, char **out, s
 	if (mu->flags & MU_NOPASSWORD)
 		return ASASL_FAIL;
 
-	p->username = strdup(authc);
-	p->authzid = strdup(authz);
+	p->username = sstrdup(authc);
+	p->authzid = sstrdup(authz);
 
 	if (verify_password(mu, pass))
 		return ASASL_DONE;

@@ -1,22 +1,21 @@
-# Translation for Atheme IRC Services.
-# Copyright (C) 2004 - 2011 Atheme
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ChatLounge
 # This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-# Translators:
-#   <m@sr.dk>, 2011.
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Atheme IRC Services\n"
+"Project-Id-Version: ChatServices 1.0.0-dev\n"
 "Report-Msgid-Bugs-To: https://github.com/ChatLounge/ChatServices/issues\n"
 "POT-Creation-Date: 2017-10-28 00:26-0500\n"
-"PO-Revision-Date: 2011-11-17 23:38+0000\n"
-"Last-Translator: mickeyunagee <m@sr.dk>\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: da\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: modules/alis/main.c:273 modules/botserv/bottalk.c:70
 #: modules/botserv/bottalk.c:135 modules/botserv/info.c:130
@@ -62,7 +61,7 @@ msgstr ""
 #: modules/nickserv/sendpass_user.c:72 modules/operserv/soper.c:65
 #: modules/rpgserv/set.c:184
 msgid "You are not authorized to perform this operation."
-msgstr "Du har ikke tilladelser til denne operation."
+msgstr ""
 
 #: modules/alis/main.c:468 modules/botserv/help.c:39
 #: modules/botserv/set_core.c:47 modules/chanfix/fix.c:606
@@ -79,7 +78,7 @@ msgstr "Du har ikke tilladelser til denne operation."
 #: modules/statserv/main.c:42
 #, c-format
 msgid "***** %s Help *****"
-msgstr "***** %s Hjaelp *****"
+msgstr ""
 
 #: modules/alis/main.c:469
 #, c-format
@@ -87,8 +86,6 @@ msgid ""
 "%s allows searching for channels with more\n"
 "flexibility than the /list command."
 msgstr ""
-"%s tillader dig at soege for kanaler med mere flexibilitet end /list "
-"kommandoen."
 
 #: modules/alis/main.c:473 modules/botserv/help.c:42 modules/chanfix/fix.c:609
 #: modules/chanserv/help.c:84 modules/contrib/ircd_announceserv.c:161
@@ -98,7 +95,7 @@ msgstr ""
 #: modules/nickserv/help.c:67 modules/rpgserv/help.c:27
 #: modules/statserv/main.c:46
 msgid "For more information on a command, type:"
-msgstr "For mere information vedr. en kommado, skriv:"
+msgstr ""
 
 #: modules/alis/main.c:477 modules/botserv/help.c:48
 #: modules/botserv/set_core.c:55 modules/chanfix/fix.c:615
@@ -114,37 +111,35 @@ msgstr "For mere information vedr. en kommado, skriv:"
 #: modules/operserv/set.c:73 modules/rpgserv/help.c:31
 #: modules/statserv/main.c:54
 msgid "***** End of Help *****"
-msgstr "***** Slut af Hjaelp *****"
+msgstr ""
 
 #: modules/backend/opensex.c:268
 #, c-format
 msgid "DATABASE ERROR: db-open-read: cannot open '%s' for reading: %s"
-msgstr "DATABASE FEJL: db-open-read: kan ikke aabne '%s' for at laese: %s"
+msgstr ""
 
 #: modules/backend/opensex.c:309
 #, c-format
 msgid "DATABASE ERROR: db-open-write: cannot open '%s' for writing: %s"
-msgstr "DATABASE FEJL: db-open-write: kan ikke aabne '%s' for at skrive: %s"
+msgstr ""
 
 #: modules/backend/opensex.c:362
 #, c-format
 msgid ""
 "DATABASE ERROR: db_save(): cannot rename services.db.new to services.db: %s"
 msgstr ""
-"DATABASE FEJL: db_save(): kan ikke omdoebe services.db.new til services.db: "
-"%s"
 
 #: modules/botserv/bottalk.c:23
 msgid "Makes the bot say the given text on the given channel."
-msgstr "Faar botten til at sige den angivne tekst paa den angivne kanal."
+msgstr ""
 
 #: modules/botserv/bottalk.c:24
 msgid "Makes the bot do the equivalent of a \"/me\" command."
-msgstr "Faar botten til at goere en \"/me\" kommando"
+msgstr ""
 
 #: modules/botserv/bottalk.c:49
 msgid "Syntax: SAY <#channel> <msg>"
-msgstr "Syntax: SAY <#kanal> <besked>"
+msgstr ""
 
 #: modules/botserv/bottalk.c:58 modules/botserv/bottalk.c:123
 #: modules/botserv/set_fantasy.c:72 modules/botserv/set_nobot.c:63
@@ -191,7 +186,7 @@ msgstr "Syntax: SAY <#kanal> <besked>"
 #: modules/rpgserv/set.c:178
 #, c-format
 msgid "Channel %s is not registered."
-msgstr "Kanalen %s er ikke registreret."
+msgstr ""
 
 #: modules/botserv/bottalk.c:64 modules/botserv/bottalk.c:129
 #: modules/chanserv/ban.c:66 modules/chanserv/ban.c:150
@@ -205,23 +200,23 @@ msgstr "Kanalen %s er ikke registreret."
 #: modules/chanserv/topic.c:309 modules/chanserv/unban_self.c:77
 #, c-format
 msgid "%s is currently empty."
-msgstr "%s er tom lige nu."
+msgstr ""
 
 #: modules/botserv/bottalk.c:76 modules/botserv/bottalk.c:141
 #: modules/botserv/set_saycaller.c:75
-#, fuzzy, c-format
+#, c-format
 msgid "%s is frozen."
-msgstr "%s er nu lukket."
+msgstr ""
 
 #: modules/botserv/bottalk.c:86 modules/botserv/bottalk.c:151
 #: modules/botserv/main.c:962
 #, c-format
 msgid "%s does not have a bot assigned."
-msgstr "%s har ikke nogen bot."
+msgstr ""
 
 #: modules/botserv/bottalk.c:114
 msgid "Syntax: ACT <#channel> <msg>"
-msgstr "Syntax: ACT <#channel> <msg>"
+msgstr ""
 
 #: modules/botserv/help.c:20 modules/chanfix/fix.c:623
 #: modules/chanserv/help.c:22 modules/contrib/ircd_announceserv.c:29
@@ -232,59 +227,58 @@ msgstr "Syntax: ACT <#channel> <msg>"
 #: modules/operserv/help.c:21 modules/rpgserv/help.c:16
 #: modules/statserv/main.c:20
 msgid "Displays contextual help information."
-msgstr "Viser mere hjaelpe information."
+msgstr ""
 
 #: modules/botserv/help.c:40
 #, c-format
 msgid "%s allows users to request a custom bot for their channel."
-msgstr "%s tillader brugere at oenske en custom bot til deres kanal."
+msgstr ""
 
 #: modules/botserv/info.c:24
 msgid "Allows you to see BotServ information about a channel or a bot."
-msgstr "Tillader dig at se BotServ information omkring en kanal eller bot."
+msgstr ""
 
 #: modules/botserv/info.c:61 modules/botserv/info.c:175
 #: modules/chanserv/info.c:52 modules/chanserv/info.c:59
 msgid "Syntax: INFO <#channel>"
-msgstr "Syntax: INFO <#channel>"
+msgstr ""
 
 #: modules/botserv/info.c:62 modules/botserv/info.c:176
 msgid "Syntax: INFO <botnick>"
-msgstr "Syntax: INFO <botnick>"
+msgstr ""
 
 #: modules/botserv/info.c:81
-#, fuzzy, c-format
+#, c-format
 msgid "Information on bot %s"
-msgstr "Information omkring bot %s:"
+msgstr ""
 
 #: modules/botserv/info.c:92
-#, fuzzy, c-format
+#, c-format
 msgid "Mask        : %s@%s"
-msgstr "Maske:%s@%s"
+msgstr ""
 
 #: modules/botserv/info.c:93
-#, fuzzy, c-format
+#, c-format
 msgid "Realname    : %s"
-msgstr "Rigtige navn: %s"
+msgstr ""
 
 #: modules/botserv/info.c:97
-#, fuzzy, c-format
+#, c-format
 msgid "Created     : %s (%s ago)"
-msgstr "Oprettet: %s (Tid siden: %s)"
+msgstr ""
 
 #: modules/botserv/info.c:99
 msgid "Options     : PRIVATE"
 msgstr ""
 
 #: modules/botserv/info.c:101
-#, fuzzy
 msgid "Options     : None"
-msgstr "Valgmulig: Intet"
+msgstr ""
 
 #: modules/botserv/info.c:102
-#, fuzzy, c-format
+#, c-format
 msgid "Used on     : %zu channel%s"
-msgstr "Brugt paa: %zu kanal(er)"
+msgstr ""
 
 #: modules/botserv/info.c:114 modules/botserv/info.c:123
 #, c-format
@@ -292,116 +286,113 @@ msgid "Channels    : %s"
 msgstr ""
 
 #: modules/botserv/info.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "Information on channel %s"
-msgstr "Information omkring kanal %s:"
+msgstr ""
 
 #: modules/botserv/info.c:150
-#, fuzzy, c-format
+#, c-format
 msgid "Bot nick    : %s"
-msgstr "Bot nick: %s"
+msgstr ""
 
 #: modules/botserv/info.c:152
-#, fuzzy
 msgid "Bot nick    : <not assigned>"
-msgstr "Bot nick: Ikke angivet endnu"
+msgstr ""
 
 #: modules/botserv/info.c:170
-#, fuzzy, c-format
+#, c-format
 msgid "Options     : %s"
-msgstr "Rolle:     %s"
+msgstr ""
 
 #: modules/botserv/main.c:542 modules/botserv/main.c:563
 #: modules/botserv/main.c:700
 msgid "Syntax: BOT ADD <nick> <user> <host> <real>"
-msgstr "Syntax: BOT ADD <botnick> <botejer> <ip/hostname> <rigtigenavn>"
+msgstr ""
 
 #: modules/botserv/main.c:543 modules/botserv/main.c:564
 #: modules/botserv/main.c:599 modules/botserv/main.c:663
 msgid "Syntax: BOT CHANGE <oldnick> <newnick> [<user> [<host> [<real>]]]"
 msgstr ""
-"Syntax: BOT CHANGE <gamlebotnick> <nyebotnick> [<botejer> [<ip/hostname> "
-"[<rigtigenavn>]]]"
 
 #: modules/botserv/main.c:544 modules/botserv/main.c:565
 #: modules/botserv/main.c:772
 msgid "Syntax: BOT DEL <nick>"
-msgstr "Syntax: BOT DEL <botnavn>"
+msgstr ""
 
 #: modules/botserv/main.c:606 modules/botserv/main.c:778
 #: modules/botserv/main.c:900
 #, c-format
 msgid "%s is not a bot"
-msgstr "%s er ikke en bot ;oPP"
+msgstr ""
 
 #: modules/botserv/main.c:612 modules/botserv/main.c:714
 #, c-format
 msgid "%s is a registered nick."
-msgstr "%s er et registreret nick."
+msgstr ""
 
 #: modules/botserv/main.c:621 modules/botserv/main.c:707
 #, c-format
 msgid "%s is already a bot or service."
-msgstr "%s er allerede en bot eller service."
+msgstr ""
 
 #: modules/botserv/main.c:629 modules/botserv/main.c:725
 #, c-format
 msgid "%s is an invalid nickname."
-msgstr "%s er ikke et validt nick."
+msgstr ""
 
 #: modules/botserv/main.c:646
 #, c-format
 msgid "%s is an invalid realname, not changing it"
-msgstr "%s er ikke et valid rigtigt navn, skiftes derfor ikke."
+msgstr ""
 
 #: modules/botserv/main.c:656
 #, c-format
 msgid "%s is an invalid username, not changing it."
-msgstr "%s er ikke et valid brugernavn, skiftes derfor ikke."
+msgstr ""
 
 #: modules/botserv/main.c:731
 #, c-format
 msgid "%s is an invalid username."
-msgstr "%s er ikke et valid rigtigt navn."
+msgstr ""
 
 #: modules/botserv/main.c:740
 #, c-format
 msgid "%s is an invalid realname."
-msgstr "%s er ikke et valid rigtigt navn."
+msgstr ""
 
 #: modules/botserv/main.c:820
 #, c-format
 msgid "Listing of bots available on %s:"
-msgstr "Lister bots tilgaengelige paa %s:"
+msgstr ""
 
 #: modules/botserv/main.c:831
-#, fuzzy, c-format
+#, c-format
 msgid "%d bot available."
-msgstr "%d bots tilgaengelige."
+msgstr ""
 
 #: modules/botserv/main.c:833
 #, c-format
 msgid "%d bots available."
-msgstr "%d bots tilgaengelige."
+msgstr ""
 
 #: modules/botserv/main.c:837
 #, c-format
 msgid "Listing of private bots available on %s:"
-msgstr "Lister private bots tilgaengelige paa %s:"
+msgstr ""
 
 #: modules/botserv/main.c:846
-#, fuzzy, c-format
+#, c-format
 msgid "%d private bot available."
-msgstr "%d private bots tilgaengelige."
+msgstr ""
 
 #: modules/botserv/main.c:848
 #, c-format
 msgid "%d private bots available."
-msgstr "%d private bots tilgaengelige."
+msgstr ""
 
 #: modules/botserv/main.c:867
 msgid "Syntax: ASSIGN <#channel> <nick>"
-msgstr "Syntax: ASSIGN <#channel> <nick>"
+msgstr ""
 
 #: modules/botserv/main.c:873 modules/botserv/main.c:950
 #: modules/chanserv/access.c:781 modules/chanserv/access.c:878
@@ -430,51 +421,51 @@ msgstr "Syntax: ASSIGN <#channel> <nick>"
 #: modules/operserv/soper.c:262
 #, c-format
 msgid "%s is not registered."
-msgstr "%s er ikke registreret."
+msgstr ""
 
 #: modules/botserv/main.c:879
 #, c-format
 msgid "There are not enough users in %s to be able to assign a bot."
-msgstr "Der er ikke nok brugere i %s for at du kan tildele en bot."
+msgstr ""
 
 #: modules/botserv/main.c:885
 #, c-format
 msgid "You cannot assign bots to %s."
-msgstr "Du kan ikke angive bots til %s."
+msgstr ""
 
 #: modules/botserv/main.c:891
 #, c-format
 msgid "You are not authorized to assign bots on %s."
-msgstr "Du er ikke autoriseret til at tildele bots paa %s."
+msgstr ""
 
 #: modules/botserv/main.c:906
 #, c-format
 msgid "You are not authorized to assign the bot %s to a channel."
-msgstr "Du er ikke autoriseret til at tildele botten %s til en kanal."
+msgstr ""
 
 #: modules/botserv/main.c:912
 #, c-format
 msgid "%s is already assigned to %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/botserv/main.c:930
 #, c-format
 msgid "Assigned the bot %s to %s."
-msgstr "Tildelte botten %s til %s."
+msgstr ""
 
 #: modules/botserv/main.c:944
 msgid "Syntax: UNASSIGN <#channel>"
-msgstr "Syntax: UNASSIGN <#channel>"
+msgstr ""
 
 #: modules/botserv/main.c:956
 #, c-format
 msgid "You are not authorized to unassign a bot on %s."
-msgstr "Du er ikke autoriseret til at fjerne tilknytningen paa %s."
+msgstr ""
 
 #: modules/botserv/main.c:974
 #, c-format
 msgid "Unassigned the bot from %s."
-msgstr "Fjernede botten fra%s."
+msgstr ""
 
 #: modules/botserv/main.c:1080 modules/groupserv/main/hooks.c:189
 #: modules/hostserv/main.c:30 modules/hostserv/request.c:216
@@ -504,27 +495,27 @@ msgstr ""
 
 #: modules/botserv/set_core.c:23
 msgid "Configures bot options."
-msgstr "Konfigurer bot mulighed."
+msgstr ""
 
 #: modules/botserv/set_core.c:48 modules/chanserv/set_core.c:44
 #: modules/groupserv/set.c:49 modules/nickserv/set_core.c:31
 #: modules/operserv/set.c:62
 msgid "Help for SET:"
-msgstr "Hjaelp for SET:"
+msgstr ""
 
 #: modules/botserv/set_core.c:50
 msgid "Configures different botserv bot options."
-msgstr "Konfigurerer forskellige BotServ bot muligheder."
+msgstr ""
 
 #: modules/botserv/set_core.c:54 modules/chanserv/set_core.c:52
 #: modules/groupserv/set.c:57
 #, c-format
 msgid "For more specific help use /msg %s HELP SET command."
-msgstr "For mere specifik hjaelp brug /msg %s HELPSET kommandoen."
+msgstr ""
 
 #: modules/botserv/set_core.c:70
 msgid "Syntax: SET <destination> <setting> <parameters>"
-msgstr "Syntax: SET <destination> <indtilling> <parametre>"
+msgstr ""
 
 #: modules/botserv/set_core.c:79 modules/chanserv/access.c:179
 #: modules/chanserv/access.c:219 modules/chanserv/akick.c:157
@@ -538,33 +529,33 @@ msgstr "Syntax: SET <destination> <indtilling> <parametre>"
 #: modules/statserv/server.c:68
 #, c-format
 msgid "Invalid command. Use /%s%s help for a command listing."
-msgstr "Invalid kommando. Brug /%s%s help for en kommando liste."
+msgstr ""
 
 #: modules/botserv/set_fantasy.c:28
 msgid "Enable fantasy commands."
-msgstr "Slaar FANTASY kommandoer til."
+msgstr ""
 
 #: modules/botserv/set_fantasy.c:65 modules/botserv/set_fantasy.c:100
 msgid "Syntax: SET <#channel> FANTASY {ON|OFF}"
-msgstr "Syntax: <#channel> FANTASY {ON|OFF}"
+msgstr ""
 
 #: modules/botserv/set_fantasy.c:89
 #, c-format
 msgid "Fantasy mode is now ON on channel %s."
-msgstr "Fantasy tilstand er nu slaaet til paa kanalen %s."
+msgstr ""
 
 #: modules/botserv/set_fantasy.c:95
 #, c-format
 msgid "Fantasy mode is now OFF on channel %s."
-msgstr "Fantasy tilstand er nu slaaet fra paa kanalen %s."
+msgstr ""
 
 #: modules/botserv/set_nobot.c:29
 msgid "Prevent a bot from being assigned to a channel."
-msgstr "Forhindre en bot fra at blive tildelt en kanal."
+msgstr ""
 
 #: modules/botserv/set_nobot.c:56 modules/botserv/set_nobot.c:140
 msgid "Syntax: SET <#channel> NOBOT {ON|OFF}"
-msgstr "Syntax: SET <#channel> NOBOT {ON|OFF}"
+msgstr ""
 
 #: modules/botserv/set_nobot.c:69 modules/botserv/set_private.c:68
 #: modules/chanserv/akick.c:584 modules/chanserv/flags.c:249
@@ -584,16 +575,16 @@ msgstr "Syntax: SET <#channel> NOBOT {ON|OFF}"
 #: modules/nickserv/loginhistory.c:104 modules/nickserv/loginhistory.c:119
 #: modules/nickserv/logout.c:47 modules/nickserv/status.c:87
 msgid "You are not logged in."
-msgstr "Du er nu logget ind."
+msgstr ""
 
 #: modules/botserv/set_nobot.c:83 modules/botserv/set_saycaller.c:85
 #: modules/chanserv/set_guard.c:86 modules/chanserv/set_keeptopic.c:71
 #: modules/chanserv/set_pubacl.c:70 modules/chanserv/set_restricted.c:71
 #: modules/chanserv/set_secure.c:71 modules/chanserv/set_topiclock.c:71
 #: modules/chanserv/set_verbose.c:71 modules/chanserv/set_verbose.c:91
-#, fuzzy, c-format
+#, c-format
 msgid "The %s flag is already set for channel: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/botserv/set_nobot.c:104 modules/chanserv/set_fantasy.c:115
 #, c-format
@@ -608,9 +599,9 @@ msgid "The %s flag has been removed for channel %s."
 msgstr ""
 
 #: modules/botserv/set_nobot.c:113 modules/botserv/set_saycaller.c:113
-#, fuzzy, c-format
+#, c-format
 msgid "Say Caller is now OFF on channel %s."
-msgstr "Fantasy tilstand er nu slaaet fra paa kanalen %s."
+msgstr ""
 
 #: modules/botserv/set_nobot.c:114 modules/botserv/set_saycaller.c:114
 #, c-format
@@ -625,7 +616,7 @@ msgstr ""
 #: modules/botserv/set_nobot.c:120
 #, c-format
 msgid "No Bot mode is now ON on channel %s."
-msgstr "No Bot tilstand er nu slaaet TIL paa %s."
+msgstr ""
 
 #: modules/botserv/set_nobot.c:127 modules/botserv/set_saycaller.c:107
 #: modules/chanserv/set_guard.c:114 modules/chanserv/set_keeptopic.c:90
@@ -644,39 +635,38 @@ msgstr ""
 #: modules/botserv/set_nobot.c:134
 #, c-format
 msgid "No Bot mode is now OFF on channel %s."
-msgstr "No Bot tilstand er nu slaaet FRA paa %s."
+msgstr ""
 
 #: modules/botserv/set_private.c:29
 msgid "Prevent a bot from being assigned by non IRC operators."
-msgstr "Forhindre en bot i at blive tildelt af ikke IRC operatoere."
+msgstr ""
 
 #: modules/botserv/set_private.c:55 modules/botserv/set_private.c:93
 msgid "Syntax: SET <botnick> PRIVATE {ON|OFF}"
-msgstr "Syntax: SET <botnick> {ON|OFF}"
+msgstr ""
 
 #: modules/botserv/set_private.c:62
 #, c-format
 msgid "%s is not a bot."
-msgstr "%s er ikke nogen bot. ;oP"
+msgstr ""
 
 #: modules/botserv/set_private.c:82
 #, c-format
 msgid "Private mode of bot %s is now ON."
-msgstr "Privat tilstand af botten %s er nu TIL."
+msgstr ""
 
 #: modules/botserv/set_private.c:88
 #, c-format
 msgid "Private mode of bot %s is now OFF."
-msgstr "Privat tilstand af botten %s er nu FRA."
+msgstr ""
 
 #: modules/botserv/set_saycaller.c:28
 msgid "Enable Caller-ID on BotServ actions or messages."
 msgstr ""
 
 #: modules/botserv/set_saycaller.c:56 modules/botserv/set_saycaller.c:120
-#, fuzzy
 msgid "Syntax: SET <#channel> SAYCALLER {ON|OFF}"
-msgstr "Syntax: <#channel> FANTASY {ON|OFF}"
+msgstr ""
 
 #: modules/botserv/set_saycaller.c:93
 #, c-format
@@ -691,54 +681,54 @@ msgid "%s enabled the SAYCALLER flag."
 msgstr ""
 
 #: modules/botserv/set_saycaller.c:99
-#, fuzzy, c-format
+#, c-format
 msgid "Say Caller is now ON on channel %s."
-msgstr "Fantasy tilstand er nu slaaet til paa kanalen %s."
+msgstr ""
 
 #: modules/chanfix/fix.c:348
 msgid "To fix a channel: CHANFIX <#channel>"
-msgstr "For at fixe en kanal: CHANFIX <#channel>"
+msgstr ""
 
 #: modules/chanfix/fix.c:354 modules/operserv/clearchan.c:64
 #: modules/operserv/mode.c:50
 #, c-format
 msgid "Channel %s does not exist."
-msgstr "Kanalen %s eksistere ikke dumbo."
+msgstr ""
 
 #: modules/chanfix/fix.c:360 modules/chanfix/fix.c:413
 #: modules/chanfix/fix.c:472 modules/chanfix/fix.c:548
 #, c-format
 msgid "No CHANFIX record available for %s; try again later."
-msgstr "Ingen CHANFIX tilgaengeligt for %s; proev igen senere."
+msgstr ""
 
 #: modules/chanfix/fix.c:367 modules/chanserv/register.c:85
 #: modules/contrib/cs_fregister.c:85 modules/nickserv/register.c:124
 #, c-format
 msgid "%s is already registered."
-msgstr "%s er allerede registrereret."
+msgstr ""
 
 #: modules/chanfix/fix.c:374
 #, c-format
 msgid "Scores for %s are too low (< %u) for a fix."
-msgstr "Score for %s er nu for lav (< %u) for et fix."
+msgstr ""
 
 #: modules/chanfix/fix.c:384
 #, c-format
 msgid "Fix request has been acknowledged for %s."
-msgstr "Fix oenske er nu blevet accepteret af %s."
+msgstr ""
 
 #: modules/chanfix/fix.c:387
 msgid "Manually chanfix a channel."
-msgstr "Manuelt chanfix en kanal"
+msgstr ""
 
 #: modules/chanfix/fix.c:407 modules/chanfix/fix.c:466
 msgid "To view CHANFIX scores for a channel: SCORES <#channel>"
-msgstr "For at se CHANFIX score paa en kanal: SCORES <#channel>"
+msgstr ""
 
 #: modules/chanfix/fix.c:426
 #, c-format
 msgid "There are no scores in the CHANFIX database for %s."
-msgstr "Der er ingen score i CHANFIX databasen for %s."
+msgstr ""
 
 #: modules/chanfix/fix.c:430
 #, c-format
@@ -747,70 +737,70 @@ msgstr ""
 
 #: modules/chanfix/fix.c:432
 msgid "Num"
-msgstr "Nummer"
+msgstr ""
 
 #: modules/chanfix/fix.c:432
 msgid "Account/Hostmask"
-msgstr "Konto/Host"
+msgstr ""
 
 #: modules/chanfix/fix.c:432
 msgid "Score"
-msgstr "Score"
+msgstr ""
 
 #: modules/chanfix/fix.c:449
 #, c-format
 msgid "End of SCORES listing for %s."
-msgstr "Slut af SCORES listen for %s."
+msgstr ""
 
 #: modules/chanfix/fix.c:452
 msgid "List channel scores."
-msgstr "List kanal score."
+msgstr ""
 
 #: modules/chanfix/fix.c:480 modules/operserv/modinspect.c:61
 #: modules/rpgserv/info.c:45
 #, c-format
 msgid "Information on %s:"
-msgstr "Information om %s:"
+msgstr ""
 
 #: modules/chanfix/fix.c:485
 #, c-format
 msgid "Creation time: %s"
-msgstr "Tidspunkt af skabelse: %s"
+msgstr ""
 
 #: modules/chanfix/fix.c:493
 #, c-format
 msgid "Highest score: %u"
-msgstr "Hoejste score: %u"
+msgstr ""
 
 #: modules/chanfix/fix.c:494
 #, c-format
 msgid "Usercount    : %zu"
-msgstr "Brugerantal:    %zu"
+msgstr ""
 
 #: modules/chanfix/fix.c:495
 #, c-format
 msgid "Initial step : %.0f%% of %u (%0.1f)"
-msgstr "Foerste skridt: %.0f%% af %u (%0.1f)"
+msgstr ""
 
 #: modules/chanfix/fix.c:496
 #, c-format
 msgid "Current step : %u"
-msgstr "Nuvaerende: %u"
+msgstr ""
 
 #: modules/chanfix/fix.c:497
 #, c-format
 msgid "Final step   : %.0f%% of %u (%0.1f)"
-msgstr "Seneste:     %.0f%% of %u (%0.1f)"
+msgstr ""
 
 #: modules/chanfix/fix.c:498
 #, c-format
 msgid "Needs fixing : %s"
-msgstr "Skal fixes: %s"
+msgstr ""
 
 #: modules/chanfix/fix.c:499
 #, c-format
 msgid "Now fixing   : %s"
-msgstr "Fixer nu: %s"
+msgstr ""
 
 #: modules/chanfix/fix.c:517 modules/chanserv/info.c:313
 #: modules/nickserv/info.c:490
@@ -820,11 +810,11 @@ msgstr ""
 
 #: modules/chanfix/fix.c:520 modules/rpgserv/info.c:62
 msgid "*** End of Info ***"
-msgstr "*** Slut af Info ***"
+msgstr ""
 
 #: modules/chanfix/fix.c:523
 msgid "List information on channel."
-msgstr "Lister information paa kanal."
+msgstr ""
 
 #: modules/chanfix/fix.c:536 modules/chanfix/fix.c:593
 #: modules/chanserv/mark.c:43 modules/chanserv/mark.c:101
@@ -864,9 +854,9 @@ msgid "Adds a note to a channel."
 msgstr ""
 
 #: modules/chanfix/fix.c:607
-#, fuzzy, c-format
+#, c-format
 msgid "%s allows for simple channel operator management."
-msgstr "%s tillader simpel kanal operator management."
+msgstr ""
 
 #: modules/chanfix/fix.c:663
 #, c-format
@@ -875,96 +865,96 @@ msgstr ""
 
 #: modules/chanserv/access.c:27
 msgid "Manage channel access."
-msgstr "Moderer kanal adgang."
+msgstr ""
 
 #: modules/chanserv/access.c:33
 msgid "Manage channel roles."
-msgstr "Moderer kanal roller."
+msgstr ""
 
 #: modules/chanserv/access.c:38
 msgid "List channel access entries."
-msgstr "Lister kanal adgang indtastninger."
+msgstr ""
 
 #: modules/chanserv/access.c:43
 msgid "Display information on an access list entry."
-msgstr "Viser information paa en adgangs liste post."
+msgstr ""
 
 #: modules/chanserv/access.c:48
 msgid "Delete an access list entry."
-msgstr "Slet en adgangs liste post."
+msgstr ""
 
 #: modules/chanserv/access.c:53
 msgid "Add an access list entry."
-msgstr "Tilfoej en adgangs liste post."
+msgstr ""
 
 #: modules/chanserv/access.c:58
 msgid "Update an access list entry."
-msgstr "Opdater en adgangs liste post."
+msgstr ""
 
 #: modules/chanserv/access.c:63
 msgid "List available roles."
-msgstr "Vis tilgaengelige roller."
+msgstr ""
 
 #: modules/chanserv/access.c:68
 msgid "Add a role."
-msgstr "Tilfoej rolle."
+msgstr ""
 
 #: modules/chanserv/access.c:73
 msgid "Change flags on a role."
-msgstr "Skift flag paa en rolle."
+msgstr ""
 
 #: modules/chanserv/access.c:78
 msgid "Delete a role."
-msgstr "Slet en rolle."
+msgstr ""
 
 #: modules/chanserv/access.c:124
 msgid "Help for ACCESS:"
-msgstr "Hjaelp for ACCESS"
+msgstr ""
 
 #: modules/chanserv/access.c:128
 #, c-format
 msgid "For more information, use /msg %s HELP ACCESS command."
-msgstr "For mere information, brug /msg %s HELP ACCESS kommandoen."
+msgstr ""
 
 #: modules/chanserv/access.c:140
 msgid "Help for ROLE:"
-msgstr "Hjaelp for ROLE:"
+msgstr ""
 
 #: modules/chanserv/access.c:144
 #, c-format
 msgid "For more information, use /msg %s HELP ROLE command."
-msgstr "For more information, use /msg %s HELP ROLE kommandoen."
+msgstr ""
 
 #: modules/chanserv/access.c:161 modules/chanserv/access.c:172
 msgid "Syntax: ACCESS <#channel> <command> [parameters]"
-msgstr "Syntax: ACCESS <#channel> <command> [parametre]"
+msgstr ""
 
 #: modules/chanserv/access.c:201 modules/chanserv/access.c:212
 msgid "Syntax: ROLE <#channel> <command> [parameters]"
-msgstr "Syntax: ROLE <#channel> <command> [parametre]"
+msgstr ""
 
 #: modules/chanserv/access.c:507 modules/chanserv/template.c:195
 #: modules/chanserv/template.c:332 modules/groupserv/template.c:174
 #: modules/groupserv/template.c:311
 #, c-format
 msgid "Invalid template name %s."
-msgstr "Skabelon navnet kan ikke bruges: %s."
+msgstr ""
 
 #: modules/chanserv/access.c:513 modules/chanserv/template.c:350
 #: modules/groupserv/template.c:329
 #, c-format
 msgid "Sorry, too many templates on %s."
-msgstr "Beklager, for mange skabeloner paa %s."
+msgstr ""
 
 #: modules/chanserv/access.c:556
-#, fuzzy, c-format
+#, c-format
 msgid "%d access entr%s updated accordingly for %s on: %s"
-msgstr "%d adgangs poster opdateret tilsvarende."
+msgstr ""
 
 #: modules/chanserv/access.c:682
-#, fuzzy, c-format
+#, c-format
 msgid "ACCESS list for: %s"
-msgstr "Slut af SCORES listen for %s."
+msgstr ""
 
 #: modules/chanserv/access.c:684
 #, c-format
@@ -972,81 +962,81 @@ msgid "Entry%sNickname/Host%sRole%sModified Time"
 msgstr ""
 
 #: modules/chanserv/access.c:717
-#, fuzzy, c-format
+#, c-format
 msgid "End of %s ACCESS listing.  Total of %u %s."
-msgstr "Slut af %s ACCESS listen."
+msgstr ""
 
 #: modules/chanserv/access.c:760
 msgid "Syntax: ACCESS <#channel> INFO <account|hostmask>"
-msgstr "Syntax: ACCESS <#channel> INFO <konto|hostname>"
+msgstr ""
 
 #: modules/chanserv/access.c:790 modules/chanserv/access.c:889
 #, c-format
 msgid "No ACL entry for %s in %s was found."
-msgstr "No ACL entry for %s in %s var fundet."
+msgstr ""
 
 #: modules/chanserv/access.c:805
 #, c-format
 msgid "Access for %s in %s:"
-msgstr "Access for %s in %s:"
+msgstr ""
 
 #: modules/chanserv/access.c:811
 #, c-format
 msgid "Ban reason : %s"
-msgstr "Ban grundlag: %s"
+msgstr ""
 
 #: modules/chanserv/access.c:815
 #, c-format
 msgid "Role       : %s (inherited from %s)"
-msgstr "Rolle:     %s (Paataget fra %s)"
+msgstr ""
 
 #: modules/chanserv/access.c:817
 #, c-format
 msgid "Role       : %s"
-msgstr "Rolle:     %s"
+msgstr ""
 
 #: modules/chanserv/access.c:819
 #, c-format
 msgid "Flags      : %s (%s)"
-msgstr "Flags:       %s (%s)"
+msgstr ""
 
 #: modules/chanserv/access.c:820
 #, c-format
 msgid "Modified   : %s (%s ago)"
-msgstr "Aendret:      %s (%s)"
+msgstr ""
 
 #: modules/chanserv/access.c:821 modules/operserv/modinspect.c:71
 msgid "*** End of Info ***"
-msgstr "*** Slut af Info ***"
+msgstr ""
 
 #: modules/chanserv/access.c:857
 msgid "Syntax: ACCESS <#channel> DEL <account|hostmask>"
-msgstr "Syntax: ACCESS <#channel> DEL <konto|hostname>"
+msgstr ""
 
 #: modules/chanserv/access.c:895 modules/chanserv/access.c:1234
 #: modules/chanserv/fflags.c:125 modules/chanserv/flags.c:392
 #: modules/groupserv/fflags.c:84 modules/groupserv/flags.c:234
 msgid "You may not remove the last founder."
-msgstr "Du kan ikke fjerne den sidste founder."
+msgstr ""
 
 #: modules/chanserv/access.c:923
-#, fuzzy, c-format
+#, c-format
 msgid "You may not remove %s from the %s role."
-msgstr "Du kan ikke fjerne den sidste founder."
+msgstr ""
 
 #: modules/chanserv/access.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "%s was removed from the access list of %s (had role: %s)."
-msgstr "%s var fjernet som %s i %s."
+msgstr ""
 
 #: modules/chanserv/access.c:931
-#, fuzzy, c-format
+#, c-format
 msgid "%s deleted %s from the access list (had role: %s)."
-msgstr "%s var fjernet som %s i %s."
+msgstr ""
 
 #: modules/chanserv/access.c:982
 msgid "Syntax: ACCESS <#channel> ADD <account|hostmask> <role>"
-msgstr "Syntax: ACCESS <#channel> ADD <konto|hostname>"
+msgstr ""
 
 #: modules/chanserv/access.c:1000 modules/chanserv/access.c:1192
 #: modules/chanserv/flags.c:495 modules/chanserv/xop_manager.c:272
@@ -1062,7 +1052,7 @@ msgstr ""
 #: modules/chanserv/xop_manager.c:367
 #, c-format
 msgid "Channel %s access list is full."
-msgstr "Channel %s adgangsliste er fuld."
+msgstr ""
 
 #: modules/chanserv/access.c:1026 modules/chanserv/access.c:1218
 #: modules/chanserv/flags.c:507 modules/chanserv/xop_manager.c:278
@@ -1073,13 +1063,13 @@ msgstr ""
 #: modules/chanserv/access.c:1036
 #, c-format
 msgid "%s already has the %s role in %s."
-msgstr "%s already has the %s role in %s."
+msgstr ""
 
 #: modules/chanserv/access.c:1048 modules/chanserv/access.c:1228
 #: modules/chanserv/access.c:1529 modules/chanserv/access.c:1624
 #, c-format
 msgid "Role %s does not exist."
-msgstr "Rollen %s eksisterer ikke."
+msgstr ""
 
 #: modules/chanserv/access.c:1075 modules/chanserv/flags.c:401
 msgid "Only 1 founder allowed per channel."
@@ -1108,19 +1098,19 @@ msgid "%s cannot take foundership of a channel."
 msgstr ""
 
 #: modules/chanserv/access.c:1110 modules/chanserv/access.c:1288
-#, fuzzy, c-format
+#, c-format
 msgid "You may not add %s to the %s role."
-msgstr "Du kan ikke fjerne den sidste founder."
+msgstr ""
 
 #: modules/chanserv/access.c:1125
-#, fuzzy, c-format
+#, c-format
 msgid "%s was added to the access list of %s with the %s role."
-msgstr "%s var tilfoejet som %s i %s."
+msgstr ""
 
 #: modules/chanserv/access.c:1127
-#, fuzzy, c-format
+#, c-format
 msgid "%s added %s to the access list with the %s role."
-msgstr "%s var tilfoejet som %s i %s."
+msgstr ""
 
 #: modules/chanserv/access.c:1140 modules/chanserv/access.c:1329
 #: modules/chanserv/fflags.c:176 modules/chanserv/flags.c:540
@@ -1130,12 +1120,12 @@ msgstr ""
 
 #: modules/chanserv/access.c:1174
 msgid "Syntax: ACCESS <#channel> SET <account|hostmask> <role>"
-msgstr "Syntax: ACCESS <#channel> SET <konto|hostname> <rolle>"
+msgstr ""
 
 #: modules/chanserv/access.c:1212
 #, c-format
 msgid "Channel %s access list is full."
-msgstr "Channel %s adgangsliste er fuld."
+msgstr ""
 
 #: modules/chanserv/access.c:1262
 #, c-format
@@ -1143,27 +1133,27 @@ msgid "Only %d founder%s allowed per channel."
 msgstr ""
 
 #: modules/chanserv/access.c:1309
-#, fuzzy, c-format
+#, c-format
 msgid "%s now has the %s role on: %s"
-msgstr "%s har nu rollen %s i %s."
+msgstr ""
 
 #: modules/chanserv/access.c:1311
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been moved from the %s role to the %s role on: %s"
-msgstr "%s var fjernet som %s i %s."
+msgstr ""
 
 #: modules/chanserv/access.c:1314
-#, fuzzy, c-format
+#, c-format
 msgid "%s changed the access list role for %s from %s to %s."
-msgstr "%s already has the %s role in %s."
+msgstr ""
 
 #: modules/chanserv/access.c:1376
 msgid "List of channel-defined roles:"
-msgstr "Liste af kanal-definerede roller:"
+msgstr ""
 
 #: modules/chanserv/access.c:1419 modules/chanserv/access.c:1510
 msgid "Syntax: ROLE <#channel> ADD|SET <role> [flags]"
-msgstr "Syntax: ROLE <#channel> ADD|SET <role> [flags]"
+msgstr ""
 
 #: modules/chanserv/access.c:1438
 #, c-format
@@ -1331,9 +1321,9 @@ msgid "%s is not on the AKICK list for %s."
 msgstr ""
 
 #: modules/chanserv/akick.c:500 modules/chanserv/akick.c:553
-#, fuzzy, c-format
+#, c-format
 msgid "%s removed %s from the AKICK list."
-msgstr "%s var fjernet som %s i %s."
+msgstr ""
 
 #: modules/chanserv/akick.c:502 modules/chanserv/akick.c:551
 #, c-format
@@ -1482,9 +1472,9 @@ msgid "Syntax: UNBAN <#channel> [nickname|hostmask]"
 msgstr ""
 
 #: modules/chanserv/clear_akicks.c:92
-#, fuzzy, c-format
+#, c-format
 msgid "Cleared AKICK entries on: %s"
-msgstr "Fjernede brugere fra %s."
+msgstr ""
 
 #: modules/chanserv/clear_akicks.c:94
 #, c-format
@@ -1493,27 +1483,26 @@ msgstr ""
 
 #: modules/chanserv/clear_bans_any.c:26
 msgid "Clears bans or other lists of a channel."
-msgstr "Rydder bans eller  andre lister af kanalen."
+msgstr ""
 
 #: modules/chanserv/clear_bans_any.c:67 modules/chanserv/clear_bans_any.c:73
 #, c-format
 msgid "Invalid mode; valid ones are %s."
-msgstr "Invalid tilstand, der kan bruges: %s"
+msgstr ""
 
 #: modules/chanserv/clear_bans_any.c:118
 #, c-format
 msgid "Cleared %s modes on %s (%d removed)."
-msgstr "Fjernede %s tilstand paa %s (%d fjernet)."
+msgstr ""
 
 #: modules/chanserv/clear_bans.c:25
-#, fuzzy
 msgid "Clears the ban list (+b) of a channel."
-msgstr "Rydder bans eller  andre lister af kanalen."
+msgstr ""
 
 #: modules/chanserv/clear_bans.c:93
-#, fuzzy, c-format
+#, c-format
 msgid "Cleared channel bans on %s (%d removed)."
-msgstr "Fjernede %s tilstand paa %s (%d fjernet)."
+msgstr ""
 
 #: modules/chanserv/clear.c:23
 msgid "Channel removal toolkit."
@@ -1534,21 +1523,20 @@ msgstr ""
 
 #: modules/chanserv/clear.c:69 modules/chanserv/clear.c:80
 msgid "Syntax: CLEAR <#channel> <command> [parameters]"
-msgstr "Syntax: CLEAR <#channel> <command> [parameters]"
+msgstr ""
 
 #: modules/chanserv/clear_excepts.c:25
-#, fuzzy
 msgid "Clears the ban exception list (+e) of a channel."
-msgstr "Rydder bans eller  andre lister af kanalen."
+msgstr ""
 
 #: modules/chanserv/clear_excepts.c:78
 msgid "Channel ban exception (+e) modes are not available."
 msgstr ""
 
 #: modules/chanserv/clear_excepts.c:99
-#, fuzzy, c-format
+#, c-format
 msgid "Cleared channel ban exceptions on %s (%d removed)."
-msgstr "Fjernede %s tilstand paa %s (%d fjernet)."
+msgstr ""
 
 #: modules/chanserv/clear_flags.c:91 modules/chanserv/drop.c:99
 #: modules/groupserv/drop.c:67 modules/nickserv/drop.c:110
@@ -1557,154 +1545,149 @@ msgid ""
 "To avoid accidental use of this command, this operation has to be confirmed. "
 "Please confirm by replying with %s"
 msgstr ""
-"For at undgaa utilsigtede brug af denne kommando, skal du svare ved at "
-"skrive: %s"
 
 #: modules/chanserv/clear_flags.c:100 modules/chanserv/drop.c:108
 #: modules/groupserv/drop.c:76 modules/nickserv/drop.c:119
 #, c-format
 msgid "Invalid key for %s."
-msgstr "Ikke gyldigt svar for: %s"
+msgstr ""
 
 #: modules/chanserv/clear_flags.c:117
-#, fuzzy, c-format
+#, c-format
 msgid "Cleared flags in: %s"
-msgstr "Fjernede foelgende flag i %s."
+msgstr ""
 
 #: modules/chanserv/clear_invex.c:25
-#, fuzzy
 msgid "Clears the invite exception list (+I) of a channel."
-msgstr "Rydder bans eller  andre lister af kanalen."
+msgstr ""
 
 #: modules/chanserv/clear_invex.c:78
 msgid "Channel invite exceptions (+I) modes are not available."
 msgstr ""
 
 #: modules/chanserv/clear_invex.c:99
-#, fuzzy, c-format
+#, c-format
 msgid "Cleared channel invite exceptions on %s (%d removed)."
-msgstr "Fjernede %s tilstand paa %s (%d fjernet)."
+msgstr ""
 
 #: modules/chanserv/clear_quiets.c:25
-#, fuzzy
 msgid "Clears the quiet list (+q) of a channel."
-msgstr "Rydder bans eller  andre lister af kanalen."
+msgstr ""
 
 #: modules/chanserv/clear_quiets.c:78
 msgid "Channel quiet (+q) modes are not available."
 msgstr ""
 
 #: modules/chanserv/clear_quiets.c:99
-#, fuzzy, c-format
+#, c-format
 msgid "Cleared channel quiets on %s (%d removed)."
-msgstr "Fjernede %s tilstand paa %s (%d fjernet)."
+msgstr ""
 
 #: modules/chanserv/clear_users.c:24
 msgid "Kicks all users from a channel."
-msgstr "Smider alle ud af kanalen."
+msgstr ""
 
 #: modules/chanserv/clear_users.c:140
-#, fuzzy, c-format
+#, c-format
 msgid "Cleared users from: %s"
-msgstr "Fjernede brugere fra %s."
+msgstr ""
 
 #: modules/chanserv/clone.c:156
-#, fuzzy, c-format
+#, c-format
 msgid "Cloned %s to: %s"
-msgstr "Clonede %s til %s."
+msgstr ""
 
 #: modules/chanserv/close.c:25
 msgid "Closes a channel."
-msgstr "Lukker en kanal"
+msgstr ""
 
 #: modules/chanserv/close.c:85 modules/chanserv/close.c:204
 msgid "Usage: CLOSE <#channel> <ON|OFF> [reason]"
-msgstr "Usage: CLOSE <#channel> <ON|OFF> [reason]"
+msgstr ""
 
 #: modules/chanserv/close.c:100
 msgid "Usage: CLOSE <#channel> ON <reason>"
-msgstr "Usage: CLOSE <#channel> <ON> <reason>"
+msgstr ""
 
 #: modules/chanserv/close.c:106
 #, c-format
 msgid "%s cannot be closed."
-msgstr "%s kan ikke lukkes."
+msgstr ""
 
 #: modules/chanserv/close.c:112
 #, c-format
 msgid "%s is already closed."
-msgstr "%s er allerede lukket."
+msgstr ""
 
 #: modules/chanserv/close.c:143
 #, c-format
 msgid "%s is now closed."
-msgstr "%s er nu lukket."
+msgstr ""
 
 #: modules/chanserv/close.c:163
 #, c-format
 msgid "%s is not closed."
-msgstr "%s er ikke lukket."
+msgstr ""
 
 #: modules/chanserv/close.c:185
 #, c-format
 msgid "%s has been reopened."
-msgstr "%s er nu genaabnet."
+msgstr ""
 
 #: modules/chanserv/count.c:21
 msgid "Shows number of entries in access lists."
-msgstr "Viser antallet af poster paa adgangslisten."
+msgstr ""
 
 #: modules/chanserv/count.c:50
 msgid "Syntax: COUNT <#channel>"
-msgstr "Syntax: COUNT <#channel>"
+msgstr ""
 
 #: modules/chanserv/count.c:102
 #, c-format
 msgid "%s: VOP: %d, AOP: %d, SOP: %d, AKick: %d, Other: %d"
-msgstr "%s: VOP: %d, AOP: %d, SOP: %d, AKick: %d, Other: %d"
+msgstr ""
 
 #: modules/chanserv/count.c:105
 #, c-format
 msgid "%s: VOP: %d, HOP: %d, AOP: %d, SOP: %d, AKick: %d, Other: %d"
-msgstr "%s: VOP: %d, HOP: %d, AOP: %d, SOP: %d, AKick: %d, Other: %d"
+msgstr ""
 
 #: modules/chanserv/drop.c:21
 msgid "Drops a channel registration."
-msgstr "Dropper en kanal registrering."
+msgstr ""
 
 #: modules/chanserv/drop.c:23
 msgid "Forces dropping of a channel registration."
-msgstr "Tvinger en droppelse af kanal registrering."
+msgstr ""
 
 #: modules/chanserv/drop.c:49 modules/chanserv/drop.c:56
 msgid "Syntax: DROP <#channel>"
-msgstr "Syntax: DROP <#channel>"
+msgstr ""
 
 #: modules/chanserv/drop.c:68 modules/chanserv/drop.c:150
 msgid ""
 "For security reasons, you may not drop a channel registration with a fantasy "
 "command."
 msgstr ""
-"Af sikkerhedsgrunde, kan du ikke droppe en kanal med en FANTASY kommando."
 
 #: modules/chanserv/drop.c:81
 #, c-format
 msgid "The channel %s is closed; it cannot be dropped."
-msgstr "Kanalen %s er lukket; den kan ikke droppes."
+msgstr ""
 
 #: modules/chanserv/drop.c:87 modules/chanserv/drop.c:156
 #, c-format
 msgid "The channel %s is held; it cannot be dropped."
-msgstr "Kanalen %s er holdt, og kan ikke droppes."
+msgstr ""
 
 #: modules/chanserv/drop.c:119 modules/chanserv/drop.c:167
 #, c-format
 msgid "The channel %s has been dropped."
-msgstr "Kanelen %s er nu droppet."
+msgstr ""
 
 #: modules/chanserv/drop.c:131 modules/chanserv/drop.c:138
 msgid "Syntax: FDROP <#channel>"
-msgstr "Syntax: FDROP <#channel>"
+msgstr ""
 
 #: modules/chanserv/fflags.c:28
 msgid "Forces a flags change on a channel."
@@ -1738,14 +1721,14 @@ msgid "You are not allowed to set %s on %s in %s."
 msgstr ""
 
 #: modules/chanserv/fflags.c:181
-#, fuzzy, c-format
+#, c-format
 msgid "Flags %s were set on %s in: %s"
-msgstr "%s har nu rollen %s i %s."
+msgstr ""
 
 #: modules/chanserv/fflags.c:183
-#, fuzzy, c-format
+#, c-format
 msgid "%s forced flags change %s on: %s"
-msgstr "%s already has the %s role in %s."
+msgstr ""
 
 #: modules/chanserv/flags.c:28
 msgid "Manipulates specific permissions on a channel."
@@ -1757,14 +1740,14 @@ msgid "FLAGS list for: %s"
 msgstr ""
 
 #: modules/chanserv/flags.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "Entry%sNickname/Host%sFlags"
-msgstr "Post Nick/HostellerIP Role"
+msgstr ""
 
 #: modules/chanserv/flags.c:157
-#, fuzzy, c-format
+#, c-format
 msgid "End of %s FLAGS listing.  Total of %u %s."
-msgstr "Slut af %s ACCESS listen."
+msgstr ""
 
 #: modules/chanserv/flags.c:212
 msgid "Syntax: FLAGS <channel> [target] [flags]"
@@ -1809,9 +1792,8 @@ msgid "%s does not wish to be added to channel access lists (NEVEROP set)."
 msgstr ""
 
 #: modules/chanserv/flags.c:486
-#, fuzzy
 msgid "Invalid hostmask."
-msgstr "Ikke gyldigt svar for: %s"
+msgstr ""
 
 #: modules/chanserv/flags.c:551
 #, c-format
@@ -1819,9 +1801,9 @@ msgid "Flags %s (Old template: %s New template: %s) were set on %s in %
 msgstr ""
 
 #: modules/chanserv/flags.c:564
-#, fuzzy, c-format
+#, c-format
 msgid "%s set flags %s on: %s"
-msgstr "%s har nu rollen %s i %s."
+msgstr ""
 
 #: modules/chanserv/flags.c:566
 #, c-format
@@ -1847,9 +1829,9 @@ msgid "Syntax: FTRANSFER <#channel> <newfounder>"
 msgstr ""
 
 #: modules/chanserv/ftransfer.c:79
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the founder of: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/ftransfer.c:86
 #, c-format
@@ -1916,24 +1898,22 @@ msgid "%s is not on %s."
 msgstr ""
 
 #: modules/chanserv/halfop.c:122
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already %shalfopped on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/halfop.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been %shalfopped on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/halfop.c:149
-#, fuzzy
 msgid "Syntax: HALFOP <#channel> [nickname] [...]"
-msgstr "Syntax: ASSIGN <#channel> <nick>"
+msgstr ""
 
 #: modules/chanserv/halfop.c:161
-#, fuzzy
 msgid "Syntax: DEHALFOP <#channel> [nickname] [...]"
-msgstr "Syntax: ASSIGN <#channel> <nick>"
+msgstr ""
 
 #: modules/chanserv/help.c:51
 #, c-format
@@ -2016,14 +1996,13 @@ msgid "View the channel change history."
 msgstr ""
 
 #: modules/chanserv/history.c:51
-#, fuzzy
 msgid "Syntax: HISTORY <channel>"
-msgstr "Syntax: INFO <#channel>"
+msgstr ""
 
 #: modules/chanserv/history.c:80 modules/groupserv/history.c:86
-#, fuzzy, c-format
+#, c-format
 msgid "%s does not have have history yet."
-msgstr "%s har ikke nogen bot."
+msgstr ""
 
 #: modules/chanserv/history.c:85
 #, c-format
@@ -2080,19 +2059,19 @@ msgstr ""
 
 #: modules/chanserv/info.c:88 modules/groupserv/info.c:55
 #: modules/nickserv/info.c:142
-#, fuzzy, c-format
+#, c-format
 msgid "Information on %s"
-msgstr "Information om %s:"
+msgstr ""
 
 #: modules/chanserv/info.c:98
-#, fuzzy, c-format
+#, c-format
 msgid "Founder%s    : %s"
-msgstr "Rolle:     %s"
+msgstr ""
 
 #: modules/chanserv/info.c:105
-#, fuzzy, c-format
+#, c-format
 msgid "Successor   : %s"
-msgstr "Access for %s in %s:"
+msgstr ""
 
 #: modules/chanserv/info.c:108 modules/groupserv/info.c:64
 #: modules/nickserv/info.c:155
@@ -2106,18 +2085,18 @@ msgid "Last used   : (about %d weeks ago)"
 msgstr ""
 
 #: modules/chanserv/info.c:118
-#, fuzzy, c-format
+#, c-format
 msgid "Last used   : %s (%s ago)"
-msgstr "Oprettet: %s (Tid siden: %s)"
+msgstr ""
 
 #: modules/chanserv/info.c:128
 msgid "Mode lock is too long, not entirely shown"
 msgstr ""
 
 #: modules/chanserv/info.c:132
-#, fuzzy, c-format
+#, c-format
 msgid "Mode lock   : %s"
-msgstr "Rolle:     %s"
+msgstr ""
 
 #: modules/chanserv/info.c:158 modules/nickserv/info.c:299
 #, c-format
@@ -2131,9 +2110,9 @@ msgid "Flags       : %s"
 msgstr ""
 
 #: modules/chanserv/info.c:293
-#, fuzzy, c-format
+#, c-format
 msgid "Prefix      : %s"
-msgstr "Rolle:     %s"
+msgstr ""
 
 #: modules/chanserv/info.c:295
 #, c-format
@@ -2151,9 +2130,9 @@ msgid "%s was CLOSED by %s on %s (%s)"
 msgstr ""
 
 #: modules/chanserv/info.c:341
-#, fuzzy, c-format
+#, c-format
 msgid "*** End of Info for the channel %s ***"
-msgstr "*** Slut af Info ***"
+msgstr ""
 
 #: modules/chanserv/invite.c:20
 msgid "Invites you to a channel."
@@ -2250,14 +2229,12 @@ msgid "%d matches for criteria %s"
 msgstr ""
 
 #: modules/chanserv/moderate.c:40
-#, fuzzy
 msgid "Activates a pending registration"
-msgstr "Dropper en kanal registrering."
+msgstr ""
 
 #: modules/chanserv/moderate.c:42
-#, fuzzy
 msgid "Rejects a pending registration"
-msgstr "Dropper en kanal registrering."
+msgstr ""
 
 #: modules/chanserv/moderate.c:44
 msgid "View pending registrations"
@@ -2271,14 +2248,13 @@ msgid ""
 msgstr ""
 
 #: modules/chanserv/moderate.c:227
-#, fuzzy
 msgid "Syntax: ACTIVATE <#channel>"
-msgstr "Syntax: COUNT <#channel>"
+msgstr ""
 
 #: modules/chanserv/moderate.c:234 modules/chanserv/moderate.c:341
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not pending registration."
-msgstr "%s er ikke registreret."
+msgstr ""
 
 #: modules/chanserv/moderate.c:256 modules/chanserv/register.c:167
 #: modules/contrib/cs_fregister.c:128
@@ -2287,14 +2263,13 @@ msgid "%s is now registered to %s."
 msgstr ""
 
 #: modules/chanserv/moderate.c:334
-#, fuzzy
 msgid "Syntax: REJECT <#channel>"
-msgstr "Syntax: COUNT <#channel>"
+msgstr ""
 
 #: modules/chanserv/moderate.c:351
-#, fuzzy, c-format
+#, c-format
 msgid "%s was rejected."
-msgstr "%s er nu genaabnet."
+msgstr ""
 
 #: modules/chanserv/moderate.c:367
 #, c-format
@@ -2316,24 +2291,22 @@ msgid "Removes channel ops from a user."
 msgstr ""
 
 #: modules/chanserv/op.c:112
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already %sopped on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/op.c:128
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been %sopped on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/op.c:139
-#, fuzzy
 msgid "Syntax: OP <#channel> [nickname] [...]"
-msgstr "Syntax: DROP <#channel>"
+msgstr ""
 
 #: modules/chanserv/op.c:151
-#, fuzzy
 msgid "Syntax: DEOP <#channel> [nickname] [...]"
-msgstr "Syntax: DROP <#channel>"
+msgstr ""
 
 #: modules/chanserv/owner.c:23
 msgid "Gives the channel owner flag to a user."
@@ -2348,24 +2321,22 @@ msgid "The IRCd software you are running does not support this feature."
 msgstr ""
 
 #: modules/chanserv/owner.c:122
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already %sset as owner on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/owner.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been %sset as owner on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/owner.c:149
-#, fuzzy
 msgid "Syntax: OWNER <#channel> [nickname] [...]"
-msgstr "Syntax: ASSIGN <#channel> <nick>"
+msgstr ""
 
 #: modules/chanserv/owner.c:161
-#, fuzzy
 msgid "Syntax: DEOWNER <#channel> [nickname] [...]"
-msgstr "Syntax: ASSIGN <#channel> <nick>"
+msgstr ""
 
 #: modules/chanserv/protect.c:23
 msgid "Gives the channel protection flag to a user."
@@ -2376,14 +2347,14 @@ msgid "Removes channel protection flag from a user."
 msgstr ""
 
 #: modules/chanserv/protect.c:122
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already %sset as protected on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/protect.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been %sset as protected on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/protect.c:149
 msgid "Syntax: PROTECT <#channel> [nickname]"
@@ -2407,9 +2378,8 @@ msgid "%s is protected from quiets; you cannot quiet them."
 msgstr ""
 
 #: modules/chanserv/quiet.c:279
-#, fuzzy
 msgid "Syntax: QUIET <#channel> <nickname|hostmask> [...]"
-msgstr "Syntax: ACCESS <#channel> DEL <konto|hostname>"
+msgstr ""
 
 #: modules/chanserv/quiet.c:327
 #, c-format
@@ -2424,19 +2394,17 @@ msgid "Quieted %s on %s."
 msgstr ""
 
 #: modules/chanserv/quiet.c:350
-#, fuzzy
 msgid "Syntax: QUIET <#channel> <nickname|hostmask> [,,,]"
-msgstr "Syntax: ACCESS <#channel> DEL <konto|hostname>"
+msgstr ""
 
 #: modules/chanserv/quiet.c:373 modules/chanserv/quiet.c:382
-#, fuzzy
 msgid "Syntax: UNQUIET <#channel> <nickname|hostmask> [...]"
-msgstr "Syntax: ACCESS <#channel> DEL <konto|hostname>"
+msgstr ""
 
 #: modules/chanserv/quiet.c:435
-#, fuzzy, c-format
+#, c-format
 msgid "Unquieted %s on %s (%d quiet%s removed)."
-msgstr "Fjernede %s tilstand paa %s (%d fjernet)."
+msgstr ""
 
 #: modules/chanserv/quiet.c:439
 #, c-format
@@ -2454,9 +2422,8 @@ msgid "No such quiet %s on %s."
 msgstr ""
 
 #: modules/chanserv/quiet.c:463
-#, fuzzy
 msgid "Syntax: UNQUIET <#channel> [nickname|hostmask] [...]"
-msgstr "Syntax: ACCESS <#channel> DEL <konto|hostname>"
+msgstr ""
 
 #: modules/chanserv/recover.c:24
 msgid "Regain control of your channel."
@@ -2614,9 +2581,9 @@ msgid "The entry message for %s was not set."
 msgstr ""
 
 #: modules/chanserv/set_entrymsg.c:89
-#, fuzzy, c-format
+#, c-format
 msgid "%s set the entry message to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_entrymsg.c:90
 #, c-format
@@ -2752,9 +2719,9 @@ msgstr ""
 #: modules/chanserv/set_pubacl.c:79 modules/chanserv/set_restricted.c:80
 #: modules/chanserv/set_secure.c:80 modules/chanserv/set_topiclock.c:81
 #: modules/chanserv/set_verbose.c:81 modules/chanserv/set_verbose.c:109
-#, fuzzy, c-format
+#, c-format
 msgid "The %s flag has been set for channel: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_guard.c:119
 #, c-format
@@ -2765,9 +2732,9 @@ msgstr ""
 #: modules/chanserv/set_pubacl.c:98 modules/chanserv/set_restricted.c:99
 #: modules/chanserv/set_secure.c:99 modules/chanserv/set_topiclock.c:102
 #: modules/chanserv/set_verbose.c:131
-#, fuzzy, c-format
+#, c-format
 msgid "The %s flag has been removed for channel: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_keeptopic.c:26
 msgid "Enables topic retention."
@@ -2788,9 +2755,9 @@ msgid "Limits the power of the +f flag."
 msgstr ""
 
 #: modules/chanserv/set_limitflags.c:75 modules/chanserv/set_private.c:75
-#, fuzzy, c-format
+#, c-format
 msgid "The %s flag is already set for: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_limitflags.c:80
 #, c-format
@@ -2799,9 +2766,9 @@ msgstr ""
 
 #: modules/chanserv/set_limitflags.c:84 modules/chanserv/set_private.c:84
 #: modules/nickserv/set_strictaccess.c:55
-#, fuzzy, c-format
+#, c-format
 msgid "The %s flag has been set for: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_limitflags.c:95 modules/chanserv/set_private.c:95
 #: modules/nickserv/set_strictaccess.c:66
@@ -2816,9 +2783,9 @@ msgstr ""
 
 #: modules/chanserv/set_limitflags.c:104 modules/chanserv/set_private.c:104
 #: modules/nickserv/set_strictaccess.c:75
-#, fuzzy, c-format
+#, c-format
 msgid "The %s flag has been removed for: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_mlock.c:26
 msgid "Sets channel mode lock."
@@ -2854,14 +2821,14 @@ msgid "You may only alter +%s modes."
 msgstr ""
 
 #: modules/chanserv/set_mlock.c:302
-#, fuzzy, c-format
+#, c-format
 msgid "The MLOCK for %s has been set to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_mlock.c:303
-#, fuzzy, c-format
+#, c-format
 msgid "%s set the mode lock to %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_mlock.c:310
 #, c-format
@@ -2914,9 +2881,9 @@ msgid ""
 msgstr ""
 
 #: modules/chanserv/set_prefix.c:111
-#, fuzzy, c-format
+#, c-format
 msgid "%s set the fantasy prefix to %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_prefix.c:112
 #, c-format
@@ -3057,14 +3024,14 @@ msgid "The URL for %s was not set."
 msgstr ""
 
 #: modules/chanserv/set_url.c:87
-#, fuzzy, c-format
+#, c-format
 msgid "%s set the channel URL to %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_url.c:88
-#, fuzzy, c-format
+#, c-format
 msgid "The URL of %s has been set to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/set_verbose.c:26
 msgid "Notifies channel about access list modifications."
@@ -3250,9 +3217,9 @@ msgid "Added template %s with flags %s in: %s"
 msgstr ""
 
 #: modules/chanserv/template.c:386
-#, fuzzy, c-format
+#, c-format
 msgid "Removed template %s from: %s"
-msgstr "Skabelon navnet kan ikke bruges: %s."
+msgstr ""
 
 #: modules/chanserv/template.c:392
 #, c-format
@@ -3265,9 +3232,9 @@ msgid "%s set %s on %d access entr%s with flags %s."
 msgstr ""
 
 #: modules/chanserv/template.c:433 modules/groupserv/template.c:411
-#, fuzzy, c-format
+#, c-format
 msgid "%d access entr%s updated accordingly."
-msgstr "%d adgangs poster opdateret tilsvarende."
+msgstr ""
 
 #: modules/chanserv/template.c:435
 #, c-format
@@ -3289,9 +3256,8 @@ msgid "Prepends a topic on a channel."
 msgstr ""
 
 #: modules/chanserv/topic.c:30
-#, fuzzy
 msgid "Swap part of the topic on a channel."
-msgstr "Rydder bans eller  andre lister af kanalen."
+msgstr ""
 
 #: modules/chanserv/topic.c:62
 msgid "Syntax: TOPIC <#channel> <topic>"
@@ -3317,14 +3283,13 @@ msgid "Syntax: TOPICPREPEND <#channel> <topic>"
 msgstr ""
 
 #: modules/chanserv/topic.c:284 modules/chanserv/topic.c:295
-#, fuzzy
 msgid "Syntax: TOPICSWAP <#channel> <search>:[<replace>]"
-msgstr "Syntax: SAY <#kanal> <besked>"
+msgstr ""
 
 #: modules/chanserv/topic.c:338
-#, fuzzy, c-format
+#, c-format
 msgid "Channel %s does not have %s in its topic."
-msgstr "Kanalen %s eksistere ikke dumbo."
+msgstr ""
 
 #: modules/chanserv/unban_self.c:24
 msgid "Unbans you on a channel."
@@ -3357,24 +3322,22 @@ msgid "Removes channel voice from a user."
 msgstr ""
 
 #: modules/chanserv/voice.c:101
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already %svoiced on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/voice.c:117
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been %svoiced on %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/voice.c:128
-#, fuzzy
 msgid "Syntax: VOICE <#channel> [nickname] [...]"
-msgstr "Syntax: ASSIGN <#channel> <nick>"
+msgstr ""
 
 #: modules/chanserv/voice.c:140
-#, fuzzy
 msgid "Syntax: DEVOICE <#channel> [nickname] [...]"
-msgstr "Syntax: ASSIGN <#channel> <nick>"
+msgstr ""
 
 #: modules/chanserv/why.c:20
 msgid "Explains channel access logic."
@@ -3399,9 +3362,8 @@ msgid "%s has no special access to %s."
 msgstr ""
 
 #: modules/chanserv/xop_manager.c:41
-#, fuzzy
 msgid "Manipulates a channel MANAGER list."
-msgstr "Moderer kanal roller."
+msgstr ""
 
 #: modules/chanserv/xop_manager.c:43
 msgid "Manipulates a channel SOP list."
@@ -3438,14 +3400,14 @@ msgid "%s is neither a registered account nor a hostmask."
 msgstr ""
 
 #: modules/chanserv/xop_manager.c:287
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already on the %s list for: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/chanserv/xop_manager.c:306
-#, fuzzy, c-format
+#, c-format
 msgid "You are not authorized to modify the access entry for %s on: %s"
-msgstr "Du er ikke autoriseret til at tildele bots paa %s."
+msgstr ""
 
 #: modules/chanserv/xop_manager.c:323 modules/chanserv/xop_manager.c:394
 #, c-format
@@ -3453,9 +3415,9 @@ msgid "%s's access on %s has been changed from %s to %s."
 msgstr ""
 
 #: modules/chanserv/xop_manager.c:325 modules/chanserv/xop_manager.c:396
-#, fuzzy, c-format
+#, c-format
 msgid "%s changed %s's access from %s to %s."
-msgstr "%s var fjernet som %s i %s."
+msgstr ""
 
 #: modules/chanserv/xop_manager.c:331 modules/chanserv/xop_manager.c:403
 #, c-format
@@ -3463,9 +3425,9 @@ msgid "%s has been added to the %s list for %s."
 msgstr ""
 
 #: modules/chanserv/xop_manager.c:332 modules/chanserv/xop_manager.c:404
-#, fuzzy, c-format
+#, c-format
 msgid "%s added %s to the %s list."
-msgstr "%s var tilfoejet som %s i %s."
+msgstr ""
 
 #: modules/chanserv/xop_manager.c:342
 #, c-format
@@ -3488,9 +3450,9 @@ msgid "%s is not on the %s list for %s."
 msgstr ""
 
 #: modules/chanserv/xop_manager.c:455 modules/chanserv/xop_manager.c:480
-#, fuzzy, c-format
+#, c-format
 msgid "%s removed %s from the %s list."
-msgstr "%s var fjernet som %s i %s."
+msgstr ""
 
 #: modules/chanserv/xop_manager.c:457 modules/chanserv/xop_manager.c:478
 #, c-format
@@ -3498,19 +3460,19 @@ msgid "%s has been removed from the %s list for %s."
 msgstr ""
 
 #: modules/chanserv/xop_manager.c:556
-#, fuzzy, c-format
+#, c-format
 msgid "%s list for: %s"
-msgstr "Hoejste score: %u"
+msgstr ""
 
 #: modules/chanserv/xop_manager.c:581
-#, fuzzy, c-format
+#, c-format
 msgid "%s list is empty."
-msgstr "%s er tom lige nu."
+msgstr ""
 
 #: modules/chanserv/xop_manager.c:585
-#, fuzzy, c-format
+#, c-format
 msgid "End of %s %s listing.  Total of %d %s."
-msgstr "Slut af SCORES listen for %s."
+msgstr ""
 
 #: modules/chanserv/xop_manager.c:608
 msgid "Syntax: FORCEXOP <#channel>"
@@ -3939,9 +3901,9 @@ msgid "Syntax: goodmail ADD <email> <reason>"
 msgstr ""
 
 #: modules/contrib/ns_goodmail.c:158
-#, fuzzy, c-format
+#, c-format
 msgid "Email %s has already been whitelisted."
-msgstr "%s er allerede registrereret."
+msgstr ""
 
 #: modules/contrib/ns_goodmail.c:174
 #, c-format
@@ -3949,9 +3911,8 @@ msgid "You have whitelisted email address %s."
 msgstr ""
 
 #: modules/contrib/ns_goodmail.c:182
-#, fuzzy
 msgid "Syntax: goodmail DEL <email>"
-msgstr "Syntax: BOT DEL <botnavn>"
+msgstr ""
 
 #: modules/contrib/ns_goodmail.c:204
 #, c-format
@@ -4678,14 +4639,13 @@ msgid "%s is not a registered account."
 msgstr ""
 
 #: modules/groupserv/fflags.c:75 modules/groupserv/flags.c:186
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid template name on the group: %s"
-msgstr "Skabelon navnet kan ikke bruges: %s."
+msgstr ""
 
 #: modules/groupserv/fflags.c:90 modules/groupserv/flags.c:240
-#, fuzzy
 msgid "You may not remove a founder's +F access."
-msgstr "Du kan ikke fjerne den sidste founder."
+msgstr ""
 
 #: modules/groupserv/fflags.c:101 modules/groupserv/fflags.c:163
 #: modules/groupserv/flags.c:252 modules/groupserv/flags.c:317
@@ -4705,14 +4665,14 @@ msgid "Group %s access list is full."
 msgstr ""
 
 #: modules/groupserv/fflags.c:279
-#, fuzzy, c-format
+#, c-format
 msgid "%s now has flags %s (TEMPLATE: %s) on: %s"
-msgstr "%s har nu rollen %s i %s."
+msgstr ""
 
 #: modules/groupserv/fflags.c:287
-#, fuzzy, c-format
+#, c-format
 msgid "%s now has flags %s on: %s"
-msgstr "%s har nu rollen %s i %s."
+msgstr ""
 
 #: modules/groupserv/flags.c:27
 msgid "Sets flags on a user in a group."
@@ -4760,15 +4720,14 @@ msgid "View the group change history."
 msgstr ""
 
 #: modules/groupserv/history.c:53
-#, fuzzy
 msgid "Syntax: HISTORY <!group>"
-msgstr "Syntax: INFO <botnick>"
+msgstr ""
 
 #: modules/groupserv/history.c:63 modules/groupserv/template.c:83
 #: modules/groupserv/templatevhost.c:88
-#, fuzzy, c-format
+#, c-format
 msgid "Group %s is not registered."
-msgstr "%s er ikke registreret."
+msgstr ""
 
 #: modules/groupserv/history.c:91
 #, c-format
@@ -4776,9 +4735,9 @@ msgid "Group Changes History for %s"
 msgstr ""
 
 #: modules/groupserv/history.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "End of Group Changes History for %s"
-msgstr "Slut af SCORES listen for %s."
+msgstr ""
 
 #: modules/groupserv/info.c:23
 msgid "Displays information about registered groups."
@@ -4824,9 +4783,9 @@ msgid "Join flags: %s"
 msgstr ""
 
 #: modules/groupserv/info.c:126
-#, fuzzy, c-format
+#, c-format
 msgid "*** End of Info for the group %s ***"
-msgstr "*** Slut af Info ***"
+msgstr ""
 
 #: modules/groupserv/invite.c:27
 msgid "Invites a user to a group."
@@ -4837,9 +4796,9 @@ msgid "Syntax: INVITE <!group> <user>"
 msgstr ""
 
 #: modules/groupserv/invite.c:66
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already a member of: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/groupserv/invite.c:72
 #, c-format
@@ -4848,14 +4807,14 @@ msgid ""
 msgstr ""
 
 #: modules/groupserv/invite.c:78
-#, fuzzy, c-format
+#, c-format
 msgid "%s does not wish to belong to any groups."
-msgstr "%s har ikke nogen bot."
+msgstr ""
 
 #: modules/groupserv/invite.c:96
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been invited to %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/groupserv/join.c:23
 msgid "Join a open group."
@@ -4871,14 +4830,14 @@ msgid "Group %s is not open to anyone joining."
 msgstr ""
 
 #: modules/groupserv/join.c:69
-#, fuzzy, c-format
+#, c-format
 msgid "You are already a member of group: %s."
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/groupserv/join.c:88
-#, fuzzy, c-format
+#, c-format
 msgid "You are now a member of: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/groupserv/join.c:94
 #, c-format
@@ -4947,9 +4906,9 @@ msgid "DELETE: %s from %s"
 msgstr ""
 
 #: modules/groupserv/main/hooks.c:139
-#, fuzzy, c-format
+#, c-format
 msgid "Groups      : %s"
-msgstr "Rolle:     %s"
+msgstr ""
 
 #: modules/groupserv/register.c:23
 msgid "Registers a group."
@@ -4982,9 +4941,9 @@ msgid "You have been restricted from registering groups by network staff."
 msgstr ""
 
 #: modules/groupserv/register.c:73
-#, fuzzy, c-format
+#, c-format
 msgid "The group %s has been registered to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/groupserv/regnolimit.c:24
 msgid "Allow a group to bypass registration limits."
@@ -5040,9 +4999,9 @@ msgid "A official channel for %s was not set."
 msgstr ""
 
 #: modules/groupserv/set_channel.c:65
-#, fuzzy, c-format
+#, c-format
 msgid "The official channel of %s has been set to: %s"
-msgstr "Kanelen %s er nu droppet."
+msgstr ""
 
 #: modules/groupserv/set_description.c:23
 msgid "Sets the group description."
@@ -5059,9 +5018,9 @@ msgid "A description for %s was not set."
 msgstr ""
 
 #: modules/groupserv/set_description.c:65
-#, fuzzy, c-format
+#, c-format
 msgid "The description of %s has been set to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/groupserv/set_email.c:23
 msgid "Sets the group e-mail address."
@@ -5091,14 +5050,14 @@ msgid "Syntax: SET GROUPNAME <oldname> <newname>"
 msgstr ""
 
 #: modules/groupserv/set_groupname.c:78
-#, fuzzy, c-format
+#, c-format
 msgid "The group name is already set to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/groupserv/set_groupname.c:91
-#, fuzzy, c-format
+#, c-format
 msgid "The group %s has been renamed to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/groupserv/set_joinflags.c:23
 msgid "Sets the flags users will be given when they JOIN the group."
@@ -5165,19 +5124,19 @@ msgid "Syntax: PUBACL <!group> <ON|OFF>"
 msgstr ""
 
 #: modules/groupserv/set_pubacl.c:55
-#, fuzzy, c-format
+#, c-format
 msgid "%s already has PUBACL enabled."
-msgstr "%s er allerede lukket."
+msgstr ""
 
 #: modules/groupserv/set_pubacl.c:62
-#, fuzzy, c-format
+#, c-format
 msgid "PUBACL has been set on: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/groupserv/set_pubacl.c:70
-#, fuzzy, c-format
+#, c-format
 msgid "%s already has PUBACL disabled."
-msgstr "%s already has the %s role in %s."
+msgstr ""
 
 #: modules/groupserv/set_pubacl.c:77
 #, c-format
@@ -5230,9 +5189,9 @@ msgid "Syntax: TAXONOMY <!group>"
 msgstr ""
 
 #: modules/groupserv/taxonomy.c:56
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a registered group."
-msgstr "%s er ikke registreret."
+msgstr ""
 
 #: modules/groupserv/taxonomy.c:65
 #, c-format
@@ -5258,14 +5217,12 @@ msgid "No valid flags given."
 msgstr ""
 
 #: modules/groupserv/template.c:206
-#, fuzzy
 msgid "You may not add +b to group templates."
-msgstr "Du kan ikke fjerne den sidste founder."
+msgstr ""
 
 #: modules/groupserv/template.c:216
-#, fuzzy
 msgid "Invalid template name given."
-msgstr "Skabelon navnet kan ikke bruges: %s."
+msgstr ""
 
 #: modules/groupserv/template.c:358
 #, c-format
@@ -5298,9 +5255,9 @@ msgid "V-Host Offer"
 msgstr ""
 
 #: modules/groupserv/templatevhost.c:228
-#, fuzzy, c-format
+#, c-format
 msgid "End of %s TEMPLATEVHOST listing."
-msgstr "Slut af %s ACCESS listen."
+msgstr ""
 
 #: modules/groupserv/templatevhost.c:231
 #, c-format
@@ -5411,9 +5368,8 @@ msgid "You have requested help about %s."
 msgstr ""
 
 #: modules/helpserv/ticket.c:250
-#, fuzzy
 msgid "Syntax: CLOSE <nick> [reason]"
-msgstr "Syntax: BOT DEL <botnavn>"
+msgstr ""
 
 #: modules/helpserv/ticket.c:298
 #, c-format
@@ -5534,9 +5490,8 @@ msgid "Syntax: OFFER [!group] <vhost>"
 msgstr ""
 
 #: modules/hostserv/offer.c:221
-#, fuzzy
 msgid "The requested group does not exist."
-msgstr "Rollen %s eksisterer ikke."
+msgstr ""
 
 #: modules/hostserv/offer.c:229
 msgid "The requested offer already exists."
@@ -5571,9 +5526,8 @@ msgid "Syntax: TAKE <vhost>"
 msgstr ""
 
 #: modules/hostserv/offer.c:438
-#, fuzzy
 msgid "You can't take vhosts when not logged in"
-msgstr "Du er nu logget ind."
+msgstr ""
 
 #: modules/hostserv/offer.c:444
 msgid "You have been restricted from taking vhosts by network staff"
@@ -5646,14 +5600,14 @@ msgid "You have been restricted from requesting vhosts by network staff."
 msgstr ""
 
 #: modules/hostserv/request.c:275
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the active vhost for your nick."
-msgstr "%s er allerede en bot eller service."
+msgstr ""
 
 #: modules/hostserv/request.c:287
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the active vhost for your account."
-msgstr "%s er allerede en bot eller service."
+msgstr ""
 
 #: modules/hostserv/request.c:316
 #, c-format
@@ -5677,9 +5631,8 @@ msgid "Nick %s not found in vhost request database."
 msgstr ""
 
 #: modules/hostserv/request.c:445
-#, fuzzy
 msgid "Syntax: REJECT <nick> [reason]"
-msgstr "Syntax: BOT DEL <botnavn>"
+msgstr ""
 
 #: modules/hostserv/request.c:451
 msgid "Reason too long. It must be 150 characters or less."
@@ -5708,9 +5661,9 @@ msgid " assigned"
 msgstr ""
 
 #: modules/hostserv/vhost.c:143 modules/nickserv/info.c:200
-#, fuzzy, c-format
+#, c-format
 msgid " on %s (%s ago)"
-msgstr "Oprettet: %s (Tid siden: %s)"
+msgstr ""
 
 #: modules/hostserv/vhost.c:147 modules/nickserv/info.c:204
 #, c-format
@@ -6053,9 +6006,8 @@ msgid "Sets up permanent memo forwarding between accounts."
 msgstr ""
 
 #: modules/memoserv/redirect.c:66
-#, fuzzy
 msgid "You may not redirect memos to yourself."
-msgstr "Du kan ikke fjerne den sidste founder."
+msgstr ""
 
 #: modules/memoserv/redirect.c:76
 #, c-format
@@ -6304,9 +6256,9 @@ msgstr ""
 
 #: modules/nickserv/cert.c:243 modules/nickserv/identify.c:124
 #: modules/nickserv/identify.c:131
-#, fuzzy, c-format
+#, c-format
 msgid "You are already logged in as: %s"
-msgstr "Du er nu logget ind."
+msgstr ""
 
 #: modules/nickserv/cert.c:249 modules/nickserv/identify.c:137
 #: modules/saslserv/main.c:657
@@ -6475,9 +6427,8 @@ msgid "%s has been regained."
 msgstr ""
 
 #: modules/nickserv/enforce.c:413
-#, fuzzy
 msgid "You were not logged in."
-msgstr "Du er nu logget ind."
+msgstr ""
 
 #: modules/nickserv/enforce.c:423
 #, c-format
@@ -6495,14 +6446,14 @@ msgstr ""
 
 #: modules/nickserv/enforce.c:474 modules/nickserv/ghost.c:120
 #: modules/nickserv/identify.c:200
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid password for: %s"
-msgstr "Ikke gyldigt svar for: %s"
+msgstr ""
 
 #: modules/nickserv/enforce.c:577
-#, fuzzy, c-format
+#, c-format
 msgid "The nick %s is reserved and cannot be registered."
-msgstr "Kanalen %s er lukket; den kan ikke droppes."
+msgstr ""
 
 #: modules/nickserv/freeze.c:28
 msgid "Freezes an account."
@@ -6527,9 +6478,9 @@ msgid "%s is already frozen."
 msgstr ""
 
 #: modules/nickserv/freeze.c:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s is now frozen; reason: %s"
-msgstr "%s er ikke registreret."
+msgstr ""
 
 #: modules/nickserv/freeze.c:152
 #, c-format
@@ -6537,9 +6488,9 @@ msgid "%s is not frozen."
 msgstr ""
 
 #: modules/nickserv/freeze.c:162
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been unfrozen."
-msgstr "%s er nu genaabnet."
+msgstr ""
 
 #: modules/nickserv/ghost.c:24
 msgid "Reclaims use of a nickname."
@@ -6708,9 +6659,9 @@ msgid "You do not have any history yet."
 msgstr ""
 
 #: modules/nickserv/history.c:57
-#, fuzzy, c-format
+#, c-format
 msgid "%s does not have any history yet."
-msgstr "%s har ikke nogen bot."
+msgstr ""
 
 #: modules/nickserv/history.c:62
 #, c-format
@@ -6748,14 +6699,14 @@ msgid "Logins to this account: %s"
 msgstr ""
 
 #: modules/nickserv/identify.c:164 modules/nickserv/logout.c:108
-#, fuzzy, c-format
+#, c-format
 msgid "You have been logged out of: %s"
-msgstr "Du kan ikke angive bots til %s."
+msgstr ""
 
 #: modules/nickserv/identify.c:182
-#, fuzzy, c-format
+#, c-format
 msgid "You are now logged in as: %s"
-msgstr "Du er nu logget ind."
+msgstr ""
 
 #: modules/nickserv/info.c:72
 msgid "Syntax: INFO <nickname>"
@@ -6767,14 +6718,14 @@ msgid "%s is not registered anymore, but was marked by %s on %s (%s)."
 msgstr ""
 
 #: modules/nickserv/info.c:135
-#, fuzzy, c-format
+#, c-format
 msgid "Information on %s (account %s)"
-msgstr "Information omkring bot %s:"
+msgstr ""
 
 #: modules/nickserv/info.c:161
-#, fuzzy, c-format
+#, c-format
 msgid "User reg.   : %s (%s ago)"
-msgstr "Oprettet: %s (Tid siden: %s)"
+msgstr ""
 
 #: modules/nickserv/info.c:187
 #, c-format
@@ -6782,14 +6733,14 @@ msgid "Last addr   : %s"
 msgstr ""
 
 #: modules/nickserv/info.c:207
-#, fuzzy, c-format
+#, c-format
 msgid "vHost       : %s"
-msgstr "Rolle:     %s"
+msgstr ""
 
 #: modules/nickserv/info.c:209
-#, fuzzy, c-format
+#, c-format
 msgid "vHost       : %s (assigned%s)"
-msgstr "Flags:       %s (%s)"
+msgstr ""
 
 #: modules/nickserv/info.c:211
 #, c-format
@@ -6797,9 +6748,9 @@ msgid "vHost       : unassigned%s"
 msgstr ""
 
 #: modules/nickserv/info.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "Real addr   : %s"
-msgstr "Rigtige navn: %s"
+msgstr ""
 
 #: modules/nickserv/info.c:221
 msgid "Recognized  : now (matches access list)"
@@ -6815,9 +6766,9 @@ msgid "Last seen   : (about %d weeks ago)"
 msgstr ""
 
 #: modules/nickserv/info.c:232 modules/nickserv/info.c:247
-#, fuzzy, c-format
+#, c-format
 msgid "Last seen   : %s (%s ago)"
-msgstr "Oprettet: %s (Tid siden: %s)"
+msgstr ""
 
 #: modules/nickserv/info.c:252
 #, c-format
@@ -6825,28 +6776,28 @@ msgid "User seen   : (about %d weeks ago)"
 msgstr ""
 
 #: modules/nickserv/info.c:254
-#, fuzzy, c-format
+#, c-format
 msgid "User seen   : %s (%s ago)"
-msgstr "Oprettet: %s (Tid siden: %s)"
+msgstr ""
 
 #: modules/nickserv/info.c:263
 msgid "User seen   : now"
 msgstr ""
 
 #: modules/nickserv/info.c:278 modules/nickserv/info.c:286
-#, fuzzy, c-format
+#, c-format
 msgid "Nicks       : %s"
-msgstr "Rolle:     %s"
+msgstr ""
 
 #: modules/nickserv/info.c:292
-#, fuzzy, c-format
+#, c-format
 msgid "E-mail      : %s%s"
-msgstr "Maske:%s@%s"
+msgstr ""
 
 #: modules/nickserv/info.c:430
-#, fuzzy, c-format
+#, c-format
 msgid "Language    : %s"
-msgstr "Rigtige navn: %s"
+msgstr ""
 
 #: modules/nickserv/info.c:436
 #, c-format
@@ -6880,18 +6831,18 @@ msgid "%s has requested an email address change to %s on %s"
 msgstr ""
 
 #: modules/nickserv/info.c:519
-#, fuzzy, c-format
+#, c-format
 msgid "*** End of Info for the account %s ***"
-msgstr "*** Slut af Info ***"
+msgstr ""
 
 #: modules/nickserv/list.c:25
 msgid "Lists nicknames registered matching a given pattern."
 msgstr ""
 
 #: modules/nickserv/list.c:267
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a recognized LIST criterion"
-msgstr "%s er ikke registreret."
+msgstr ""
 
 #: modules/nickserv/list.c:335
 #, c-format
@@ -6903,9 +6854,8 @@ msgid "Lists channels that you have access to."
 msgstr ""
 
 #: modules/nickserv/listchans.c:81 modules/nickserv/listchans.c:106
-#, fuzzy
 msgid "You don't have any channel access."
-msgstr "Moderer kanal adgang."
+msgstr ""
 
 #: modules/nickserv/listchans.c:83 modules/nickserv/listchans.c:108
 #, c-format
@@ -6913,9 +6863,9 @@ msgid "No channel access was found for the account: %s"
 msgstr ""
 
 #: modules/nickserv/listchans.c:95
-#, fuzzy, c-format
+#, c-format
 msgid "Access flag(s) %s in %s (%s)"
-msgstr "Access for %s in %s:"
+msgstr ""
 
 #: modules/nickserv/listchans.c:111
 #, c-format
@@ -6990,9 +6940,9 @@ msgid "You do not have any login history yet."
 msgstr ""
 
 #: modules/nickserv/loginhistory.c:57
-#, fuzzy, c-format
+#, c-format
 msgid "%s does not have any login history yet."
-msgstr "%s har ikke nogen bot."
+msgstr ""
 
 #: modules/nickserv/loginhistory.c:62
 #, c-format
@@ -7023,18 +6973,18 @@ msgid "Authentication failed.  Invalid password for: %s"
 msgstr ""
 
 #: modules/nickserv/logout.c:85
-#, fuzzy, c-format
+#, c-format
 msgid "You may not logout: %s"
-msgstr "Du kan ikke angive bots til %s."
+msgstr ""
 
 #: modules/nickserv/logout.c:92
 msgid "Syntax: LOGOUT <target> <password>"
 msgstr ""
 
 #: modules/nickserv/logout.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been logged out of: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/nickserv/main.c:30
 msgid "Disconnects an old session."
@@ -7158,9 +7108,9 @@ msgid "%s is not registered anymore but was marked by %s on %s: %s"
 msgstr ""
 
 #: modules/nickserv/multimark.c:852
-#, fuzzy, c-format
+#, c-format
 msgid "You need the %s privilege for this operation."
-msgstr "Du har ikke tilladelser til denne operation."
+msgstr ""
 
 #: modules/nickserv/multimark.c:868 modules/nickserv/multimark.c:1124
 msgid "Usage: MARK <target> <ADD|DEL|LIST|MIGRATE> [note]"
@@ -7175,14 +7125,14 @@ msgid "Usage: MARK <target> ADD <note>"
 msgstr ""
 
 #: modules/nickserv/multimark.c:901
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been marked."
-msgstr "%s er nu genaabnet."
+msgstr ""
 
 #: modules/nickserv/multimark.c:913
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not registered, and was not marked."
-msgstr "%s er ikke registreret."
+msgstr ""
 
 #: modules/nickserv/multimark.c:961
 #, c-format
@@ -7194,14 +7144,12 @@ msgid "Usage: MARK <target> DEL <number>"
 msgstr ""
 
 #: modules/nickserv/multimark.c:1110
-#, fuzzy
 msgid "The mark has been deleted."
-msgstr "Kanelen %s er nu droppet."
+msgstr ""
 
 #: modules/nickserv/multimark.c:1115
-#, fuzzy
 msgid "This mark does not exist."
-msgstr "Rollen %s eksisterer ikke."
+msgstr ""
 
 #: modules/nickserv/register.c:27
 msgid "Registers a nickname."
@@ -7338,9 +7286,9 @@ msgid "The password for the account %s has been changed to: %s"
 msgstr ""
 
 #: modules/nickserv/resetpass.c:101
-#, fuzzy, c-format
+#, c-format
 msgid "The %s flag has been removed for account: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/nickserv/resetstrictaccess.c:46
 msgid "Send an e-mail to recover access if locked out from STRICTACCESS."
@@ -7352,9 +7300,9 @@ msgid "Syntax: SENDPASS <account>"
 msgstr ""
 
 #: modules/nickserv/resetstrictaccess.c:76
-#, fuzzy, c-format
+#, c-format
 msgid "%s did not have a key set."
-msgstr "%s har ikke nogen bot."
+msgstr ""
 
 #: modules/nickserv/resetstrictaccess.c:86
 #, c-format
@@ -7568,9 +7516,9 @@ msgid "Overriding MARK on the account: %s"
 msgstr ""
 
 #: modules/nickserv/sendpass.c:241
-#, fuzzy, c-format
+#, c-format
 msgid "The password for %s has been sent to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/nickserv/sendpass_user.c:124
 msgid ""
@@ -7865,9 +7813,9 @@ msgid "The password for %s has been changed to %s."
 msgstr ""
 
 #: modules/nickserv/setpass.c:115
-#, fuzzy, c-format
+#, c-format
 msgid "The %s flag has been removed for the account: %s"
-msgstr "%s var fjernet som %s i %s."
+msgstr ""
 
 #: modules/nickserv/setpass.c:159
 #, c-format
@@ -7887,9 +7835,9 @@ msgid "Syntax: SET PASSWORD <new password>"
 msgstr ""
 
 #: modules/nickserv/set_password.c:87
-#, fuzzy, c-format
+#, c-format
 msgid "The password for %s has been changed to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/nickserv/set_private.c:40 modules/nickserv/set_privmsg.c:40
 #, c-format
@@ -7959,9 +7907,9 @@ msgid "Public key entry has been deleted."
 msgstr ""
 
 #: modules/nickserv/set_pubkey.c:74
-#, fuzzy, c-format
+#, c-format
 msgid "Your public key is already set to: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/nickserv/set_pubkey.c:80
 #, c-format
@@ -7973,9 +7921,9 @@ msgid "Allows you to opt-out of channel change messages."
 msgstr ""
 
 #: modules/nickserv/set_strictaccess.c:40
-#, fuzzy, c-format
+#, c-format
 msgid "The %s flag has already been set for: %s"
-msgstr "%s er allerede tildelt til %s."
+msgstr ""
 
 #: modules/nickserv/set_strictaccess.c:47
 msgid ""
@@ -7994,9 +7942,8 @@ msgid "Displays session information."
 msgstr ""
 
 #: modules/nickserv/status.c:24
-#, fuzzy
 msgid "Displays parsable session information."
-msgstr "Viser mere hjaelpe information."
+msgstr ""
 
 #: modules/nickserv/status.c:56
 #, c-format
@@ -8445,9 +8392,8 @@ msgid "Updated %s in clone exempt list."
 msgstr ""
 
 #: modules/operserv/clones.c:587
-#, fuzzy
 msgid "Syntax: CLONES DELEXEMPT <ip>"
-msgstr "Syntax: BOT DEL <botnavn>"
+msgstr ""
 
 #: modules/operserv/clones.c:610
 #, c-format
@@ -8888,9 +8834,9 @@ msgid "Number of registered accounts: %d"
 msgstr ""
 
 #: modules/operserv/info.c:95
-#, fuzzy, c-format
+#, c-format
 msgid "Number of registered nicks: %d"
-msgstr "%s er et registreret nick."
+msgstr ""
 
 #: modules/operserv/info.c:96
 #, c-format
@@ -8980,9 +8926,9 @@ msgid "Channel expiration time: %d days"
 msgstr ""
 
 #: modules/operserv/info.c:123
-#, fuzzy, c-format
+#, c-format
 msgid "Default channel registration flags: %s"
-msgstr "Dropper en kanal registrering."
+msgstr ""
 
 #: modules/operserv/info.c:125
 #, c-format
@@ -9083,9 +9029,9 @@ msgid "Syntax: MODE <channel> <parameters>"
 msgstr ""
 
 #: modules/operserv/mode.c:57
-#, fuzzy, c-format
+#, c-format
 msgid "Setting modes %s on %s."
-msgstr "Clonede %s til %s."
+msgstr ""
 
 #: modules/operserv/modinspect.c:20
 msgid "Displays information about loaded modules."
@@ -10046,14 +9992,12 @@ msgid "join staff channels"
 msgstr ""
 
 #: modules/operserv/specs.c:68
-#, fuzzy
 msgid "mark channels"
-msgstr "Lukker en kanal"
+msgstr ""
 
 #: modules/operserv/specs.c:69
-#, fuzzy
 msgid "hold channels"
-msgstr "Lukker en kanal"
+msgstr ""
 
 #: modules/operserv/specs.c:70
 msgid "bypass channel registration limits"
@@ -10313,9 +10257,9 @@ msgid "IP: %s Reason: %s (%s - %s)"
 msgstr ""
 
 #: modules/proxyscan/dnsbl.c:292
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been scanned."
-msgstr "%s er nu genaabnet."
+msgstr ""
 
 #: modules/proxyscan/dnsbl.c:297
 #, c-format
@@ -10581,9 +10525,9 @@ msgid "No such setting %s."
 msgstr ""
 
 #: modules/saslserv/main.c:785
-#, fuzzy, c-format
+#, c-format
 msgid "You are now logged in to: %s"
-msgstr "Du er nu logget ind."
+msgstr ""
 
 #: modules/scripting/perl/api/perl_command.c:27
 #, c-format
@@ -10604,9 +10548,8 @@ msgid "Failed to retrieve script list: %s"
 msgstr ""
 
 #: modules/statserv/channel.c:19
-#, fuzzy
 msgid "Obtain various information about a channel."
-msgstr "Lister information paa kanal."
+msgstr ""
 
 #: modules/statserv/channel.c:22
 msgid "Obtain the topic for a given channel."
@@ -10717,19 +10660,18 @@ msgid "End of server list."
 msgstr ""
 
 #: modules/statserv/server.c:100
-#, fuzzy
 msgid "Syntax: SERVER INFO <server>"
-msgstr "Syntax: INFO <#channel>"
+msgstr ""
 
 #: modules/statserv/server.c:106 modules/statserv/server.c:112
-#, fuzzy, c-format
+#, c-format
 msgid "Server %s does not exist."
-msgstr "Rollen %s eksisterer ikke."
+msgstr ""
 
 #: modules/statserv/server.c:116
-#, fuzzy, c-format
+#, c-format
 msgid "Information for server %s:"
-msgstr "Information omkring bot %s:"
+msgstr ""
 
 #: modules/statserv/server.c:117
 #, c-format
@@ -10764,19 +10706,3 @@ msgstr ""
 #, c-format
 msgid "Network size: %u servers"
 msgstr ""
-
-#~ msgid "  Options : Private"
-#~ msgstr "Valgmulig: Privat"
-
-#~ msgid "%d: %s"
-#~ msgstr "%d: %s"
-
-#~ msgid "          Options : %s"
-#~ msgstr "Valgmuligheder: %s"
-
-#~ msgid "%-5d %-22s %s"
-#~ msgstr "%-5d %-22s %s"
-
-#, fuzzy
-#~ msgid "Syntax: FLAGS <#channel> MODIFY [target] <flags>"
-#~ msgstr "Syntax: ROLE <#channel> ADD|SET <role> [flags]"

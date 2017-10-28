@@ -15,10 +15,10 @@ modules/chanserv/access.c
 modules/chanserv/akick.c
 modules/chanserv/antiflood.c
 modules/chanserv/ban.c
-modules/chanserv/clear.c
 modules/chanserv/clear_akicks.c
-modules/chanserv/clear_bans.c
 modules/chanserv/clear_bans_any.c
+modules/chanserv/clear_bans.c
+modules/chanserv/clear.c
 modules/chanserv/clear_excepts.c
 modules/chanserv/clear_flags.c
 modules/chanserv/clear_invex.c
@@ -58,6 +58,7 @@ modules/chanserv/set_guard.c
 modules/chanserv/set_keeptopic.c
 modules/chanserv/set_limitflags.c
 modules/chanserv/set_mlock.c
+modules/chanserv/set_notifyflags.c
 modules/chanserv/set_prefix.c
 modules/chanserv/set_private.c
 modules/chanserv/set_property.c
@@ -91,7 +92,6 @@ modules/contrib/ns_generatehash.c
 modules/contrib/ns_goodmail.c
 modules/contrib/ns_guestnoreg.c
 modules/contrib/ns_listlogins.c
-modules/contrib/ns_sendpassmail.c
 modules/contrib/ns_waitreg.c
 modules/contrib/os_defcon.c
 modules/contrib/os_helpme.c
@@ -117,6 +117,7 @@ modules/groupserv/fdrop.c
 modules/groupserv/fflags.c
 modules/groupserv/flags.c
 modules/groupserv/help.c
+modules/groupserv/history.c
 modules/groupserv/info.c
 modules/groupserv/invite.c
 modules/groupserv/join.c
@@ -133,8 +134,12 @@ modules/groupserv/set_email.c
 modules/groupserv/set_groupname.c
 modules/groupserv/set_joinflags.c
 modules/groupserv/set_open.c
+modules/groupserv/set_pubacl.c
 modules/groupserv/set_public.c
 modules/groupserv/set_url.c
+modules/groupserv/taxonomy.c
+modules/groupserv/template.c
+modules/groupserv/templatevhost.c
 modules/helpserv/helpme.c
 modules/helpserv/main.c
 modules/helpserv/services.c
@@ -142,6 +147,7 @@ modules/helpserv/ticket.c
 modules/hostserv/drop.c
 modules/hostserv/group.c
 modules/hostserv/help.c
+modules/hostserv/main.c
 modules/hostserv/offer.c
 modules/hostserv/onoff.c
 modules/hostserv/request.c
@@ -155,6 +161,7 @@ modules/memoserv/ignore.c
 modules/memoserv/list.c
 modules/memoserv/main.c
 modules/memoserv/read.c
+modules/memoserv/redirect.c
 modules/memoserv/sendall.c
 modules/memoserv/send.c
 modules/memoserv/sendgroup.c
@@ -169,6 +176,7 @@ modules/nickserv/freeze.c
 modules/nickserv/ghost.c
 modules/nickserv/group.c
 modules/nickserv/help.c
+modules/nickserv/history.c
 modules/nickserv/hold.c
 modules/nickserv/identify.c
 modules/nickserv/info.c
@@ -177,6 +185,7 @@ modules/nickserv/listchans.c
 modules/nickserv/listgroups.c
 modules/nickserv/listmail.c
 modules/nickserv/listownmail.c
+modules/nickserv/loginhistory.c
 modules/nickserv/logout.c
 modules/nickserv/main.c
 modules/nickserv/mark.c
@@ -184,6 +193,7 @@ modules/nickserv/multimark.c
 modules/nickserv/register.c
 modules/nickserv/regnolimit.c
 modules/nickserv/resetpass.c
+modules/nickserv/resetstrictaccess.c
 modules/nickserv/restrict.c
 modules/nickserv/return.c
 modules/nickserv/sendpass.c
@@ -192,15 +202,19 @@ modules/nickserv/set_accountname.c
 modules/nickserv/set_core.c
 modules/nickserv/set_email.c
 modules/nickserv/set_emailmemos.c
+modules/nickserv/set_emailnotify.c
 modules/nickserv/set_enforcetime.c
 modules/nickserv/set_hidemail.c
 modules/nickserv/set_language.c
 modules/nickserv/set_nevergroup.c
 modules/nickserv/set_neverop.c
 modules/nickserv/set_nogreet.c
-modules/nickserv/set_nopassword.c
 modules/nickserv/set_nomemo.c
 modules/nickserv/set_noop.c
+modules/nickserv/set_nopassword.c
+modules/nickserv/set_notifyacl.c
+modules/nickserv/set_notifymemo.c
+modules/nickserv/set_notifyset.c
 modules/nickserv/setpass.c
 modules/nickserv/set_password.c
 modules/nickserv/set_private.c
@@ -208,6 +222,7 @@ modules/nickserv/set_privmsg.c
 modules/nickserv/set_property.c
 modules/nickserv/set_pubkey.c
 modules/nickserv/set_quietchg.c
+modules/nickserv/set_strictaccess.c
 modules/nickserv/status.c
 modules/nickserv/taxonomy.c
 modules/nickserv/vacation.c
@@ -255,6 +270,7 @@ modules/rpgserv/info.c
 modules/rpgserv/list.c
 modules/rpgserv/search.c
 modules/rpgserv/set.c
+modules/saslserv/main.c
 modules/scripting/perl/api/perl_command.c
 modules/scripting/perl/perl_module.c
 modules/statserv/channel.c
