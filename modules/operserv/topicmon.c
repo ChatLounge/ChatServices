@@ -6,7 +6,7 @@
  * Description:
  *
  *	This module will check for topic changes in any channel,
- * and post them to the services log channel.
+ * and post them to the services log channel. 
  *
  */
 
