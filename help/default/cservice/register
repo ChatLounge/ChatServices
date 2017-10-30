@@ -9,6 +9,12 @@ allows you to maintain a channel access list
 and other functions that are normally
 provided by IRC bots.
 
+#if module chanserv/moderate
+* Channels require Staff review for
+Registration on this network and are NOT
+instant.
+#endif
+
 Syntax: REGISTER <#channel>
 
 Examples:
