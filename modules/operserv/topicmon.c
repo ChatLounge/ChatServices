@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2014-2017 ChatLounge IRC Network Development Team
  *
  * Author: Ben (Ben @ irc.chatlounge.net)
  *
@@ -9,20 +9,20 @@
  * and post them to the services log channel.
  *
  */
- 
+
 #include "atheme.h"
 #include "channels.h"
 #include "common.h"
 #include "servers.h"
 #include "users.h"
- 
+
 DECLARE_MODULE_V1
 (
 	"operserv/topicmon", true, _modinit, _moddeinit,
 	PACKAGE_STRING,
 	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
 );
- 
+
 static void watch_topic_changes(channel_t *channel);
 
 void _modinit(module_t *m)
@@ -45,10 +45,10 @@ static void watch_topic_changes(channel_t *channel)
 
 	//if (u == NULL)
 	//	return;
-	
+
 	//if (!(data->s->flags & SF_EOB))
 	//	return;
-	
+
 	slog(LG_INFO, "TOPICMON: \2%s\2 has changed the topic on \2%s\2 to:",
 		channel->topic_setter, channel->name);
 	slog(LG_INFO, "TOPICMON: %s",
