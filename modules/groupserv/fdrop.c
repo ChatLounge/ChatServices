@@ -13,7 +13,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/fdrop", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	VENDOR_STRING
 );
 
 static void gs_cmd_fdrop(sourceinfo_t *si, int parc, char *parv[]);
@@ -66,4 +66,3 @@ void _moddeinit(module_unload_intent_t intent)
 {
 	service_named_unbind_command("groupserv", &gs_fdrop);
 }
-

@@ -13,7 +13,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/access", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*notify_channel_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
@@ -991,7 +991,7 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 		command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 		return;
 	}
-	
+
 	if (validhostmask(target) && chansvs.min_non_wildcard_chars_host_acl > 0 &&
 		check_not_enough_non_wildcard_chars(target,
 			chansvs.min_non_wildcard_chars_host_acl, 1) &&

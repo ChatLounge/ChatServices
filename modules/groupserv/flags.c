@@ -16,7 +16,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/flags", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
+	VENDOR_STRING
 );
 
 static unsigned int (*get_hostsvs_req_time)(void) = NULL;
@@ -220,7 +220,7 @@ static void gs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 			return;
 		}
-		
+
 		if (((oldflags & GA_SET) || (flags & GA_SET)) && !(groupacs_sourceinfo_flags(mg, si) & GA_FOUNDER)) {
 			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 			return;
@@ -465,4 +465,3 @@ void _moddeinit(module_unload_intent_t intent)
 {
 	service_named_unbind_command("groupserv", &gs_flags);
 }
-

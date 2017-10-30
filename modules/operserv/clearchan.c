@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"operserv/clearchan", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <admin@chatlounge.net>"
+	VENDOR_STRING
 );
 
 #define CLEAR_KICK 1

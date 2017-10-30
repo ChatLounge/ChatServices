@@ -16,7 +16,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/multimark", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void ns_cmd_multimark(sourceinfo_t *si, int parc, char *parv[]);

@@ -17,7 +17,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/set_notifyset", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;

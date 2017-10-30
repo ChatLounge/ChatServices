@@ -61,7 +61,7 @@ DECLARE_MODULE_V1
 (
 	"proxyscan/dnsbl", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	VENDOR_STRING
 );
 
 mowgli_list_t blacklist_list = { NULL, NULL, 0 };

@@ -1,4 +1,4 @@
-/*
+VENDOR_STRING/*
  * Copyright (c) 2006 Jilles Tjoelker, et al.
  * Copyright (c) 2017 ChatLounge IRC Network Development Team
  *
@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/group", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
@@ -254,7 +254,7 @@ static void ns_cmd_fungroup(sourceinfo_t *si, int parc, char *parv[])
 		snprintf(description, sizeof description, "Nick ungrouped: \2%s\2", mn->nick);
 		add_history_entry(si->smu, mn->owner, description);
 	}
-	
+
 	object_unref(mn);
 }
 

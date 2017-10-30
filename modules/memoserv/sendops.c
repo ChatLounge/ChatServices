@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"memoserv/sendops", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
+	VENDOR_STRING
 );
 
 static void ms_cmd_sendops(sourceinfo_t *si, int parc, char *parv[]);

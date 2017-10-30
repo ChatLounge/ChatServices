@@ -14,7 +14,7 @@
  *
  *  Copyright (c) 2015-2017 - ChatLounge IRC Network Development Team
  */
- 
+
 #include "atheme.h"
 #include "hostserv.h"
 
@@ -22,7 +22,7 @@ DECLARE_MODULE_V1
 (
 	"hostserv/drop", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;

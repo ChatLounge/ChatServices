@@ -23,7 +23,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/" COMMAND_LC, false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;

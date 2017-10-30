@@ -17,7 +17,7 @@ DECLARE_MODULE_V1
 (
 	"botserv/set", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Rizon Development Group <http://dev.rizon.net>"
+	VENDOR_STRING
 );
 
 void _modinit(module_t *m)

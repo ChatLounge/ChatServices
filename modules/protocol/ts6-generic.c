@@ -44,7 +44,7 @@ DECLARE_MODULE_V1
 (
 	"protocol/ts6-generic", true, _modinit, NULL,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static bool use_rserv_support = false;

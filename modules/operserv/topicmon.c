@@ -6,7 +6,7 @@
  * Description:
  *
  *	This module will check for topic changes in any channel,
- * and post them to the services log channel. 
+ * and post them to the services log channel.
  *
  */
 
@@ -20,7 +20,7 @@ DECLARE_MODULE_V1
 (
 	"operserv/topicmon", true, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void watch_topic_changes(channel_t *channel);

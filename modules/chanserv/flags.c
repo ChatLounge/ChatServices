@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/flags", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*notify_channel_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
@@ -236,7 +236,7 @@ static void cs_cmd_flags(sourceinfo_t *si, int parc, char *parv[])
 
 	/*
 	 * There used to be Anope compatibility here, adding support for
-	 * "/msg ChanServ flags #channel modify/clear/list", 
+	 * "/msg ChanServ flags #channel modify/clear/list",
 	 * but this has caused issues described in the following bug report:
 	 * https://github.com/shalture/shalture/issues/16
 	 * ...so it was removed again. ~ToBeFree

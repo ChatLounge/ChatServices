@@ -17,7 +17,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/set_groupname", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void gs_cmd_set_groupname(sourceinfo_t *si, int parc, char *parv[]);

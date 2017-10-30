@@ -17,7 +17,7 @@ DECLARE_MODULE_V1
 (
 	"hostserv/request", true, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
+	VENDOR_STRING
 );
 
 bool request_per_nick;

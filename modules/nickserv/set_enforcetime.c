@@ -13,7 +13,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/set_enforcetime",false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
@@ -27,7 +27,7 @@ command_t ns_set_enforcetime = { "ENFORCETIME", N_("Amount of time it takes befo
 static void show_enforcetime(hook_user_req_t *hdata)
 {
 	metadata_t *md;
-	
+
 	if (!(hdata->mu == hdata->si->smu || has_priv(hdata->si, PRIV_USER_AUSPEX)))
 		return;
 

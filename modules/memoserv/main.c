@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"memoserv/main", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void on_user_identify(user_t *u);
@@ -188,7 +188,7 @@ bool send_user_memo(sourceinfo_t *si, myuser_t *target,
 	memo->status = status;
 	mowgli_strlcpy(memo->sender, entity(si->smu)->name, NICKLEN);
 	mowgli_strlcpy(memo->text, memotext, MEMOLEN);
-	
+
 	/* Create a linked list node and add to memos */
 	n = mowgli_node_create();
 	mowgli_node_add(memo, n, &target->memos);
@@ -294,7 +294,7 @@ bool send_user_memo_misc(myuser_t *target,
 	memo->status = status;
 	mowgli_strlcpy(memo->sender, memosvs->me->nick, NICKLEN);
 	mowgli_strlcpy(memo->text, memotext, MEMOLEN);
-	
+
 	/* Create a linked list node and add to memos */
 	n = mowgli_node_create();
 	mowgli_node_add(memo, n, &target->memos);

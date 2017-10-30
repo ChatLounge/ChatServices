@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/set_strictaccess", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry_setting)(myuser_t *smu, myuser_t *tmu, const char *settingname, const char *setting) = NULL;
@@ -111,7 +111,7 @@ void _modinit(module_t *m)
 	static list_param_t use_myuser_strictaccess;
 	use_myuser_strictaccess.opttype = OPT_BOOL;
 	use_myuser_strictaccess.is_match = uses_myuser_strictaccess;
-	
+
 	list_register("use-myuser-strictaccess", &use_myuser_strictaccess);
 	list_register("use_myuser_strictaccess", &use_myuser_strictaccess);
 }
@@ -119,10 +119,9 @@ void _modinit(module_t *m)
 void _moddeinit(module_unload_intent_t intent)
 {
 	command_delete(&ns_set_strictaccess, *ns_set_cmdtree);
-	
+
 	use_myuser_strictaccess--;
-	
+
 	list_unregister("use-myuser-strictaccess");
 	list_unregister("use_myuser_strictaccess");
 }
-

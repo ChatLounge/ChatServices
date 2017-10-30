@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/clear_excepts", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
@@ -72,7 +72,7 @@ static void cs_cmd_clear_excepts(sourceinfo_t *si, int parc, char *parv[])
 		command_fail(si, fault_noprivs, _("\2%s\2 is closed."), parv[0]);
 		return;
 	}
-	
+
 	if (!strchr(ircd->ban_like_modes, 'e'))
 	{
 		command_fail(si, fault_unimplemented, _("Channel ban exception (+e) modes are not available."));

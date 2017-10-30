@@ -27,7 +27,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/moderate", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
@@ -315,7 +315,7 @@ static void cs_cmd_activate(sourceinfo_t *si, int parc, char *parv[])
 	}
 
 	csreq_destroy(cs);
-	/* Check if GUARD is enabled by default and if so, ChanServ should join even 
+	/* Check if GUARD is enabled by default and if so, ChanServ should join even
 	 * if the founder is no longer present or identified. --siniStar
 	 */
 	if (mc->flags & MC_GUARD)

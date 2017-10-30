@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/join", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void gs_cmd_join(sourceinfo_t *si, int parc, char *parv[]);
@@ -114,4 +114,3 @@ void _moddeinit(module_unload_intent_t intent)
 {
 	service_named_unbind_command("groupserv", &gs_join);
 }
-

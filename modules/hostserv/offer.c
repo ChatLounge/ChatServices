@@ -18,7 +18,7 @@ DECLARE_MODULE_V1
 (
 	"hostserv/offer", true, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
@@ -575,7 +575,7 @@ static void hs_cmd_offerlist(sourceinfo_t *si, int parc, char *parv[])
 
 			//command_success_nodata(si, _("vhost:\2%s\2, group: \2%s\2"), get_group_template_vhost_by_flags(ga->mg, ga->flags), entity(ga->mg)->name);
 		}
-		
+
 		if (count > 0)
 		{
 			command_success_nodata(si, _("V-Hosts available from group template memberships:"));
