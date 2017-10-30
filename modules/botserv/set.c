@@ -1,6 +1,8 @@
 /*
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016 Austin Ellis <siniStar@IRC4Fun.net>
  * Copyright (c) 2009 Celestin, et al.
- * Copyright (c) 2016 Austin Ellis
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * This file is a meta-module for compatibility with old

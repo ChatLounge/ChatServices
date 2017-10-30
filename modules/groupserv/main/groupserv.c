@@ -1,12 +1,12 @@
 /* groupserv.c - group services
  * Copyright (C) 2010 Atheme Development Group
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net/)
  */
 
 #define FLAGS_ADD 0x1
 #define FLAGS_DEL 0x2
- 
+
 #include "atheme.h"
 #include "groupserv_main.h"
 
