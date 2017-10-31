@@ -1,4 +1,4 @@
-VENDOR_STRING/*
+/*
  * Copyright (c) 2006 Jilles Tjoelker, et al.
  * Copyright (c) 2017 ChatLounge IRC Network Development Team
  *
