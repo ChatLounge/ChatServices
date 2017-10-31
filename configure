@@ -4830,7 +4830,7 @@ PACKAGE=chatservices
 
 VERSION=1.0.0-dev
 
-$as_echo "#define VENDOR_STRING \"ChatLounge IRC Network Development Team <http://www.chatlounge.net>\"" >>confdefs.h
+$as_echo "#define VENDOR_STRING \"ChatLounge IRC Network Development Team <https://www.chatlounge.net>\"" >>confdefs.h
 
 cat >>confdefs.h <<_ACEOF
 #define PACKAGE "$PACKAGE"
