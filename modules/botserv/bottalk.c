@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016 Austin Ellis
+ * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016 Austin Ellis <siniStar@IRC4Fun.net>
  * Copyright (c) 2009 Celestin, et al.
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -93,7 +94,7 @@ static void bs_cmd_say(sourceinfo_t *si, int parc, char *parv[])
 		msg(bot->nick, channel, "(%s) %s", saybuf, message);
 		logcommand(si, CMDLOG_DO, "SAY:\2%s\2: \2%s\2", channel, message);
 	}
-	else 
+	else
 	{
 		msg(bot->nick, channel, "%s", message);
 		logcommand(si, CMDLOG_DO, "SAY:\2%s\2: \2%s\2", channel, message);
@@ -169,5 +170,3 @@ static void bs_cmd_act(sourceinfo_t *si, int parc, char *parv[])
  * vim:sw=8
  * vim:noexpandtab
  */
-
-

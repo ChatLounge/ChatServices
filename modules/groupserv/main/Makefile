@@ -1,5 +1,5 @@
 # Copyright (c) 2010 Atheme Development Group
-# Copyright (c) 2016 ChatLounge IRC Network Development Team
+# Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
 #     (http://www.chatlounge.net/)
 # Rights to this code are documented in doc/LICENSE.
 
@@ -16,4 +16,3 @@ CPPFLAGS += -I../../../include -I..
 CFLAGS += $(PLUGIN_CFLAGS)
 LDFLAGS += $(PLUGIN_LDFLAGS)
 LIBS +=	-L../../../libathemecore -lathemecore ${LDFLAGS_RPATH}
-

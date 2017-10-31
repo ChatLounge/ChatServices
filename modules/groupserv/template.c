@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net/)
  *
  *     Provides the TEMPLATE command for GroupServ, similar to

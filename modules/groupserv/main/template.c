@@ -3,7 +3,7 @@
  * template.c: Functions to work with predefined flags collections
  *
  * Copyright (c) 2005-2010 Atheme Project (http://www.atheme.org)
- * Copyright (c) 2016 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -73,7 +73,7 @@ void set_global_group_template_flags(const char *name, unsigned int flags)
 		slog(LG_INFO, "set_global_group_template_flags(): add %s is TRUE", name);
 	else
 		slog(LG_INFO, "set_global_group_template_flags(): add %s is FALSE", name);
-	
+
 	// Debug
 	slog(LG_INFO, "set_global_group_template_flags(): add %s = %u", name, def_t->flags);
 }

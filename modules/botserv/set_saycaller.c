@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Austin Ellis
+ * Copyright (c) 2016 Austin Ellis <siniStar@IRC4Fun.net>
  * Copyright (c) 2017 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
@@ -69,7 +69,7 @@ static void bs_cmd_set_saycaller(sourceinfo_t *si, int parc, char *parv[])
 		command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 		return;
 	}
-	
+
 	if (metadata_find(mc, "private:frozen:freezer"))
 	{
 		command_fail(si, fault_noprivs, _("\2%s\2 is frozen."), mc->name);
