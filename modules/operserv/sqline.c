@@ -16,7 +16,7 @@ DECLARE_MODULE_V1
 (
 	"operserv/sqline", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void os_sqline_newuser(hook_user_nick_t *data);

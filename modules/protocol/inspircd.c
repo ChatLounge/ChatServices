@@ -16,7 +16,7 @@ DECLARE_MODULE_V1
 (
 	"protocol/inspircd", true, _modinit, NULL,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 /* *INDENT-OFF* */

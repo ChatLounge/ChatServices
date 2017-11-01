@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/clear_flags", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;
@@ -44,7 +44,7 @@ static void cs_cmd_clear_flags(sourceinfo_t *si, int parc, char *parv[])
 	chanacs_t *ca;
 	char *name = parv[0];
 	int changes = 0;
-	
+
 	char *key = parv[1];
 	char fullcmd[512];
 	char key0[80], key1[80];

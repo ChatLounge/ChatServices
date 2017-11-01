@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/set_prefix", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 void (*notify_channel_set_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
 	const char *settingname, const char *setting) = NULL;

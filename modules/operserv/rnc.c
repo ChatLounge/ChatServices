@@ -12,7 +12,7 @@ DECLARE_MODULE_V1
 (
 	"operserv/rnc", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Robin Burchell <surreal.w00t@gmail.com>"
+	VENDOR_STRING
 );
 
 static void os_cmd_rnc(sourceinfo_t *si, int parc, char *parv[]);

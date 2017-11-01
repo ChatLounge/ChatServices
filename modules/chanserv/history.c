@@ -18,7 +18,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/history", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void cs_cmd_history(sourceinfo_t *si, int parc, char *parv[]);

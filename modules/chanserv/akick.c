@@ -22,7 +22,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/akick", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 command_t cs_akick = { "AKICK", N_("Manipulates a channel's AKICK list."),

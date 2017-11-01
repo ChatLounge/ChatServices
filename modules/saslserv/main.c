@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"saslserv/main", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*add_login_history_entry)(myuser_t *smu, myuser_t *tmu, const char *desc) = NULL;
@@ -650,7 +650,7 @@ static myuser_t *login_user(sasl_session_t *p)
 		MOWGLI_ITER_FOREACH_SAFE(n, tn, source_mu->logins.head)
 		{
 			user_t *u = (user_t *)n->data;
-			
+
 			if (!myuser_access_verify(u, target_mu))
 			{
 				notonaccesslist = 1;

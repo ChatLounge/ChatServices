@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/template", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void gs_cmd_template(sourceinfo_t *si, int parc, char *parv[]);

@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"memoserv/read", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 #define MAX_READ_AT_ONCE 5

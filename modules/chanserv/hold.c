@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/hold", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*add_history_entry)(sourceinfo_t *si, mychan_t *mc, const char *desc) = NULL;

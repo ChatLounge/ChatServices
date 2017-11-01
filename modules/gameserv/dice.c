@@ -18,7 +18,7 @@ DECLARE_MODULE_V1
 (
 	"gameserv/dice", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void command_dice(sourceinfo_t *si, int parc, char *parv[]);

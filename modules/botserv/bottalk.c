@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"botserv/bottalk", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Rizon Development Group <http://dev.rizon.net>"
+	VENDOR_STRING
 );
 
 static void bs_cmd_say(sourceinfo_t *si, int parc, char *parv[]);

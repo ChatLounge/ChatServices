@@ -18,7 +18,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/xop_manager", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 void (*notify_channel_acl_change)(sourceinfo_t *si, myuser_t *tmu, mychan_t *mc,
@@ -146,7 +146,7 @@ static void cs_xop(sourceinfo_t *si, int parc, char *parv[], const char *levelde
 		/* As in /cs flags, allow founder to do anything */
 		if (restrictflags & CA_FOUNDER)
 			restrictflags = ca_all;
-		
+
 		/* The following is a bit complicated, to allow for
 		 * possible future denial of granting +f */
 		if (!(restrictflags & CA_FLAGS))
@@ -164,7 +164,7 @@ static void cs_xop(sourceinfo_t *si, int parc, char *parv[], const char *levelde
 			command_fail(si, fault_noprivs, _("You are not authorized to perform this operation."));
 			return;
 		}
-		
+
 		cs_xop_do_add(si, mc, mt, uname, level, leveldesc, restrictflags);
 	}
 
@@ -187,7 +187,7 @@ static void cs_xop(sourceinfo_t *si, int parc, char *parv[], const char *levelde
 		restrictflags = allow_flags(mc, restrictflags);
 
 		if (restrictflags & CA_FOUNDER)
-			restrictflags = ca_all;		
+			restrictflags = ca_all;
 
 		if ((restrictflags & level) != level)
 		{
@@ -263,7 +263,7 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 			command_fail(si, fault_badparams, _("\2%s\2 is neither a registered account nor a hostmask."), target);
 			return;
 		}
-		
+
 		if (validhostmask(target) && chansvs.min_non_wildcard_chars_host_acl > 0 &&
 			check_not_enough_non_wildcard_chars(target,
 				chansvs.min_non_wildcard_chars_host_acl, 1) &&
@@ -272,7 +272,7 @@ static void cs_xop_do_add(sourceinfo_t *si, mychan_t *mc, myentity_t *mt, char *
 			command_fail(si, fault_badparams, _("Invalid nick!user@host: \2%s\2  At least %u non-wildcard characters are required."), target, chansvs.min_non_wildcard_chars_host_acl);
 			return;
 		}
-		
+
 		if (validhostmask(target) && (addflags & chansvs.flags_req_acct))
 		{
 			command_fail(si, fault_badparams, _("You may not add any of the following flags to hostmasks: %s"),

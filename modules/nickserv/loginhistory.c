@@ -4,8 +4,8 @@
  *     LOGINHISTORY command for NickServ
  *
  *     This file contains the code for NickServ ID/Login history.
- * When loaded, it will show a list of previous login events and 
- * other NickServ account events (such as settings changes and 
+ * When loaded, it will show a list of previous login events and
+ * other NickServ account events (such as settings changes and
  * ACL changes).
  *
  */
@@ -18,7 +18,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/loginhistory", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void ns_cmd_loginhistory(sourceinfo_t *si, int parc, char *parv[]);

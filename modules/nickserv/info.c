@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/info", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
+	VENDOR_STRING
 );
 
 static void ns_cmd_info(sourceinfo_t *si, int parc, char *parv[]);

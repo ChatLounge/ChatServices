@@ -20,7 +20,7 @@
 
 #include "atheme.h"
 
-DECLARE_MODULE_V1("proxyscan/main", false, _modinit, _moddeinit, PACKAGE_VERSION, "William Pitcock <nenolod@dereferenced.org>");
+DECLARE_MODULE_V1("proxyscan/main", false, _modinit, _moddeinit, PACKAGE_VERSION, VENDOR_STRING);
 
 static service_t *proxyscan = NULL;
 

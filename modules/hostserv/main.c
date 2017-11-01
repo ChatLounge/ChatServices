@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"hostserv/main", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net/>"
+	VENDOR_STRING
 );
 
 static void on_user_identify(user_t *u);

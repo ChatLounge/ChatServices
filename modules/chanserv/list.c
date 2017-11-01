@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"chanserv/list", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void cs_cmd_list(sourceinfo_t *si, int parc, char *parv[]);

@@ -15,7 +15,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/set_joinflags", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 static void gs_cmd_set_joinflags(sourceinfo_t *si, int parc, char *parv[]);
@@ -88,4 +88,3 @@ void _moddeinit(module_unload_intent_t intent)
 {
 	command_delete(&gs_set_joinflags, gs_set_cmdtree);
 }
-

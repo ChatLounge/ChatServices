@@ -5,7 +5,7 @@
  *     Provides the TEMPLATEVHOST command for GroupServ.  (Un)set
  * optional vhost offers for users based on group membership if the
  * membership matches an existing template for the group.
- * 
+ *
  *
  */
 
@@ -18,7 +18,7 @@ DECLARE_MODULE_V1
 (
 	"groupserv/templatevhost", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"ChatLounge IRC Network Development Team <http://www.chatlounge.net>"
+	VENDOR_STRING
 );
 
 bool hostserv_loaded = false;
@@ -129,7 +129,7 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 				struct tm tm;
 				char moddate[64];
 				time_t modtime;
-				
+
 				while (*p == ' ')
 					p++;
 				q = strchr(p, '=');
@@ -187,7 +187,7 @@ static void gs_cmd_templatevhost(sourceinfo_t *si, int parc, char *parv[])
 
 						if (get_group_template_name(mg, ga->flags) == NULL)
 							continue;
-						
+
 						if (!strcasecmp(templatename, get_group_template_name(mg, ga->flags)))
 						{
 							md4 = metadata_find(ga->mt, "private:usercloak");

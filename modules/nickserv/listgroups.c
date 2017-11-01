@@ -14,7 +14,7 @@ DECLARE_MODULE_V1
 (
 	"nickserv/listgroups", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
-	"Atheme Development Group <http://www.atheme.org>"
+	VENDOR_STRING
 );
 
 static void ns_cmd_listgroups(sourceinfo_t *si, int parc, char *parv[]);
@@ -111,5 +111,3 @@ void _moddeinit(module_unload_intent_t intent)
 {
 	service_named_unbind_command("nickserv", &ns_listgroups);
 }
-
-
