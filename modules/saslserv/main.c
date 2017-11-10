@@ -41,7 +41,7 @@ static void sasl_mech_register(sasl_mechanism_t *mech);
 static void sasl_mech_unregister(sasl_mechanism_t *mech);
 static void mechlist_build_string(char *ptr, size_t buflen);
 static void mechlist_do_rebuild();
-//static const char *sasl_format_sourceinfo(sourceinfo_t *si, bool full);
+static const char *sasl_format_sourceinfo(sourceinfo_t *si, bool full);
 static const char *sasl_get_source_name(sourceinfo_t *si);
 static void on_shutdown(void *unused);
 
@@ -54,7 +54,7 @@ typedef struct {
 
 static struct sourceinfo_vtable sasl_vtable = {
 	.description = "SASL",
-//	.format = sasl_format_sourceinfo,
+	.format = sasl_format_sourceinfo,
 	.get_source_name = sasl_get_source_name,
 	.get_source_mask = sasl_get_source_name
 };
@@ -816,7 +816,7 @@ static void delete_stale(void *vptr)
 	}
 }
 
-/* static const char *sasl_format_sourceinfo(sourceinfo_t *si, bool full)
+static const char *sasl_format_sourceinfo(sourceinfo_t *si, bool full)
 {
 	sasl_sourceinfo_t *ssi = (sasl_sourceinfo_t *) si;
 	static char buf[BUFSIZE];
@@ -830,7 +830,7 @@ static void delete_stale(void *vptr)
 		snprintf(buf, sizeof buf, "SASL(%s)",
 			ssi->sess->host ? ssi->sess->host : "?");
 	return buf;
-} */
+}
 
 static const char *sasl_get_source_name(sourceinfo_t *si)
 {
