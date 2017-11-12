@@ -127,7 +127,7 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 	i = 1;
 
 	/* Make dynamic format string. */
-	snprintf(fmtstring, BUFSIZE, "%%%ud %%-%us %%-%us (%%s) (%%s) [modified %%s ago, on %%s]",
+	snprintf(fmtstring, BUFSIZE, "%%%ud %%-%us %%-%us (%%s) (%%s) [modified %%s ago, on %%s by %%s]",
 		entrywidth, nickhostwidth, flagswidth);
 
 	MOWGLI_ITER_FOREACH(n, mc->chanacs.head)
@@ -135,6 +135,8 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 		const char *template, *mod_ago;
 		struct tm tm;
 		char mod_date[64];
+		myentity_t *setter;
+		const char *setter_name;
 
 		ca = n->data;
 
@@ -147,9 +149,14 @@ static void do_list(sourceinfo_t *si, mychan_t *mc, unsigned int flags)
 		tm = *localtime(&ca->tmodified);
 		strftime(mod_date, sizeof mod_date, TIME_FORMAT, &tm);
 
+		if (*ca->setter_uid != '\0' && (setter = myentity_find_uid(ca->setter_uid)))
+			setter_name = setter->name;
+		else
+			setter_name = "?";
+
 		command_success_nodata(si, _(fmtstring),
 			i, ca->entity ? ca->entity->name : ca->host, bitmask_to_flags(ca->level),
-			template == NULL ? "<Custom>" : template, mc->name, mod_ago, mod_date);
+			template == NULL ? "<Custom>" : template, mc->name, mod_ago, mod_date, setter_name);
 		i++;
 	}
 
@@ -455,7 +462,7 @@ selfautomode:
 				restrictflags |= CA_AUTOVOICE;
 		}
 
-		if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
+		if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags, si->smu))
 		{
 			command_fail(si, fault_noprivs, _("You are not allowed to set \2%s\2 on \2%s\2 in \2%s\2."), bitmask_to_flags2(addflags, removeflags), mt->name, mc->name);
 			chanacs_close(ca);
@@ -521,7 +528,7 @@ selfautomode:
 		req.oldlevel = ca->level;
 		oldlevel = ca->level;
 
-		if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
+		if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags, si->smu))
 		{
 					command_fail(si, fault_noprivs, _("You are not allowed to set \2%s\2 on \2%s\2 in \2%s\2."), bitmask_to_flags2(addflags, removeflags), target, mc->name);
 			chanacs_close(ca);

@@ -416,7 +416,7 @@ static void cs_cmd_template(sourceinfo_t *si, int parc, char *parv[])
 					continue;
 				}
 				changes++;
-				chanacs_modify_simple(ca, newflags, ~newflags);
+				chanacs_modify_simple(ca, newflags, ~newflags, si->smu);
 
 				myuser_t *tmu = myuser_find(ca->entity->name);
 

@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2016 - 2017 ChatLounge IRC Network Development Team <admin@chatlounge.net>
- * Copyright (c) 2010 - 2011 William Pitcock <nenolod@atheme.org>.
+ * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team <admin@chatlounge.net>
+ * Copyright (c) 2010-2011 William Pitcock <nenolod@atheme.org>.
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * ACCESS command implementation for ChanServ.
@@ -535,7 +536,7 @@ static void update_role_entry(sourceinfo_t *si, mychan_t *mc, const char *role, 
 			req.oldlevel = ca->level;
 
 			changes++;
-			chanacs_modify_simple(ca, flags, ~flags);
+			chanacs_modify_simple(ca, flags, ~flags, si->smu);
 
 			req.newlevel = ca->level;
 
@@ -918,7 +919,7 @@ static void cs_cmd_access_del(sourceinfo_t *si, int parc, char *parv[])
 			restrictflags = allow_flags(mc, restrictflags);
 	}
 
-	if (!chanacs_modify(ca, &req.newlevel, &req.oldlevel, restrictflags))
+	if (!chanacs_modify(ca, &req.newlevel, &req.oldlevel, restrictflags, si->smu))
 	{
 		command_fail(si, fault_noprivs, _("You may not remove \2%s\2 from the \2%s\2 role."), target, role);
 		return;
@@ -1105,7 +1106,7 @@ static void cs_cmd_access_add(sourceinfo_t *si, int parc, char *parv[])
 	addflags = newflags & ~oldflags;
 	removeflags = ca_all & ~newflags;
 
-	if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
+	if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags, si->smu))
 	{
 		command_fail(si, fault_noprivs, _("You may not add \2%s\2 to the \2%s\2 role."), target, role);
 		return;
@@ -1283,7 +1284,7 @@ static void cs_cmd_access_set(sourceinfo_t *si, int parc, char *parv[])
 	addflags = newflags & ~oldflags;
 	removeflags = ca_all & ~newflags;
 
-	if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags))
+	if (!chanacs_modify(ca, &addflags, &removeflags, restrictflags, si->smu))
 	{
 		command_fail(si, fault_noprivs, _("You may not add \2%s\2 to the \2%s\2 role."), target, role);
 		return;

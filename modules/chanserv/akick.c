@@ -323,7 +323,7 @@ void cs_cmd_akick_add(sourceinfo_t *si, int parc, char *parv[])
 		req.ca = ca2;
 		req.oldlevel = ca2->level;
 
-		chanacs_modify_simple(ca2, CA_AKICK, 0);
+		chanacs_modify_simple(ca2, CA_AKICK, 0, si->smu);
 
 		req.newlevel = ca2->level;
 
@@ -389,7 +389,7 @@ void cs_cmd_akick_add(sourceinfo_t *si, int parc, char *parv[])
 		req.ca = ca2;
 		req.oldlevel = ca2->level;
 
-		chanacs_modify_simple(ca2, CA_AKICK, 0);
+		chanacs_modify_simple(ca2, CA_AKICK, 0, si->smu);
 
 		req.newlevel = ca2->level;
 
@@ -490,7 +490,7 @@ void cs_cmd_akick_del(sourceinfo_t *si, int parc, char *parv[])
 		req.ca = ca;
 		req.oldlevel = ca->level;
 
-		chanacs_modify_simple(ca, 0, CA_AKICK);
+		chanacs_modify_simple(ca, 0, CA_AKICK, si->smu);
 
 		req.newlevel = ca->level;
 
@@ -541,7 +541,7 @@ void cs_cmd_akick_del(sourceinfo_t *si, int parc, char *parv[])
 	req.ca = ca;
 	req.oldlevel = ca->level;
 
-	chanacs_modify_simple(ca, 0, CA_AKICK);
+	chanacs_modify_simple(ca, 0, CA_AKICK, si->smu);
 
 	req.newlevel = ca->level;
 
@@ -624,6 +624,7 @@ void cs_cmd_akick_list(sourceinfo_t *si, int parc, char *parv[])
 		if (ca->level == CA_AKICK)
 		{
 			char buf[BUFSIZE], *buf_iter;
+			myentity_t *setter = NULL;
 
 			md = metadata_find(ca, "reason");
 
@@ -638,20 +639,20 @@ void cs_cmd_akick_list(sourceinfo_t *si, int parc, char *parv[])
 
 			buf_iter = buf;
 			buf_iter += snprintf(buf_iter, sizeof(buf) - (buf_iter - buf), _("%d: \2%s\2 (\2%s\2) ["),
-					     ++i, ca->entity != NULL ? ca->entity->name : ca->host,
-					     md != NULL ? md->value : _("no AKICK reason specified"));
+					++i, ca->entity != NULL ? ca->entity->name : ca->host,
+					md != NULL ? md->value : _("no AKICK reason specified"));
 
-			if (ca->setter)
+			if (*ca->setter_uid != '\0' && (setter = myentity_find_uid(ca->setter_uid)))
 				buf_iter += snprintf(buf_iter, sizeof(buf) - (buf_iter - buf), _("setter: %s"),
-						     ca->setter);
+						setter->name);
 
 			if (expires_on > 0)
 				buf_iter += snprintf(buf_iter, sizeof(buf) - (buf_iter - buf), _("%sexpires: %s"),
-						     ca->setter != NULL ? ", " : "", timediff(time_left));
+						setter != NULL ? ", " : "", timediff(time_left));
 
 			if (ca->tmodified)
 				buf_iter += snprintf(buf_iter, sizeof(buf) - (buf_iter - buf), _("%smodified: %s"),
-						     expires_on > 0 || ca->setter != NULL ? ", " : "", ago);
+						expires_on > 0 || setter != NULL ? ", " : "", ago);
 
 			mowgli_strlcat(buf, "]", sizeof buf);
 
@@ -716,7 +717,7 @@ void akick_timeout_check(void *arg)
 
 		if (ca)
 		{
-			chanacs_modify_simple(ca, 0, CA_AKICK);
+			chanacs_modify_simple(ca, 0, CA_AKICK, NULL);
 			chanacs_close(ca);
 		}
 
@@ -782,7 +783,7 @@ void akickdel_list_create(void *arg)
 
 			if (CURRTIME > expireson)
 			{
-				chanacs_modify_simple(ca, 0, CA_AKICK);
+				chanacs_modify_simple(ca, 0, CA_AKICK, NULL);
 				chanacs_close(ca);
 			}
 			else
