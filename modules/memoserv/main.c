@@ -40,8 +40,11 @@ void _modinit(module_t *m)
 
 void _moddeinit(module_unload_intent_t intent)
 {
-        if (memosvs != NULL)
-                service_delete(memosvs);
+	hook_del_user_identify(on_user_identify);
+	hook_del_user_away(on_user_away);
+
+	if (memosvs != NULL)
+			service_delete(memosvs);
 }
 
 static void on_user_identify(user_t *u)
@@ -55,6 +58,11 @@ static void on_user_identify(user_t *u)
 						       mu->memoct_new), mu->memoct_new);
 		notice(memosvs->me->nick, u->nick, _("To read them, type /%s%s READ NEW"),
 					ircd->uses_rcommand ? "" : "msg ", memosvs->disp);
+	}
+	if (mu->memos.count >= maxmemos)
+	{
+		notice(memosvs->me->nick, u->nick, _("Your memo inbox is full.  Please "
+		                                     "delete memos you no longer need."));
 	}
 }
 
@@ -81,6 +89,11 @@ static void on_user_away(user_t *u)
 						       mu->memoct_new), mu->memoct_new);
 		notice(memosvs->me->nick, u->nick, _("To read them, type /%s%s READ NEW"),
 					ircd->uses_rcommand ? "" : "msg ", memosvs->disp);
+	}
+	if (mu->memos.count >= maxmemos)
+	{
+		notice(memosvs->me->nick, u->nick, _("Your memo inbox is full.  Please "
+		                                     "delete memos you no longer need."));
 	}
 }
 
