@@ -66,7 +66,7 @@ static int myencrypt(const char *src, int len, char *dest, int size)
     /* convert to hex, skipping last 8 bytes (constant) -- jilles */
     strcpy(dest, "$ircservices$");
     for (i = 0; i <= 7; i++)
-	sprintf(dest + 13 + 2 * i, "%02x", 255 & dest2[i]);
+        sprintf(dest + 13 + 2 * i, "%02x", 255 & dest2[i]);
     return 0;
 
 #else
@@ -91,17 +91,14 @@ static int encrypt_in_place(char *buf, int size)
 static int check_password(const char *plaintext, const char *password)
 {
     char buf[BUFSIZE];
+    int cmp = 0;
 
     if (myencrypt(plaintext, strlen(plaintext), buf, sizeof(buf)) < 0)
         return -1;
 #ifdef ENCRYPT_MD5
-    if (strcmp(buf, password) == 0)
-#else
-    if (0)
+    cmp = strcmp(buf, password) == 0;
 #endif
-        return 1;
-    else
-        return 0;
+    return cmp;
 }
 
 /*************************************************************************/
