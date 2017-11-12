@@ -295,6 +295,14 @@ static void cs_cmd_info(sourceinfo_t *si, int parc, char *parv[])
 			command_success_nodata(si, _("Prefix      : %s (default)"), chansvs.trigger);
 	}
 
+	if (!hide_info && (MC_ANTIFLOOD & mc->flags))
+	{
+		if ((md = metadata_find(mc, "private:antiflood:enforce-method")) != NULL)
+			command_success_nodata(si, _("AntiFlood   : %s"), md->value);
+		else
+			command_success_nodata(si, _("AntiFlood   : (default)"));
+	}
+
 	if (has_priv(si, PRIV_CHAN_AUSPEX) && (md = metadata_find(mc, "private:mark:setter")))
 	{
 		const char *setter = md->value;

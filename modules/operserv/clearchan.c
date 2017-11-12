@@ -127,7 +127,7 @@ static void os_cmd_clearchan(sourceinfo_t *si, int parc, char *parv[])
 					{
 						if (! (cu->user->flags & UF_KLINESENT))
 						{
-							k = kline_add(cu->user->user, cu->user->host, reason, 604800, "*");
+							k = kline_add(cu->user->user, cu->user->host, reason, 604800, si->su->nick);
 							cu->user->flags |= UF_KLINESENT;
 						}
 					}

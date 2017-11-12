@@ -664,20 +664,35 @@ void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount)
 	char lau[BUFSIZE], lao[BUFSIZE];
 	char strfbuf[BUFSIZE];
 	metadata_t *md_failnum;
+	metadata_t *md_loginaddr;
 	struct tm tm;
 	mynick_t *mn;
+	operclass_t *operclass;
 
 	return_if_fail(svs != NULL && svs->me != NULL);
 	return_if_fail(u->myuser == NULL);
 
 	if (is_soper(mu))
-		slog(LG_INFO, "SOPER: \2%s\2 as \2%s\2", u->nick, entity(mu)->name);
+	{
+		slog(LG_INFO, "SOPER: \2%s\2 as \2%s\2 (%s)", u->nick, entity(mu)->name, mu->soper->operclass->name);
+		notice(svs->me->nick, u->nick, "Logged in with SOPER class: %s", mu->soper->operclass->name);
+	}
 
 	myuser_notice(svs->me->nick, mu, "%s!%s@%s [%s] has just authenticated as you (%s)", u->nick, u->user, u->host, u->ip, entity(mu)->name);
 
 	u->myuser = mu;
 	mowgli_node_add(u, mowgli_node_create(), &mu->logins);
 	u->flags &= ~UF_SOPER_PASS;
+
+	/* check for previous login and let them know */
+	if ((md_loginaddr = metadata_find(mu, "private:host:actual")) != NULL)
+	{
+		tm = *localtime(&mu->lastlogin);
+		strftime(strfbuf, sizeof strfbuf, TIME_FORMAT, &tm);
+
+		notice(svs->me->nick, u->nick, "Last login from: \2%s\2 on %s.",
+			md_loginaddr->value, strfbuf);
+	}
 
 	/* keep track of login address for users */
 	mowgli_strlcpy(lau, u->user, BUFSIZE);
@@ -856,7 +871,7 @@ bool bad_password(sourceinfo_t *si, myuser_t *mu)
 	}
 
 	if (is_soper(mu))
-		slog(LG_INFO, "SOPER:AF: \2%s\2 as \2%s\2", get_source_name(si), entity(mu)->name);
+		slog(LG_INFO, "SOPER:AF: \2%s\2 FAILED Authentication as \2%s\2 (%s)", get_source_name(si), entity(mu)->name, mu->soper->operclass->name);
 
 	if (count % 10 == 0)
 	{
