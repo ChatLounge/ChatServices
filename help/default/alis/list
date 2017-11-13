@@ -10,8 +10,8 @@ The pattern can contain * and ? wildcards.  The pattern has
 to match the channel name or a topic, depending on where it
 is used.  The pattern is also automatically surrounded by
 wildcards if:
-- A channel name pattern starts with a wildcard or a pound
-  sign ('#'), or
+- A channel name pattern does not start with a wildcard
+  or a pound sign ('#'), or
 - A topic pattern contains no asterisk ('*') wildcards.
 
 Options are:

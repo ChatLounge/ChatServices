@@ -40,3 +40,12 @@ Examples:
     /msg &nick& BADMAIL LIST
     /msg &nick& BADMAIL LIST *@*.tk
     /msg &nick& BADMAIL LIST *@aol.com
+
+BADMAIL TEST allows you to quickly look up which patterns (if any)
+prevent the use of an email address. This is particularly useful
+if you make frequent use of glob patterns.
+
+Syntax: BADMAIL TEST <email>
+
+Examples:
+    /msg &nick& BADMAIL TEST harmless-user@example.com
