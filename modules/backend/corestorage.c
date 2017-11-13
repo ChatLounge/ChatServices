@@ -30,6 +30,10 @@ unsigned int their_ca_all;
 
 extern mowgli_list_t modules;
 
+static void corestorage_db_write(void *filename, db_save_strategy_t strategy);
+static void corestorage_db_write_blocking(void *filename);
+static void corestorage_db_saved_cb(pid_t, int, void*);
+
 /* write atheme.db (core fields) */
 static void
 corestorage_db_save(database_handle_t *db)
@@ -931,11 +935,80 @@ static void corestorage_db_load(const char *filename)
 	db_close(db);
 }
 
-static void corestorage_db_write(void *filename)
+#ifdef HAVE_FORK
+static pid_t child_pid;
+
+static void corestorage_db_saved_cb(pid_t pid, int status, void *data)
+{
+	if (child_pid != pid)
+		return; /* probably killed our child for a forced write */
+	else
+	{
+		child_pid = 0;
+		slog(LG_DEBUG, "db_save(): finished asynchronous DB write");
+	}
+}
+#endif
+
+static void corestorage_db_write(void *filename, db_save_strategy_t strategy)
+{
+#ifndef HAVE_FORK
+	corestorage_db_write_blocking(filename);
+#else
+
+	if (child_pid && strategy == DB_SAVE_BG_REGULAR)
+	{
+		slog(LG_DEBUG, "db_save(): previous save unfinished, skipping save");
+		return;
+	}
+
+	if (child_pid)
+	{
+		slog(LG_DEBUG, "db_save(): interrupting unfinished previous save for forced save");
+		if (kill(child_pid, SIGKILL) == -1 && errno != ESRCH)
+		{
+			slog(LG_ERROR, "db_save(): kill() on previous save failed; trying to carry on somehow...");
+			waitpid(child_pid, NULL, 0);
+		}
+	}
+
+	if (strategy == DB_SAVE_BLOCKING)
+	{
+		corestorage_db_write_blocking(filename);
+		return;
+	}
+
+	pid_t pid = fork();
+	switch (pid)
+	{
+		case -1:
+			slog(LG_ERROR, "db_save(): fork() failed; writing database synchronously");
+			corestorage_db_write_blocking(filename);
+			return;
+
+		case 0:
+			corestorage_db_write_blocking(filename);
+			exit(EXIT_SUCCESS);
+
+		default:
+			child_pid = pid;
+			childproc_add(pid, "db_save", corestorage_db_saved_cb, NULL);
+			return;
+	}
+#endif
+}
+
+static void corestorage_db_write_blocking(void *filename)
 {
 	database_handle_t *db;
 
 	db = db_open(filename, DB_WRITE);
+
+	if (! db)
+	{
+		slog(LG_ERROR, "db_write_blocking(): db_open() failed, aborting save");
+		return;
+	}
 
 	corestorage_db_save(db);
 	hook_call_db_write(db);

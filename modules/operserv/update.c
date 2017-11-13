@@ -34,8 +34,9 @@ void os_cmd_update(sourceinfo_t *si, int parc, char *parv[])
 	logcommand(si, CMDLOG_ADMIN, "UPDATE");
 	wallops("Updating database by request of \2%s\2.", get_oper_name(si));
 	expire_check(NULL);
+	command_success_nodata(si, _("Updating database."));
 	if (db_save)
-		db_save(NULL);
+		db_save(NULL, DB_SAVE_BG_IMPORTANT);
 	/* db_save() will wallops/snoop/log the error */
 	command_success_nodata(si, _("UPDATE completed."));
 }
