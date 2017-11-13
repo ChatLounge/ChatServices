@@ -60,7 +60,7 @@ static void ns_cmd_listownmail(sourceinfo_t *si, int parc, char *parv[])
 
 		continue_if_fail(mu != NULL);
 
-		if (!strcasecmp(si->smu->email, mu->email))
+		if (!strcasecmp(si->smu->email_canonical, mu->email_canonical))
 		{
 			/* in the future we could add a LIMIT parameter */
 			if (matches == 0)
@@ -71,9 +71,9 @@ static void ns_cmd_listownmail(sourceinfo_t *si, int parc, char *parv[])
 		}
 	}
 
-	logcommand(si, CMDLOG_GET, "LISTOWNMAIL: \2%s\2 (\2%d\2 matches)", si->smu->email, matches);
-	command_success_nodata(si, ngettext(N_("\2%d\2 match for e-mail address \2%s\2"),
-					    N_("\2%d\2 matches for e-mail address \2%s\2"), matches), matches, si->smu->email);
+	logcommand(si, CMDLOG_GET, "LISTOWNMAIL: \2%s\2 (\2%u\2 matches)", si->smu->email, matches);
+	command_success_nodata(si, N_("\2%u\2 match%s for e-mail address \2%s\2"),
+					matches, matches == 1 ? "" : "es", si->smu->email);
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs
