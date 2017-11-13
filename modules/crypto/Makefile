@@ -11,6 +11,7 @@
 MODULE = crypto
 
 SRCS =			\
+	argon2d.c	\
 	pbkdf2.c	\
 	pbkdf2v2.c	\
 	posix.c		\
