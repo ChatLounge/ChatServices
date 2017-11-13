@@ -208,6 +208,7 @@ static void ns_cmd_badmail(sourceinfo_t *si, int parc, char *parv[])
 	{
 		char buf[BUFSIZE];
 		struct tm tm;
+		unsigned long count = 0;
 
 		MOWGLI_ITER_FOREACH(n, ns_maillist.head)
 		{
@@ -220,6 +221,7 @@ static void ns_cmd_badmail(sourceinfo_t *si, int parc, char *parv[])
 			strftime(buf, BUFSIZE, TIME_FORMAT, &tm);
 			command_success_nodata(si, "Email: \2%s\2, Reason: \2%s\2 (%s - %s)",
 				l->mail, l->reason, l->creator, buf);
+			count++;
 
 		}
 		if(parv[1] == NULL)
@@ -229,7 +231,8 @@ static void ns_cmd_badmail(sourceinfo_t *si, int parc, char *parv[])
 		}
 		else
 		{
-			command_success_nodata(si, "End of list matching: %s", parv[1]);
+			command_success_nodata(si, "End of list matching: %s (%u match%s)" , parv[1],
+				count, count == 1 ? "" : "es");
 			logcommand(si, CMDLOG_GET, "BADMAIL:LIST:%s", parv[1]);
 		}
 
