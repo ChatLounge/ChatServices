@@ -18,32 +18,32 @@ DECLARE_MODULE_V1("protocol/nefarious", true, _modinit, NULL, PACKAGE_STRING, VE
 /* *INDENT-OFF* */
 
 ircd_t Nefarious = {
-        "Nefarious IRCU 0.4.0 or later", /* IRCd name */
-        "$",                            /* TLD Prefix, used by Global. */
-        true,                           /* Whether or not we use IRCNet/TS6 UID */
-        false,                          /* Whether or not we use RCOMMAND */
-        false,                          /* Whether or not we support channel owners. */
-        false,                          /* Whether or not we support channel protection. */
-        true,                           /* Whether or not we support halfops. */
-	true,				/* Whether or not we use P10 */
-	true,				/* Whether or not we use vhosts. */
+	"Nefarious IRCU 0.4.0 or later", /* IRCd name */
+	"$",                            /* TLD Prefix, used by Global. */
+	true,                           /* Whether or not we use IRCNet/TS6 UID */
+	false,                          /* Whether or not we use RCOMMAND */
+	false,                          /* Whether or not we support channel owners. */
+	false,                          /* Whether or not we support channel protection. */
+	true,                           /* Whether or not we support halfops. */
+	true,                           /* Whether or not we use P10 */
+	true,                           /* Whether or not we use vhosts. */
 	CMODE_PERM|CMODE_OPERONLY|CMODE_ADMONLY, /* Oper-only cmodes */
-        0,                              /* Integer flag for owner channel flag. */
-        0,                              /* Integer flag for protect channel flag. */
-        CSTATUS_HALFOP,                   /* Integer flag for halfops. */
-        "+",                            /* Mode we set for owner. */
-        "+",                            /* Mode we set for protect. */
-        "+",                            /* Mode we set for halfops. */
-	PROTOCOL_NEFARIOUS,		/* Protocol type */
+	0,                              /* Integer flag for owner channel flag. */
+	0,                              /* Integer flag for protect channel flag. */
+	CSTATUS_HALFOP,                 /* Integer flag for halfops. */
+	"+",                            /* Mode we set for owner. */
+	"+",                            /* Mode we set for protect. */
+	"+",                            /* Mode we set for halfops. */
+	PROTOCOL_NEFARIOUS,             /* Protocol type */
 	CMODE_PERM,                     /* Permanent cmodes */
 	0,                              /* Oper-immune cmode */
 	"be",                           /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'e',                            /* Invex mchar (+e also exempts from +i in Nefarious) */
 	IRCD_CIDR_BANS,                 /* Flags */
-	false,					/* Uses quiets */
-	NULL,					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	""						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	false,                          /* Uses quiets */
+	NULL,                           /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	""                              /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ nefarious_mode_list[] = {
@@ -653,11 +653,17 @@ static void m_sasl(sourceinfo_t *si, int parc, char *parv[])
 	if (parc < 4)
 		return;
 
+	(void) memset(&smsg, 0x00, sizeof smsg);
+
 	smsg.uid = parv[1];
 	smsg.mode = *parv[2];
-	smsg.buf = parv[3];
-	smsg.ext = parc >= 4 ? parv[4] : NULL;
-	smsg.server = si->s ? si->s : NULL;
+	smsg.parc = parc - 3;
+	smsg.server = si->s;
+
+	if (smsg.parc > SASL_MESSAGE_MAXPARA)
+		smsg.parc = SASL_MESSAGE_MAXPARA;
+
+	(void) memcpy(smsg.parv, &parv[3], smsg.parc * sizeof(char *));
 
 	hook_call_sasl_input(&smsg);
 }

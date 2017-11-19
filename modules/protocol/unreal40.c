@@ -31,32 +31,32 @@ static char ts6sid[3 + 1] = "";
 /* *INDENT-OFF* */
 
 ircd_t Unreal = {
-	"UnrealIRCd 4 or later",
-	"$",
-	true,
-	false,
-	true,
-	true,
-	true,
-	false,
-	true,
-	CMODE_OPERONLY | CMODE_ADMONLY,
-	CSTATUS_OWNER,
-	CSTATUS_PROTECT,
-	CSTATUS_HALFOP,
-	"+q",
-	"+a",
-	"+h",
-	PROTOCOL_UNREAL,
-	CMODE_PERM,
-	0,
-	"beI",
-	'e',
-	'I',
-	IRCD_HOLDNICK | IRCD_SASL_USE_PUID,
-	true, /* Uses quiets */
-	"b", /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	"~q:" /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	"UnrealIRCd 4 or later",        /* IRCd name */
+	"$",                            /* TLD Prefix, used by Global. */
+	true,                           /* Whether or not we use IRCNet/TS6 UID */
+	false,                          /* Whether or not we use RCOMMAND */
+	true,                           /* Whether or not we support channel owners. */
+	true,                           /* Whether or not we support channel protection. */
+	true,                           /* Whether or not we support halfops. */
+	false,                          /* Whether or not we use P10 */
+	true,                           /* Whether or not we use vHosts. */
+	CMODE_OPERONLY | CMODE_ADMONLY, /* Oper-only cmodes */
+	CSTATUS_OWNER,                  /* Integer flag for owner channel flag. */
+	CSTATUS_PROTECT,                /* Integer flag for protect channel flag. */
+	CSTATUS_HALFOP,                 /* Integer flag for halfops. */
+	"+q",                           /* Mode we set for owner. */
+	"+a",                           /* Mode we set for protect. */
+	"+h",                           /* Mode we set for halfops. */
+	PROTOCOL_UNREAL,                /* Protocol type */
+	CMODE_PERM,                     /* Permanent cmodes */
+	0,                              /* Oper-immune cmode */
+	"beI",                          /* Ban-like cmodes */
+	'e',                            /* Except mchar */
+	'I',                            /* Invex mchar */
+	IRCD_HOLDNICK | IRCD_SASL_USE_PUID, /* Flags */
+	true,                           /* Uses quiets */
+	"b",                            /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	"~q:"                           /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 };
 
 struct cmode_ unreal_mode_list[] = {
@@ -749,11 +749,17 @@ static void m_sasl(sourceinfo_t *si, int parc, char *parv[])
 	if (parc < 4)
 		return;
 
+	(void) memset(&smsg, 0x00, sizeof smsg);
+
 	smsg.uid = parv[1];
 	smsg.mode = *parv[2];
-	smsg.buf = parv[3];
-	smsg.ext = parc >= 4 ? parv[4] : NULL;
-	smsg.server = si->s ? si->s : NULL;
+	smsg.parc = parc - 3;
+	smsg.server = si->s;
+
+	if (smsg.parc > SASL_MESSAGE_MAXPARA)
+		smsg.parc = SASL_MESSAGE_MAXPARA;
+
+	(void) memcpy(smsg.parv, &parv[3], smsg.parc * sizeof(char *));
 
 	hook_call_sasl_input(&smsg);
 }

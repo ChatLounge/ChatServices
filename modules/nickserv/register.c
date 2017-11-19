@@ -232,7 +232,7 @@ static void ns_cmd_register(sourceinfo_t *si, int parc, char *parv[])
 		logcommand(si, CMDLOG_ADMIN, "SOPER: \2%s\2 as \2%s\2", get_oper_name(si), entity(mu)->name);
 	}
 
-	command_success_nodata(si, _("\2%s\2 is now registered to \2%s\2, with the password \2%s\2."), entity(mu)->name, mu->email, pass);
+	command_success_nodata(si, _("\2%s\2 is now registered to: \2%s\2"), entity(mu)->name, mu->email);
 	command_success_nodata(si, _("By registering an account, you are agreeing your e-mail address may be used for password recovery purposes or optionally, memo notifications.  Network staff may also use your e-mail address to communicate with you for official purposes.  If you don't agree to this, you may drop your account by typing \2/msg %s DROP\2 and following the instructions."), nicksvs.nick);
 	command_success_nodata(si, _("The default settings for new accounts are: %s"),
 		get_default_uflags());
