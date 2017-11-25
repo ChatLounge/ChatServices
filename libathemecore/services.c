@@ -647,22 +647,17 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 
 	u->flags |= UF_USEDCERT;
 
-	myuser_login(svs, u, mu, true);
+	myuser_login(svs, u, mu, true, "CERT IDENTIFY");
 	logcommand_user(svs, u, CMDLOG_LOGIN, "LOGIN via CERTFP (%s)", certfp);
 
 	user_show_all_logins(mu, svs->me, u);
-
-	if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
-	{
-		snprintf(description, sizeof description, "Successful login: CERT", mcfp);
-		add_login_history_entry(mu, mu, description);
-	}
 }
 
-void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount)
+void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount, const char *loginmethod)
 {
 	char lau[BUFSIZE], lao[BUFSIZE];
 	char strfbuf[BUFSIZE];
+	char description[300];
 	metadata_t *md_failnum;
 	metadata_t *md_loginaddr;
 	struct tm tm;
@@ -752,6 +747,13 @@ void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount)
 		ircd_on_login(u, mu, NULL);
 
 	hook_call_user_identify(u);
+
+	if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+	{
+		snprintf(description, sizeof description, "Successful login%s %s",
+			loginmethod ? ":" : "", loginmethod ? loginmethod : "");
+		add_login_history_entry(mu, mu, description);
+	}
 }
 
 /* this could be done with more finesse, but hey! */

@@ -265,17 +265,11 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 
 		cu->flags |= UF_USEDCERT;
 
-		myuser_login(ns, cu, mu, true);
+		myuser_login(ns, cu, mu, true, "CERT IDENTIFY");
 		logcommand_user(ns, cu, CMDLOG_LOGIN, "LOGIN via CERT IDENTIFY (%s)", cu->certfp);
 		notice(ns->nick, cu->nick, nicksvs.no_nick_ownership ? _("You are now logged in as \2%s\2.") : _("You are now identified for \2%s\2."), entity(mu)->name);
 
 		user_show_all_logins(mu, nicksvs.me->me, cu);
-
-		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
-		{
-			snprintf(description, sizeof description, "Successful login: CERT");
-			add_login_history_entry(mu, mu, description);
-		}
 	}
 	else
 	{

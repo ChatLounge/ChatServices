@@ -431,7 +431,7 @@ static void ns_cmd_regain(sourceinfo_t *si, int parc, char *parv[])
 			/* if they are identified to another account, nuke their session first */
 			if (si->smu != NULL)
 			{
-				command_success_nodata(si, _("You have been logged out of \2%s\2."), entity(si->smu)->name);
+				command_success_nodata(si, _("You have been logged out of: \2%s\2"), entity(si->smu)->name);
 
 				if (ircd_on_logout(si->su, entity(si->smu)->name))
 					/* logout killed the user... */
@@ -449,15 +449,9 @@ static void ns_cmd_regain(sourceinfo_t *si, int parc, char *parv[])
 				si->su->myuser = NULL;
 			}
 
-			myuser_login(si->service, si->su, mn->owner, true);
+			myuser_login(si->service, si->su, mn->owner, true, "IDENTIFY via REGAIN");
 
 			user_show_all_logins(mn->owner, nicksvs.me->me, si->su);
-
-			if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
-			{
-				snprintf(description, sizeof description, "Successful login: IDENTIFY via REGAIN.");
-				add_login_history_entry(mn->owner, mn->owner, description);
-			}
 		}
 
 		return;

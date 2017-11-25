@@ -143,7 +143,7 @@ E void join(const char *chan, const char *nick);
 E void joinall(const char *name);
 E void part(const char *chan, const char *nick);
 E void partall(const char *name);
-E void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount);
+E void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount, const char *loginmethod);
 E void verbose(mychan_t *mychan, const char *fmt, ...) PRINTFLIKE(2, 3);
 E void (*notice)(const char *from, const char *target, const char *fmt, ...) PRINTFLIKE(3, 4);
 E void change_notify(const char *from, user_t *to, const char *message, ...) PRINTFLIKE(3, 4);

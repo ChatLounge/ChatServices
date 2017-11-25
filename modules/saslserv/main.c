@@ -768,35 +768,25 @@ static void sasl_newuser(hook_user_nick_t *data)
 
 	mptr = p->mechptr;
 
-	// Debug
-	//si = sasl_sourceinfo_create(p);
-	//si->su = u;
-
-	// Debug
-	//logcommand(si, CMDLOG_LOGIN, "DEBUG: p->certfp: %s | mptr->name: %s | !strcmp(\"EXTERNAL\", mptr->name): %s",
-	//	p->certfp ? p->certfp : "<NULL>", mptr->name ? mptr->name : "<NULL>", !strcmp("EXTERNAL", mptr->name) ? "True" : "False");
-
 	if (p->certfp && !strcmp("EXTERNAL", mptr->name))
+	{
 		u->flags |= UF_USEDCERT;
-
-	myuser_login(saslsvs, u, mu, false);
-
-	if (p->certfp && !strcmp("EXTERNAL", mptr->name))
 		logcommand_user(saslsvs, u, CMDLOG_LOGIN, "LOGIN (%s) [%s]", mptr->name, p->certfp);
+		snprintf(description, sizeof description, "SASL EXTERNAL (%s)", p->certfp);
+	}
 	else
+	{
 		logcommand_user(saslsvs, u, CMDLOG_LOGIN, "LOGIN (%s)", mptr->name);
+		snprintf(description, sizeof description, "SASL %s", mptr->name);
+	}
+
+	myuser_login(saslsvs, u, mu, false, description);
 
 	destroy_session(p);
 
 	notice(saslsvs->nick, u->nick, _("You are now logged in to: %s"), entity(mu)->name);
 
 	user_show_all_logins(mu, saslsvs->me, u);
-
-	if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
-	{
-		snprintf(description, sizeof description, "Successful login: SASL");
-		add_login_history_entry(mu, mu, description);
-	}
 }
 
 /* This function is run approximately once every 30 seconds.
