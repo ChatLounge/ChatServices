@@ -450,8 +450,6 @@ static void ns_cmd_regain(sourceinfo_t *si, int parc, char *parv[])
 			}
 
 			myuser_login(si->service, si->su, mn->owner, true, "IDENTIFY via REGAIN");
-
-			user_show_all_logins(mn->owner, nicksvs.me->me, si->su);
 		}
 
 		return;

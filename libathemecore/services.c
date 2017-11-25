@@ -649,8 +649,6 @@ void handle_certfp(sourceinfo_t *si, user_t *u, const char *certfp)
 
 	myuser_login(svs, u, mu, true, "CERT IDENTIFY");
 	logcommand_user(svs, u, CMDLOG_LOGIN, "LOGIN via CERTFP (%s)", certfp);
-
-	user_show_all_logins(mu, svs->me, u);
 }
 
 void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount, const char *loginmethod)
@@ -747,6 +745,8 @@ void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount, con
 		ircd_on_login(u, mu, NULL);
 
 	hook_call_user_identify(u);
+
+	user_show_all_logins(mu, svs->me, u);
 
 	if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
 	{

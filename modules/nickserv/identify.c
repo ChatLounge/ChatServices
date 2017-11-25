@@ -184,8 +184,6 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 		myuser_login(si->service, u, mu, true, "IDENTIFY");
 		logcommand(si, CMDLOG_LOGIN, COMMAND_UC);
 
-		user_show_all_logins(mu, nicksvs.me->me, u);
-
 		return;
 	}
 

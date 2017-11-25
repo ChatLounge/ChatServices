@@ -785,8 +785,6 @@ static void sasl_newuser(hook_user_nick_t *data)
 	destroy_session(p);
 
 	notice(saslsvs->nick, u->nick, _("You are now logged in to: %s"), entity(mu)->name);
-
-	user_show_all_logins(mu, saslsvs->me, u);
 }
 
 /* This function is run approximately once every 30 seconds.
