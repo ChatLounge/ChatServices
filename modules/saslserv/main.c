@@ -434,6 +434,7 @@ static void sasl_packet(sasl_session_t *p, char *buf, int len)
 	char *cloak, *out = NULL;
 	char temp[BUFSIZE];
 	char mech[61];
+	char description[300];
 	size_t out_len = 0;
 	metadata_t *md;
 
@@ -529,7 +530,8 @@ static void sasl_packet(sasl_session_t *p, char *buf, int len)
 		{
 			sourceinfo_t *si = sasl_sourceinfo_create(p);
 			logcommand(si, CMDLOG_LOGIN, "failed LOGIN (%s) to \2%s\2 (bad password)", p->mechptr->name, entity(mu)->name);
-			bad_password(si, mu);
+			snprintf(description, sizeof description, "SASL %s", p->mechptr->name);
+			bad_password(si, mu, description);
 			object_unref(si);
 		}
 	}

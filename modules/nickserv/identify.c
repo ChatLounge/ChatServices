@@ -190,13 +190,7 @@ static void ns_cmd_login(sourceinfo_t *si, int parc, char *parv[])
 	logcommand(si, CMDLOG_LOGIN, "failed " COMMAND_UC " to \2%s\2 (bad password)", entity(mu)->name);
 
 	command_fail(si, fault_authfail, _("Invalid password for: \2%s\2"), entity(mu)->name);
-	bad_password(si, mu);
-
-	if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
-	{
-		snprintf(description, sizeof description, "Failed login: IDENTIFY from %s (%s@%s) [%s]", si->su->nick, si->su->user, si->su->host, si->su->ip);
-		add_login_history_entry(NULL, mu, description);
-	}
+	bad_password(si, mu, "IDENTIFY");
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

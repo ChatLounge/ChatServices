@@ -842,11 +842,11 @@ void change_notify(const char *from, user_t *to, const char *fmt, ...)
  * Note:
  *       - kills are currently not done
  */
-bool bad_password(sourceinfo_t *si, myuser_t *mu)
+bool bad_password(sourceinfo_t *si, myuser_t *mu, const char *loginmethod)
 {
 	const char *mask;
 	struct tm tm;
-	char numeric[21], strfbuf[BUFSIZE];
+	char numeric[21], strfbuf[BUFSIZE], description[300];
 	int count;
 	metadata_t *md_failnum;
 	service_t *svs;
@@ -888,6 +888,14 @@ bool bad_password(sourceinfo_t *si, myuser_t *mu)
 		strftime(strfbuf, sizeof strfbuf, TIME_FORMAT, &tm);
 		wallops("Warning: \2%d\2 failed login attempts to \2%s\2. Last attempt received from \2%s\2 on %s.", count, entity(mu)->name, mask, strfbuf);
 	}
+
+	if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+		{
+			snprintf(description, sizeof description, "Failed login via %s from %s (%s@%s) [%s]",
+			loginmethod,
+			si->su->nick, si->su->user, si->su->host, si->su->ip);
+			add_login_history_entry(si->smu, mu, description);
+		}
 
 	return false;
 }

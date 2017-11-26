@@ -301,7 +301,7 @@ static void ns_cmd_release(sourceinfo_t *si, int parc, char *parv[])
 	{
 		logcommand(si, CMDLOG_DO, "failed RELEASE \2%s\2 (bad password)", target);
 		command_fail(si, fault_authfail, _("Invalid password for \2%s\2."), target);
-		bad_password(si, mn->owner);
+		bad_password(si, mn->owner, "RELEASE");
 	}
 }
 
@@ -464,13 +464,7 @@ static void ns_cmd_regain(sourceinfo_t *si, int parc, char *parv[])
 	{
 		logcommand(si, CMDLOG_DO, "failed REGAIN \2%s\2 (bad password)", target);
 		command_fail(si, fault_authfail, _("Invalid password for: \2%s\2"), target);
-		bad_password(si, mn->owner);
-
-		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
-		{
-			snprintf(description, sizeof description, "Failed login: IDENTIFY via REGAIN from %s (%s@%s) [%s]", si->su->nick, si->su->user, si->su->host, si->su->ip);
-			add_login_history_entry(si->smu, mn->owner, description);
-		}
+		bad_password(si, mn->owner, "REGAIN");
 	}
 }
 

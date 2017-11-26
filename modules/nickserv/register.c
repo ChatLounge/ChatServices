@@ -179,8 +179,8 @@ static void ns_cmd_register(sourceinfo_t *si, int parc, char *parv[])
 	{
 		if (!verify_password(mu, pass))
 		{
-			command_fail(si, fault_authfail, _("Invalid password for \2%s\2."), entity(mu)->name);
-			bad_password(si, mu);
+			command_fail(si, fault_authfail, _("Invalid password for: \2%s\2"), entity(mu)->name);
+			bad_password(si, mu, "REGISTER");
 			object_unref(mu);
 			return;
 		}

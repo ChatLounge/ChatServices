@@ -173,7 +173,7 @@ static bool jsonrpcmethod_login(void *conn, mowgli_list_t *params, char *id)
 		jsi->base = si;
 		jsi->id = id;
 
-		bad_password(si, mu);
+		bad_password(si, mu, "JSONRPC");
 
 		object_unref(si);
 

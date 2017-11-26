@@ -70,13 +70,7 @@ static void ns_cmd_logout(sourceinfo_t *si, int parc, char *parv[])
 		{
 			logcommand(si, CMDLOG_LOGIN, "failed LOGOUT \2%s\2 (bad password)", u->nick);
 			command_fail(si, fault_authfail, _("Authentication failed.  Invalid password for: \2%s\2"), entity(u->myuser)->name);
-			bad_password(si, u->myuser);
-
-			if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
-			{
-				snprintf(description, sizeof description, "Failed password: LOGOUT from %s (%s@%s) [%s]", si->su->nick, si->su->user, si->su->host, si->su->ip);
-				add_login_history_entry(si->smu, u->myuser, description);
-			}
+			bad_password(si, u->myuser, "LOGOUT");
 
 			return;
 		}
