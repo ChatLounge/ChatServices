@@ -19,6 +19,7 @@ BASE_SRCS =			\
 	drop.c	\
 	enforce.c	\
 	freeze.c	\
+	fgroup.c	\
 	ghost.c	\
 	group.c	\
 	help.c	\

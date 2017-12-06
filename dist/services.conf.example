@@ -50,7 +50,7 @@
  * Asuka 1.2.1 or later                         modules/protocol/asuka
  * Bahamut 1.8.x                                modules/protocol/bahamut
  * Charybdis IRCd                               modules/protocol/charybdis
- * ChatIRCd 1.0.x or later			modules/protocol/chatircd
+ * ChatIRCd 1.0.x or later                      modules/protocol/chatircd
  * DreamForge 4.6.7 or later                    modules/protocol/dreamforge
  * Hybrid 7.1.2 and later                       modules/protocol/hybrid
  * InspIRCd 2.0                                 modules/protocol/inspircd
@@ -170,7 +170,7 @@ loadmodule "modules/crypto/posix";
  * DROP command                                 modules/nickserv/drop
  * Nickname enforcement                         modules/nickserv/enforce
  * GHOST command                                modules/nickserv/ghost
- * GROUP and UNGROUP commands                   modules/nickserv/group
+ * GROUP, FUNGROUP, and UNGROUP commands        modules/nickserv/group
  * HELP command                                 modules/nickserv/help
  * Nickname expiry override (HOLD command)      modules/nickserv/hold
  * IDENTIFY command                             modules/nickserv/identify
@@ -183,6 +183,7 @@ loadmodule "modules/crypto/posix";
  * LOGOUT command                               modules/nickserv/logout
  * MARK command                                 modules/nickserv/mark
  * FREEZE command                               modules/nickserv/freeze
+ * FGROUP command                               modules/nickserv/fgroup
  * LISTCHANS command                            modules/nickserv/listchans
  * LISTGROUPS command                           modules/nickserv/listgroups
  * REGISTER command                             modules/nickserv/register
@@ -242,6 +243,7 @@ loadmodule "modules/nickserv/listmail";
 loadmodule "modules/nickserv/logout";
 loadmodule "modules/nickserv/mark";
 loadmodule "modules/nickserv/freeze";
+loadmodule "modules/nickserv/fgroup";
 loadmodule "modules/nickserv/listchans";
 loadmodule "modules/nickserv/listgroups";
 loadmodule "modules/nickserv/register";
