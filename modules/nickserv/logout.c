@@ -94,12 +94,42 @@ static void ns_cmd_logout(sourceinfo_t *si, int parc, char *parv[])
 	if (si->su != u)
 	{
 		logcommand(si, CMDLOG_LOGIN, "LOGOUT: \2%s\2", u->nick);
-		command_success_nodata(si, _("\2%s\2 has been logged out of: \2%s\2"), u->nick, entity(u->myuser)->name);
+
+		if (u->ip)
+			command_success_nodata(si, _("\2%s (%s@%s) [%s]\2 has been logged out of: \2%s\2"),
+				u->nick, u->user, u->host, u->ip,
+				entity(u->myuser)->name);
+		else
+			command_success_nodata(si, _("\2%s (%s@%s)\2 has been logged out of: \2%s\2"),
+				u->nick, u->user, u->host,
+				entity(u->myuser)->name);
+
+		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+		{
+			if (si->su->ip)
+				snprintf(description, sizeof description, "LOGOUT (Remote from %s (%s@%s) [%s])",
+					si->su->nick, si->su->user, si->su->host, si->su->ip);
+			else
+				snprintf(description, sizeof description, "LOGOUT (Remote from %s (%s@%s))",
+					si->su->nick, si->su->user, si->su->host);
+			add_login_history_entry(si->smu, u->myuser, description);
+		}
 	}
 	else
 	{
 		logcommand(si, CMDLOG_LOGIN, "LOGOUT");
 		command_success_nodata(si, _("You have been logged out of: \2%s\2"), entity(u->myuser)->name);
+
+		if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
+		{
+			if (si->su->ip)
+				snprintf(description, sizeof description, "LOGOUT (Local from %s (%s@%s) [%s])",
+					si->su->nick, si->su->user, si->su->host, si->su->ip);
+			else
+				snprintf(description, sizeof description, "LOGOUT (Local from %s (%s@%s))",
+					si->su->nick, si->su->user, si->su->host);
+			add_login_history_entry(si->smu, u->myuser, description);
+		}
 	}
 
 	u->myuser->lastlogin = CURRTIME;
