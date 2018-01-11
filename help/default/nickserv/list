@@ -66,7 +66,7 @@ PRIVATE           - All users with the PRIVATE flag set.
 #if module nickserv/set_quietchg
 QUIETCHG          - All users with the QUIETCHG flag set.
 #endif
-#if module nickserv/set_regnolimit
+#if module nickserv/regnolimit
 REGNOLIMIT        - All users with the REGNOLIMIT flag set.
 #endif
 #if module nickserv/set_privmsg
