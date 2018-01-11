@@ -655,7 +655,7 @@ void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount, con
 {
 	char lau[BUFSIZE], lao[BUFSIZE];
 	char strfbuf[BUFSIZE];
-	char description[300];
+	char description[BUFSIZE];
 	metadata_t *md_failnum;
 	metadata_t *md_loginaddr;
 	struct tm tm;
@@ -750,9 +750,20 @@ void myuser_login(service_t *svs, user_t *u, myuser_t *mu, bool sendaccount, con
 
 	if ((add_login_history_entry = module_locate_symbol("nickserv/loginhistory", "add_login_history_entry")) != NULL)
 	{
-		snprintf(description, sizeof description, "Successful login%s %s",
-			loginmethod ? ":" : "", loginmethod ? loginmethod : "");
-		add_login_history_entry(mu, mu, description);
+		snprintf(description, sizeof description, "Successful login%s%s%s from: %s (%s@%s)",
+			loginmethod ? " (" : "", loginmethod ? loginmethod : "",
+			loginmethod ? ")" : "",
+			u->nick, u->user, u->host);
+		if (u->ip)
+		{
+			char description2[BUFSIZE];
+
+			snprintf(description2, sizeof description2, "%s [%s]",
+				description, u->ip);
+			add_login_history_entry(mu, mu, description2);
+		}
+		else
+			add_login_history_entry(mu, mu, description);
 	}
 }
 
