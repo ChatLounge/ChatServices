@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 Robin Burchell, et al.
  * Copyright (c) 2010 William Pitcock <nenolod@atheme.org>.
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -51,28 +51,6 @@ typedef struct {
 	} optval;
 	unsigned int flag;
 } list_option_t;
-
-static time_t parse_age(char *s)
-{
-	time_t duration;
-
-	duration = (atol(s) * 60);
-	while (isdigit((unsigned char)*s))
-		s++;
-
-	if (*s == 'h' || *s == 'H')
-		duration *= 60;
-	else if (*s == 'd' || *s == 'D')
-		duration *= 1440;
-	else if (*s == 'w' || *s == 'W')
-		duration *= 10080;
-	else if (*s == '\0')
-		;
-	else
-		duration = 0;
-
-	return duration;
-}
 
 static void process_parvarray(list_option_t *opts, size_t optsize, int parc, char *parv[])
 {

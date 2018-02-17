@@ -3,7 +3,7 @@
  * function.c: Miscellaneous functions.
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
- * Copyright (c) 2017 ChatLounge IRC Network Development Team (http://www.chatlounge.net)
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -186,6 +186,29 @@ const char *number_to_string(int num)
 	static char ret[32];
 	snprintf(ret, 32, "%d", num);
 	return ret;
+}
+
+/* Used in /NS LIST, /CS LIST, and similar. */
+time_t parse_age(char *s)
+{
+	time_t duration;
+
+	duration = (atol(s) * 60);
+	while (isdigit((unsigned char)*s))
+		s++;
+
+	if (*s == 'h' || *s == 'H')
+		duration *= 60;
+	else if (*s == 'd' || *s == 'D')
+		duration *= 1440;
+	else if (*s == 'w' || *s == 'W')
+		duration *= 10080;
+	else if (*s == '\0')
+		;
+	else
+		duration = 0;
+
+	return duration;
 }
 
 /* return the time elapsed since an event */

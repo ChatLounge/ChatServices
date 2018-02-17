@@ -165,29 +165,6 @@ void list_unregister(const char *param_name) {
 	mowgli_patricia_delete(list_params, param_name);
 }
 
-
-static time_t parse_age(char *s)
-{
-	time_t duration;
-
-	duration = (atol(s) * 60);
-	while (isdigit((unsigned char)*s))
-		s++;
-
-	if (*s == 'h' || *s == 'H')
-		duration *= 60;
-	else if (*s == 'd' || *s == 'D')
-		duration *= 1440;
-	else if (*s == 'w' || *s == 'W')
-		duration *= 10080;
-	else if (*s == '\0')
-		;
-	else
-		duration = 0;
-
-	return duration;
-}
-
 static void build_criteriastr(char *buf, int parc, char *parv[])
 {
 	int i;
@@ -330,7 +307,7 @@ static void ns_cmd_list(sourceinfo_t *si, int parc, char *parv[])
 
 	build_criteriastr(criteriastr, parc, parv);
 
-	logcommand(si, CMDLOG_ADMIN, "LIST: \2%s\2 (\2%d\2 matches)", criteriastr, matches);
+	logcommand(si, CMDLOG_ADMIN, "LIST: \2%s\2 (\2%d\2 match%s)", criteriastr, matches, matches == 1 ? "" : "es");
 	if (matches == 0)
 		command_success_nodata(si, _("No nicknames matched criteria \2%s\2"), criteriastr);
 	else

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2003-2004 E. Will et al.
  * Copyright (C) 2005-2006 Atheme Development Group
- * Copyright (C) 2017 ChatLounge IRC Network Development Team
+ * Copyright (C) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -167,6 +167,7 @@ E void s_time(struct timeval *sttime);
 E void e_time(struct timeval sttime, struct timeval *ttime);
 E int tv2ms(struct timeval *tv);
 #endif
+E time_t parse_age(char *s);
 E char *time_ago(time_t event);
 E char *timediff(time_t seconds);
 
