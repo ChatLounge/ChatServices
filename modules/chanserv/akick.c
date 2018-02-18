@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 William Pitcock, et al.
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -169,7 +169,7 @@ void cs_cmd_akick_add(sourceinfo_t *si, int parc, char *parv[])
 	hook_channel_acl_req_t req;
 	chanacs_t *ca, *ca2;
 	char *chan = parv[0];
-	long duration;
+	time_t duration;
 	char expiry[512];
 	char *s;
 	char *target;
@@ -225,19 +225,7 @@ void cs_cmd_akick_add(sourceinfo_t *si, int parc, char *parv[])
 
 			if (s)
 			{
-				duration = (atol(s) * 60);
-				while (isdigit((unsigned char)*s))
-					s++;
-				if (*s == 'h' || *s == 'H')
-					duration *= 60;
-				else if (*s == 'd' || *s == 'D')
-					duration *= 1440;
-				else if (*s == 'w' || *s == 'W')
-					duration *= 10080;
-				else if (*s == '\0')
-					;
-				else
-					duration = 0;
+				duration = parse_age(s);
 
 				if (duration == 0)
 				{

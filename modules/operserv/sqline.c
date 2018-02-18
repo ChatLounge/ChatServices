@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2006 Atheme Development Group
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -153,7 +153,7 @@ static void os_cmd_sqline_add(sourceinfo_t *si, int parc, char *parv[])
 	char *target = parv[0];
 	char *token = strtok(parv[1], " ");
 	char *treason, reason[BUFSIZE];
-	long duration;
+	time_t duration;
 	char *s;
 	qline_t *q;
 
@@ -190,19 +190,8 @@ static void os_cmd_sqline_add(sourceinfo_t *si, int parc, char *parv[])
 			mowgli_strlcpy(reason, "No reason given", BUFSIZE);
 		if (s)
 		{
-			duration = (atol(s) * 60);
-			while (isdigit((unsigned char)*s))
-				s++;
-			if (*s == 'h' || *s == 'H')
-				duration *= 60;
-			else if (*s == 'd' || *s == 'D')
-				duration *= 1440;
-			else if (*s == 'w' || *s == 'W')
-				duration *= 10080;
-			else if (*s == '\0')
-				;
-			else
-				duration = 0;
+			duration = parse_age(s);
+
 			if (duration == 0)
 			{
 				command_fail(si, fault_badparams, _("Invalid duration given."));
