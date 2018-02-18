@@ -167,6 +167,9 @@ E void s_time(struct timeval *sttime);
 E void e_time(struct timeval sttime, struct timeval *ttime);
 E int tv2ms(struct timeval *tv);
 #endif
+
+E void build_criteriastr(char *buf, int parc, char *parv[]);
+
 E time_t parse_age(char *s);
 E char *time_ago(time_t event);
 E char *timediff(time_t seconds);

@@ -165,20 +165,6 @@ void list_unregister(const char *param_name) {
 	mowgli_patricia_delete(list_params, param_name);
 }
 
-static void build_criteriastr(char *buf, int parc, char *parv[])
-{
-	int i;
-
-	return_if_fail(buf != NULL);
-
-	*buf = 0;
-	for (i = 0; i < parc; i++)
-	{
-		mowgli_strlcat(buf, parv[i], BUFSIZE);
-		mowgli_strlcat(buf, " ", BUFSIZE);
-	}
-}
-
 static void list_one(sourceinfo_t *si, myuser_t *mu, mynick_t *mn)
 {
 	char buf[BUFSIZE];

@@ -189,6 +189,22 @@ const char *number_to_string(int num)
 }
 
 /* Used in /NS LIST, /CS LIST, and similar. */
+void build_criteriastr(char *buf, int parc, char *parv[])
+{
+	int i;
+
+	return_if_fail(buf != NULL);
+
+	*buf = 0;
+	for (i = 0; i < parc; i++)
+	{
+		mowgli_strlcat(buf, parv[i], BUFSIZE);
+		mowgli_strlcat(buf, " ", BUFSIZE);
+	}
+}
+
+/* Used in /NS LIST, /CS LIST, and similar.
+ * Accepts a time argument as a character array, returns a time_t. */
 time_t parse_age(char *s)
 {
 	time_t duration;

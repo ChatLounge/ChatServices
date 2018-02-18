@@ -100,20 +100,6 @@ static void process_parvarray(list_option_t *opts, size_t optsize, int parc, cha
 	}
 }
 
-static void build_criteriastr(char *buf, int parc, char *parv[])
-{
-	int i;
-
-	return_if_fail(buf != NULL);
-
-	*buf = 0;
-	for (i = 0; i < parc; i++)
-	{
-		mowgli_strlcat(buf, parv[i], BUFSIZE);
-		mowgli_strlcat(buf, " ", BUFSIZE);
-	}
-}
-
 static void cs_cmd_list(sourceinfo_t *si, int parc, char *parv[])
 {
 	mychan_t *mc;
