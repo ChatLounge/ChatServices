@@ -213,7 +213,9 @@ time_t parse_age(char *s)
 	while (isdigit((unsigned char)*s))
 		s++;
 
-	if (*s == 'h' || *s == 'H')
+	if (*s == 'y' || *s == 'Y')
+		duration *= 525949; /* 365.2422 days per year is 525,948.768 minutes.  time_t is an integer, so round it. */
+	else if (*s == 'h' || *s == 'H')
 		duration *= 60;
 	else if (*s == 'd' || *s == 'D')
 		duration *= 1440;
