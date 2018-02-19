@@ -3,7 +3,7 @@
  * account.c: Account management
  *
  * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
- * Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2016-2018 ChatLounge IRC Network Development Team
  *     (http://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -30,6 +30,7 @@
 #include "authcookie.h"
 #include "template.h"
 
+mowgli_patricia_t *accountlist;
 mowgli_patricia_t *nicklist;
 mowgli_patricia_t *oldnameslist;
 mowgli_patricia_t *mclist;
@@ -80,6 +81,7 @@ void init_accounts(void)
 		exit(EXIT_FAILURE);
 	}
 
+	accountlist = mowgli_patricia_create(irccasecanon);
 	nicklist = mowgli_patricia_create(irccasecanon);
 	oldnameslist = mowgli_patricia_create(irccasecanon);
 	mclist = mowgli_patricia_create(irccasecanon);
@@ -179,6 +181,8 @@ myuser_t *myuser_add_id(const char *id, const char *name, const char *pass, cons
 	}
 
 	myuser_name_restore(entity(mu)->name, mu);
+
+	mowgli_patricia_add(accountlist, entity(mu)->name, mu);
 
 	cnt.myuser++;
 
@@ -340,6 +344,8 @@ void myuser_delete(myuser_t *mu)
 	if (nicks[0] != '\0')
 		slog(LG_REGISTER, _("DELETE: \2%s\2 from \2%s\2"), nicks, entity(mu)->name);
 
+	mowgli_patricia_delete(accountlist, entity(mu)->name);
+
 	/* entity(mu)->name is the index for this dtree */
 	myentity_del(entity(mu));
 
@@ -392,6 +398,9 @@ void myuser_rename(myuser_t *mu, const char *name)
 			ircd_on_logout(u, entity(mu)->name);
 		}
 	}
+
+	mowgli_patricia_delete(accountlist, entity(mu)->name);
+
 	myentity_del(entity(mu));
 
 	strshare_unref(entity(mu)->name);
@@ -406,6 +415,8 @@ void myuser_rename(myuser_t *mu, const char *name)
 			ircd_on_login(u, mu, NULL);
 		}
 	}
+
+	mowgli_patricia_add(accountlist, entity(mu)->name, mu);
 
 	data.mu = mu;
 	data.oldname = nb;

@@ -423,6 +423,7 @@ E qline_t *qline_find_channel(channel_t *c);
 E void qline_expire(void *arg);
 
 /* account.c */
+E mowgli_patricia_t *accountlist;
 E mowgli_patricia_t *nicklist;
 E mowgli_patricia_t *oldnameslist;
 E mowgli_patricia_t *mclist;
