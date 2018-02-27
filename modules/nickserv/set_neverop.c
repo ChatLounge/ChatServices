@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -36,6 +36,11 @@ static bool has_neverop(const mynick_t *mn, const void *arg)
 	return ( mu->flags & MU_NEVEROP ) == MU_NEVEROP;
 }
 
+static bool account_has_neverop(myuser_t *mu, const void *arg)
+{
+	return ( mu->flags & MU_NEVEROP ) == MU_NEVEROP;
+}
+
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
@@ -51,7 +56,12 @@ void _modinit(module_t *m)
 	neverop.opttype = OPT_BOOL;
 	neverop.is_match = has_neverop;
 
+	static list_param_account_t account_neverop;
+	account_neverop.opttype = OPT_BOOL;
+	account_neverop.is_match = account_has_neverop;
+
 	list_register("neverop", &neverop);
+	list_account_register("neverop", &account_neverop);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -59,6 +69,7 @@ void _moddeinit(module_unload_intent_t intent)
 	command_delete(&ns_set_neverop, *ns_set_cmdtree);
 
 	list_unregister("neverop");
+	list_account_unregister("neverop");
 }
 
 /* SET NEVEROP [ON|OFF] */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 ChatLounge IRC Network Development Team <http://www.chatlounge.net/>
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team <http://www.chatlounge.net/>
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -35,6 +35,11 @@ static bool has_notifyset(const mynick_t *mn, const void *arg)
 	return ( mu->flags & MU_NOTIFYSET ) == MU_NOTIFYSET;
 }
 
+static bool account_has_notifyset(myuser_t *mu, const void *arg)
+{
+	return ( mu->flags & MU_NOTIFYSET ) == MU_NOTIFYSET;
+}
+
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
@@ -50,7 +55,12 @@ void _modinit(module_t *m)
 	notifyset.opttype = OPT_BOOL;
 	notifyset.is_match = has_notifyset;
 
+	static list_param_account_t account_notifyset;
+	account_notifyset.opttype = OPT_BOOL;
+	account_notifyset.is_match = account_has_notifyset;
+
 	list_register("notifyset", &notifyset);
+	list_account_register("notifyset", &account_notifyset);
 }
 
 
@@ -60,6 +70,7 @@ void _moddeinit(module_unload_intent_t intent)
 	command_delete(&ns_set_notifyset, *ns_set_cmdtree);
 
 	list_unregister("notifyset");
+	list_account_unregister("notifyset");
 }
 
 /* SET NOTIFYSET [ON|OFF] */

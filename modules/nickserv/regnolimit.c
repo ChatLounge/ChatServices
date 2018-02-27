@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005-2010 Atheme Development Group
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -29,7 +29,12 @@ static bool has_regnolimit(const mynick_t *mn, const void *arg)
 {
 	myuser_t *mu = mn->owner;
 
-	return ( mu->flags & MU_REGNOLIMIT ) == MU_REGNOLIMIT;
+	return (mu->flags & MU_REGNOLIMIT) == MU_REGNOLIMIT;
+}
+
+static bool account_has_regnolimit(myuser_t *mu, const void *arg)
+{
+	return (mu->flags & MU_REGNOLIMIT) == MU_REGNOLIMIT;
 }
 
 void _modinit(module_t *m)
@@ -42,7 +47,12 @@ void _modinit(module_t *m)
 	regnolimit.opttype = OPT_BOOL;
 	regnolimit.is_match = has_regnolimit;
 
+	static list_param_account_t account_regnolimit;
+	account_regnolimit.opttype = OPT_BOOL;
+	account_regnolimit.is_match = account_has_regnolimit;
+
 	list_register("regnolimit", &regnolimit);
+	list_account_register("regnolimit", &account_regnolimit);
 
 	if (module_request("nickserv/main"))
 		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
@@ -53,6 +63,7 @@ void _moddeinit(module_unload_intent_t intent)
 	service_named_unbind_command("nickserv", &ns_regnolimit);
 
 	list_unregister("regnolimit");
+	list_account_unregister("regnolimit");
 }
 
 static void ns_cmd_regnolimit(sourceinfo_t *si, int parc, char *parv[])

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2006-2007 William Pitcock, et al.
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -86,6 +86,11 @@ static bool has_private(const mynick_t *mn, const void *arg)
 	return ( mu->flags & MU_PRIVATE ) == MU_PRIVATE;
 }
 
+static bool account_has_private(myuser_t *mu, const void *arg)
+{
+	return ( mu->flags & MU_PRIVATE ) == MU_PRIVATE;
+}
+
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
@@ -101,7 +106,12 @@ void _modinit(module_t *m)
 	private.opttype = OPT_BOOL;
 	private.is_match = has_private;
 
+	static list_param_account_t account_private;
+	account_private.opttype = OPT_BOOL;
+	account_private.is_match = account_has_private;
+
 	list_register("private", &private);
+	list_account_register("private", &account_private);
 
 	use_account_private++;
 }
@@ -111,6 +121,7 @@ void _moddeinit(module_unload_intent_t intent)
 	command_delete(&ns_set_private, *ns_set_cmdtree);
 
 	list_unregister("private");
+	list_account_unregister("private");
 
 	use_account_private--;
 }

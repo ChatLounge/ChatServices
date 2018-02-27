@@ -1,5 +1,5 @@
 # Copyright (c) 2003-2004 E. Will et al.
-# Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
+# Copyright (c) 2016-2018 ChatLounge IRC Network Development Team
 #
 # Rights to this code are documented in doc/LICENSE.
 #
@@ -32,6 +32,7 @@ BASE_SRCS =			\
 	listchans.c	\
 	listgroups.c	\
 	listmail.c	\
+	listnicks.c	\
 	listownmail.c	\
 	login.c		\
 	loginhistory.c	\

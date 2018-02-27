@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock
+ * Copyright (c) 2018 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are as documented in doc/LICENSE.
  *
  * Marking for nicknames.
@@ -38,10 +40,28 @@ static bool mark_match(const mynick_t *mn, const void *arg)
 	return false;
 }
 
+static bool mark_account_match(myuser_t *mu, const void *arg)
+{
+	const char *markpattern = (const char*)arg;
+	metadata_t *mdmark;
+
+	mdmark = metadata_find(mu, "private:mark:reason");
+
+	if (mdmark != NULL && !match(markpattern, mdmark->value))
+		return true;
+
+	return false;
+}
+
 static bool is_marked(const mynick_t *mn, const void *arg)
 {
 	myuser_t *mu = mn->owner;
 
+	return !!metadata_find(mu, "private:mark:setter");
+}
+
+static bool is_account_marked(myuser_t *mu, const void *arg)
+{
 	return !!metadata_find(mu, "private:mark:setter");
 }
 
@@ -62,12 +82,22 @@ void _modinit(module_t *m)
 	mark.opttype = OPT_STRING;
 	mark.is_match = mark_match;
 
+	static list_param_account_t mark_account;
+	mark_account.opttype = OPT_STRING;
+	mark_account.is_match = mark_account_match;
+
 	static list_param_t marked;
 	marked.opttype = OPT_BOOL;
 	marked.is_match = is_marked;
 
+	static list_param_account_t marked_account;
+	marked_account.opttype = OPT_BOOL;
+	marked_account.is_match = is_account_marked;
+
 	list_register("mark-reason", &mark);
 	list_register("marked", &marked);
+	list_account_register("mark-reason", &mark_account);
+	list_account_register("marked", &marked_account);
 }
 
 void _moddeinit(module_unload_intent_t intent)

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2017 ChatLounge IRC Network Development
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -36,6 +36,11 @@ static bool has_emailmemos(const mynick_t *mn, const void *arg)
 	return ( mu->flags & MU_EMAILMEMOS ) == MU_EMAILMEMOS;
 }
 
+static bool account_has_emailmemos(myuser_t *mu, const void *arg)
+{
+	return ( mu->flags & MU_EMAILMEMOS ) == MU_EMAILMEMOS;
+}
+
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
@@ -48,7 +53,12 @@ void _modinit(module_t *m)
 	emailmemos.opttype = OPT_BOOL;
 	emailmemos.is_match = has_emailmemos;
 
+	static list_param_account_t account_emailmemos;
+	account_emailmemos.opttype = OPT_BOOL;
+	account_emailmemos.is_match = account_has_emailmemos;
+
 	list_register("emailmemos", &emailmemos);
+	list_account_register("emailmemos", &account_emailmemos);
 
 	if (module_request("nickserv/main"))
 		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
@@ -58,6 +68,7 @@ void _moddeinit(module_unload_intent_t intent)
 {
 	command_delete(&ns_set_emailmemos, *ns_set_cmdtree);
 	list_unregister("emailmemos");
+	list_account_unregister("emailmemos");
 }
 
 /* SET EMAILMEMOS [ON|OFF] */

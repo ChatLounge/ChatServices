@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005-2007 Robin Burchell, et al.
  * Copyright (c) 2010 William Pitcock <nenolod@atheme.org>
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -14,41 +14,45 @@
 
 DECLARE_MODULE_V1
 (
-	"nickserv/list", false, _modinit, _moddeinit,
+	"nickserv/listnicks", false, _modinit, _moddeinit,
 	PACKAGE_STRING,
 	VENDOR_STRING
 );
 
-static void ns_cmd_list(sourceinfo_t *si, int parc, char *parv[]);
+static void ns_cmd_listnicks(sourceinfo_t *si, int parc, char *parv[]);
 static mowgli_patricia_t *list_params;
 
-command_t ns_list = { "LIST", N_("Lists nicknames registered matching a given pattern."), PRIV_USER_AUSPEX, 10, ns_cmd_list, { .path = "nickserv/list" } };
+command_t ns_list = { "LISTNICKS", N_("Lists nicknames registered matching a given pattern."), PRIV_USER_AUSPEX, 10, ns_cmd_listnicks, { .path = "nickserv/listnicks" } };
 
-void list_account_register(const char *param_name, list_param_account_t *param);
-void list_account_unregister(const char *param_name);
+void list_register(const char *param_name, list_param_t *param);
+void list_unregister(const char *param_name);
 
-static bool email_match(myuser_t *mu, const void *arg)
+static bool email_match(const mynick_t *mn, const void *arg)
 {
+	myuser_t *mu = mn->owner;
 	const char *cmpr = (const char*)arg;
 
 	return !match(cmpr, mu->email);
 }
 
-static bool lastlogin_match(myuser_t *mu, const void *arg)
+static bool lastlogin_match(const mynick_t *mn, const void *arg)
 {
+	myuser_t *mu = mn->owner;
 	const time_t lastlogin = *(time_t *)arg;
 
 	return (CURRTIME - mu->lastlogin) > lastlogin;
 }
 
-static bool pattern_match(myuser_t *mu, const void *arg)
+static bool pattern_match(const mynick_t *mn, const void *arg)
 {
 	const char *pattern = (const char*)arg;
 
-	char pat[512], *namepattern = NULL, *hostpattern = NULL, *p;
+	char pat[512], *nickpattern = NULL, *hostpattern = NULL, *p;
 	metadata_t *md;
 
 	bool hostmatch;
+
+	myuser_t *mu = mn->owner;
 
 	if (pattern != NULL)
 	{
@@ -59,18 +63,18 @@ static bool pattern_match(myuser_t *mu, const void *arg)
 		if (p != NULL)
 		{
 			*p++ = '\0';
-			namepattern = pat;
+			nickpattern = pat;
 			hostpattern = p;
 		}
 		else if (strchr(pat, '@'))
 			hostpattern = pat;
 		else
-			namepattern = pat;
-		if (namepattern && !strcmp(namepattern, "*"))
-			namepattern = NULL;
+			nickpattern = pat;
+		if (nickpattern && !strcmp(nickpattern, "*"))
+			nickpattern = NULL;
 	}
 
-	if (namepattern && match(namepattern, entity(mu)->name))
+	if (nickpattern && match(nickpattern, mn->nick))
 		return false;
 
 	if (hostpattern)
@@ -89,15 +93,18 @@ static bool pattern_match(myuser_t *mu, const void *arg)
 	return true;
 }
 
-static bool registered_match(myuser_t *mu, const void *arg)
+static bool registered_match(const mynick_t *mn, const void *arg)
 {
+	myuser_t *mu = mn->owner;
 	const time_t age = *(time_t *)arg;
 
 	return (CURRTIME - mu->registered) > age;
 }
 
-static bool has_waitauth(myuser_t *mu, const void *arg) {
-	return (mu->flags & MU_WAITAUTH) == MU_WAITAUTH;
+static bool has_waitauth(const mynick_t *mn, const void *arg) {
+	myuser_t *mu = mn->owner;
+
+	return ( mu->flags & MU_WAITAUTH ) == MU_WAITAUTH;
 }
 
 void _modinit(module_t *m)
@@ -106,55 +113,55 @@ void _modinit(module_t *m)
 	service_named_bind_command("nickserv", &ns_list);
 
 	/* list email */
-	static list_param_account_t email;
+	static list_param_t email;
 	email.opttype = OPT_STRING;
 	email.is_match = email_match;
 
-	static list_param_account_t lastlogin;
+	static list_param_t lastlogin;
 	lastlogin.opttype = OPT_AGE;
 	lastlogin.is_match = lastlogin_match;
 
-	static list_param_account_t pattern;
+	static list_param_t pattern;
 	pattern.opttype = OPT_STRING;
 	pattern.is_match = pattern_match;
 
-	static list_param_account_t registered;
+	static list_param_t registered;
 	registered.opttype = OPT_AGE;
 	registered.is_match = registered_match;
 
-	list_account_register("email", &email);
-	list_account_register("lastlogin", &lastlogin);
-	list_account_register("mail", &email);
+	list_register("email", &email);
+	list_register("lastlogin", &lastlogin);
+	list_register("mail", &email);
 
-	list_account_register("pattern", &pattern);
-	list_account_register("registered", &registered);
+	list_register("pattern", &pattern);
+	list_register("registered", &registered);
 
-	static list_param_account_t waitauth;
+	static list_param_t waitauth;
 	waitauth.opttype = OPT_BOOL;
 	waitauth.is_match = has_waitauth;
 
-	list_account_register("waitauth", &waitauth);
+	list_register("waitauth", &waitauth);
 }
 
 void _moddeinit(module_unload_intent_t intent)
 {
 	service_named_unbind_command("nickserv", &ns_list);
 
-	list_account_unregister("email");
-	list_account_unregister("lastlogin");
-	list_account_unregister("mail");
+	list_unregister("email");
+	list_unregister("lastlogin");
+	list_unregister("mail");
 
-	list_account_unregister("pattern");
-	list_account_unregister("registered");
+	list_unregister("pattern");
+	list_unregister("registered");
 
-	list_account_unregister("waitauth");
+	list_unregister("waitauth");
 }
 
-void list_account_register(const char *param_name, list_param_account_t *param) {
+void list_register(const char *param_name, list_param_t *param) {
 	mowgli_patricia_add(list_params, param_name, param);
 }
 
-void list_account_unregister(const char *param_name) {
+void list_unregister(const char *param_name) {
 	mowgli_patricia_delete(list_params, param_name);
 }
 
@@ -197,13 +204,13 @@ static void list_one(sourceinfo_t *si, myuser_t *mu, mynick_t *mn)
 		command_success_nodata(si, "- %s (%s) (%s) %s", mn->nick, mu->email, entity(mu)->name, buf);
 }
 
-static void ns_cmd_list(sourceinfo_t *si, int parc, char *parv[])
+static void ns_cmd_listnicks(sourceinfo_t *si, int parc, char *parv[])
 {
 	char criteriastr[BUFSIZE];
 
 	mowgli_patricia_iteration_state_t state;
 	myentity_iteration_state_t mestate;
-	myuser_t *mu;
+	mynick_t *mn;
 
 	int matches = 0;
 
@@ -211,13 +218,13 @@ static void ns_cmd_list(sourceinfo_t *si, int parc, char *parv[])
 	bool error = false;
 	bool found;
 
-	MOWGLI_PATRICIA_FOREACH(mu, &state, accountlist)
+	MOWGLI_PATRICIA_FOREACH(mn, &state, nicklist)
 	{
 		found = true;
 
 		for (i = 0; i < parc; i++)
 		{
-			list_param_account_t *param = mowgli_patricia_retrieve(list_params, parv[i]);
+			list_param_t *param = mowgli_patricia_retrieve(list_params, parv[i]);
 
 			if (param == NULL) {
 				command_fail(si, fault_badparams, _("\2%s\2 is not a recognized LIST criterion"), parv[i]);
@@ -228,7 +235,7 @@ static void ns_cmd_list(sourceinfo_t *si, int parc, char *parv[])
 			if (param->opttype == OPT_BOOL) {
 				bool arg = true;
 
-				if (!param->is_match(mu, &arg)) {
+				if (!param->is_match(mn, &arg)) {
 					found = false;
 					break;
 				}
@@ -236,7 +243,7 @@ static void ns_cmd_list(sourceinfo_t *si, int parc, char *parv[])
 				if (i + 1 < parc) {
 					int arg = atoi(parv[++i]);
 
-					if (!param->is_match(mu, &arg)) {
+					if (!param->is_match (mn, &arg)) {
 						found = false;
 						break;
 					}
@@ -247,7 +254,7 @@ static void ns_cmd_list(sourceinfo_t *si, int parc, char *parv[])
 				}
 			} else if (param->opttype == OPT_STRING) {
 				if (i + 1 < parc) {
-					if (!param->is_match(mu, parv[++i])) {
+					if (!param->is_match (mn, parv[++i])) {
 						found = false;
 						break;
 					}
@@ -262,7 +269,7 @@ static void ns_cmd_list(sourceinfo_t *si, int parc, char *parv[])
 				{
 					time_t age = parse_age(parv[++i]);
 
-					if (!param->is_match(mu, &age)) {
+					if (!param->is_match (mn, &age)) {
 						found = false;
 						break;
 					}
@@ -279,14 +286,14 @@ static void ns_cmd_list(sourceinfo_t *si, int parc, char *parv[])
 		}
 
 		if (found) {
-			list_one(si, mu, NULL);
+			list_one(si, NULL, mn);
 			matches++;
 		}
 	} //MOWGLI_PATRICIA_FOREACH(mn, &state, nicklist)
 
 	build_criteriastr(criteriastr, parc, parv);
 
-	logcommand(si, CMDLOG_ADMIN, "LIST: \2%s\2 (\2%d\2 match%s)", criteriastr, matches, matches == 1 ? "" : "es");
+	logcommand(si, CMDLOG_ADMIN, "LISTNICKS: \2%s\2 (\2%d\2 match%s)", criteriastr, matches, matches == 1 ? "" : "es");
 	if (matches == 0)
 		command_success_nodata(si, _("No nicknames matched criteria \2%s\2"), criteriastr);
 	else

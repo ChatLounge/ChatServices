@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -35,6 +35,11 @@ static bool has_nomemo(const mynick_t *mn, const void *arg)
 	return ( mu->flags & MU_NOMEMO ) == MU_NOMEMO;
 }
 
+static bool account_has_nomemo(myuser_t *mu, const void *arg)
+{
+	return ( mu->flags & MU_NOMEMO ) == MU_NOMEMO;
+}
+
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
@@ -50,7 +55,12 @@ void _modinit(module_t *m)
 	nomemo.opttype = OPT_BOOL;
 	nomemo.is_match = has_nomemo;
 
+	static list_param_account_t account_nomemo;
+	account_nomemo.opttype = OPT_BOOL;
+	account_nomemo.is_match = account_has_nomemo;
+
 	list_register("nomemo", &nomemo);
+	list_account_register("nomemo", &account_nomemo);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -58,6 +68,7 @@ void _moddeinit(module_unload_intent_t intent)
 	command_delete(&ns_set_nomemo, *ns_set_cmdtree);
 
 	list_unregister("nomemo");
+	list_account_unregister("nomemo");
 }
 
 /* SET NOMEMO [ON|OFF] */

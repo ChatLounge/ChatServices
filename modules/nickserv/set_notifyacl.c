@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 ChatLounge IRC Network Development Team <http://www.chatlounge.net/>
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team <http://www.chatlounge.net/>
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -31,7 +31,12 @@ static bool has_notifyacl(const mynick_t *mn, const void *arg)
 {
 	myuser_t *mu = mn->owner;
 
-	return ( mu->flags & MU_NOTIFYACL ) == MU_NOTIFYACL;
+	return (mu->flags & MU_NOTIFYACL) == MU_NOTIFYACL;
+}
+
+static bool account_has_notifyacl(myuser_t *mu, const void *arg)
+{
+	return (mu->flags & MU_NOTIFYACL) == MU_NOTIFYACL;
 }
 
 void _modinit(module_t *m)
@@ -49,16 +54,20 @@ void _modinit(module_t *m)
 	notifyacl.opttype = OPT_BOOL;
 	notifyacl.is_match = has_notifyacl;
 
+	static list_param_account_t account_notifyacl;
+	account_notifyacl.opttype = OPT_BOOL;
+	account_notifyacl.is_match = account_has_notifyacl;
+
 	list_register("notifyacl", &notifyacl);
+	list_account_register("notifyacl", &account_notifyacl);
 }
-
-
 
 void _moddeinit(module_unload_intent_t intent)
 {
 	command_delete(&ns_set_notifyacl, *ns_set_cmdtree);
 
 	list_unregister("notifyacl");
+	list_account_unregister("notifyacl");
 }
 
 /* SET NOTIFYACL [ON|OFF] */

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005-2007 Patrick Fish, et al.
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -34,12 +34,30 @@ static bool is_frozen(const mynick_t *mn, const void *arg)
 	return !!metadata_find(mu, "private:freeze:freezer");
 }
 
+static bool is_account_frozen(myuser_t *mu, const void *arg)
+{
+	return !!metadata_find(mu, "private:freeze:freezer");
+}
+
 static bool frozen_match(const mynick_t *mn, const void *arg)
 {
 	const char *frozenpattern = (const char*)arg;
 	metadata_t *mdfrozen;
 
 	myuser_t *mu = mn->owner;
+	mdfrozen = metadata_find(mu, "private:freeze:reason");
+
+	if (mdfrozen != NULL && !match(frozenpattern, mdfrozen->value))
+		return true;
+
+	return false;
+}
+
+static bool frozen_account_match(myuser_t *mu, const void *arg)
+{
+	const char *frozenpattern = (const char*)arg;
+	metadata_t *mdfrozen;
+
 	mdfrozen = metadata_find(mu, "private:freeze:reason");
 
 	if (mdfrozen != NULL && !match(frozenpattern, mdfrozen->value))
@@ -58,12 +76,22 @@ void _modinit(module_t *m)
 	frozen.opttype = OPT_BOOL;
 	frozen.is_match = is_frozen;
 
+	static list_param_account_t frozen_account;
+	frozen_account.opttype = OPT_BOOL;
+	frozen_account.is_match = is_account_frozen;
+
 	static list_param_t frozen_reason;
 	frozen_reason.opttype = OPT_STRING;
 	frozen_reason.is_match = frozen_match;
 
+	static list_param_account_t frozen_account_reason;
+	frozen_account_reason.opttype = OPT_STRING;
+	frozen_account_reason.is_match = frozen_account_match;
+
 	list_register("frozen", &frozen);
 	list_register("frozen-reason", &frozen_reason);
+	list_account_register("frozen", &frozen_account);
+	list_account_register("frozen-reason", &frozen_account_reason);
 
 	if (module_request("nickserv/main"))
 		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
@@ -75,6 +103,8 @@ void _moddeinit(module_unload_intent_t intent)
 
 	list_unregister("frozen");
 	list_unregister("frozen-reason");
+	list_account_unregister("frozen");
+	list_account_unregister("frozen-reason");
 }
 
 static void ns_cmd_freeze(sourceinfo_t *si, int parc, char *parv[])

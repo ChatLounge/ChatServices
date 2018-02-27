@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2006-2007 William Pitcock, et al.
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -82,7 +82,12 @@ static bool uses_privmsg(const mynick_t *mn, const void *arg)
 {
 	myuser_t *mu = mn->owner;
 
-	return ( mu->flags & MU_USE_PRIVMSG ) == MU_USE_PRIVMSG;
+	return (mu->flags & MU_USE_PRIVMSG) == MU_USE_PRIVMSG;
+}
+
+static bool account_uses_privmsg(myuser_t *mu, const void *arg)
+{
+	return (mu->flags & MU_USE_PRIVMSG) == MU_USE_PRIVMSG;
 }
 
 void _modinit(module_t *m)
@@ -102,8 +107,14 @@ void _modinit(module_t *m)
 	use_privmsg.opttype = OPT_BOOL;
 	use_privmsg.is_match = uses_privmsg;
 
+	static list_param_account_t account_use_privmsg;
+	account_use_privmsg.opttype = OPT_BOOL;
+	account_use_privmsg.is_match = account_uses_privmsg;
+
 	list_register("use-privmsg", &use_privmsg);
 	list_register("use_privmsg", &use_privmsg);
+	list_account_register("use-privmsg", &account_use_privmsg);
+	list_account_register("use_privmsg", &account_use_privmsg);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -114,6 +125,8 @@ void _moddeinit(module_unload_intent_t intent)
 
 	list_unregister("use-privmsg");
 	list_unregister("use_privmsg");
+	list_account_unregister("use-privmsg");
+	list_account_unregister("use_privmsg");
 }
 
 /* vim:cinoptions=>s,e0,n0,f0,{0,}0,^0,=s,ps,t0,c3,+s,(2s,us,)20,*30,gs,hs

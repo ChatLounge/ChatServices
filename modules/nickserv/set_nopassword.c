@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *     <admin -at- chatlounge.net>
  *
  * Rights to this code are as documented in doc/LICENSE.
@@ -34,7 +34,12 @@ static bool has_nopassword(const mynick_t *mn, const void *arg)
 {
 	myuser_t *mu = mn->owner;
 
-	return ( mu->flags & MU_NOPASSWORD ) == MU_NOPASSWORD;
+	return (mu->flags & MU_NOPASSWORD) == MU_NOPASSWORD;
+}
+
+static bool account_has_nopassword(myuser_t *mu, const void *arg)
+{
+	return (mu->flags & MU_NOPASSWORD) == MU_NOPASSWORD;
 }
 
 void _modinit(module_t *m)
@@ -52,7 +57,12 @@ void _modinit(module_t *m)
 	nopassword.opttype = OPT_BOOL;
 	nopassword.is_match = has_nopassword;
 
+	static list_param_account_t account_nopassword;
+	account_nopassword.opttype = OPT_BOOL;
+	account_nopassword.is_match = account_has_nopassword;
+
 	list_register("nopassword", &nopassword);
+	list_account_register("nopassword", &account_nopassword);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -60,6 +70,7 @@ void _moddeinit(module_unload_intent_t intent)
 	command_delete(&ns_set_nopassword, *ns_set_cmdtree);
 
 	list_unregister("nopassword");
+	list_account_unregister("nopassword");
 }
 
 /* SET NOPASSWORD [ON|OFF] */

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -36,6 +36,11 @@ static bool has_nevergroup(const mynick_t *mn, const void *arg)
 	return ( mu->flags & MU_NEVERGROUP ) == MU_NEVERGROUP;
 }
 
+static bool account_has_nevergroup(myuser_t *mu, const void *arg)
+{
+	return ( mu->flags & MU_NEVERGROUP ) == MU_NEVERGROUP;
+}
+
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
@@ -51,7 +56,12 @@ void _modinit(module_t *m)
 	nevergroup.opttype = OPT_BOOL;
 	nevergroup.is_match = has_nevergroup;
 
+	static list_param_account_t account_nevergroup;
+	account_nevergroup.opttype = OPT_BOOL;
+	account_nevergroup.is_match = account_has_nevergroup;
+
 	list_register("nevergroup", &nevergroup);
+	list_account_register("nevergroup", &account_nevergroup);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -59,6 +69,7 @@ void _moddeinit(module_unload_intent_t intent)
 	command_delete(&ns_set_nevergroup, *ns_set_cmdtree);
 
 	list_unregister("nevergroup");
+	list_account_unregister("nevergroup");
 }
 
 /* SET NEVERGROUP <ON|OFF> */

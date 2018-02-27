@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -33,7 +33,12 @@ static bool has_quietchg(const mynick_t *mn, const void *arg)
 {
 	myuser_t *mu = mn->owner;
 
-	return ( mu->flags & MU_QUIETCHG ) == MU_QUIETCHG;
+	return (mu->flags & MU_QUIETCHG) == MU_QUIETCHG;
+}
+
+static bool account_has_quietchg(myuser_t *mu, const void *arg)
+{
+	return (mu->flags & MU_QUIETCHG) == MU_QUIETCHG;
 }
 
 void _modinit(module_t *m)
@@ -51,7 +56,12 @@ void _modinit(module_t *m)
 	quietchg.opttype = OPT_BOOL;
 	quietchg.is_match = has_quietchg;
 
+	static list_param_account_t account_quietchg;
+	account_quietchg.opttype = OPT_BOOL;
+	account_quietchg.is_match = account_has_quietchg;
+
 	list_register("quietchg", &quietchg);
+	list_account_register("quietchg", &account_quietchg);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -59,6 +69,7 @@ void _moddeinit(module_unload_intent_t intent)
 	command_delete(&ns_set_quietchg, *ns_set_cmdtree);
 
 	list_unregister("quietchg");
+	list_account_unregister("quietchg");
 }
 
 /* SET QUIETCHG [ON|OFF] */

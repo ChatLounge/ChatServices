@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -36,6 +36,11 @@ static bool has_nogreet(const mynick_t *mn, const void *arg)
 	return ( mu->flags & MU_NOGREET ) == MU_NOGREET;
 }
 
+static bool account_has_nogreet(myuser_t *mu, const void *arg)
+{
+	return ( mu->flags & MU_NOGREET ) == MU_NOGREET;
+}
+
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
@@ -51,12 +56,18 @@ void _modinit(module_t *m)
 	nogreet.opttype = OPT_BOOL;
 	nogreet.is_match = has_nogreet;
 
+	static list_param_account_t account_nogreet;
+	account_nogreet.opttype = OPT_BOOL;
+	account_nogreet.is_match = account_has_nogreet;
+
 	list_register("nogreet", &nogreet);
+	list_account_register("nogreet", &account_nogreet);
 }
 
 void _moddeinit(module_unload_intent_t intent)
 {
 	list_unregister("nogreet");
+	list_account_unregister("nogreet");
 	command_delete(&ns_set_nogreet, *ns_set_cmdtree);
 }
 

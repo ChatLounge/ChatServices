@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 ChatLounge IRC Network Development Team <http://www.chatlounge.net/>
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team <http://www.chatlounge.net/>
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -34,6 +34,11 @@ static bool has_emailnotify(const mynick_t *mn, const void *arg)
 	return ( mu->flags & MU_EMAILNOTIFY ) == MU_EMAILNOTIFY;
 }
 
+static bool account_has_emailnotify(myuser_t *mu, const void *arg)
+{
+	return ( mu->flags & MU_EMAILNOTIFY ) == MU_EMAILNOTIFY;
+}
+
 void _modinit(module_t *m)
 {
 	MODULE_TRY_REQUEST_SYMBOL(m, ns_set_cmdtree, "nickserv/set_core", "ns_set_cmdtree");
@@ -46,19 +51,23 @@ void _modinit(module_t *m)
 	emailnotify.opttype = OPT_BOOL;
 	emailnotify.is_match = has_emailnotify;
 
+	static list_param_account_t account_emailnotify;
+	account_emailnotify.opttype = OPT_BOOL;
+	account_emailnotify.is_match = account_has_emailnotify;
+
 	list_register("emailnotify", &emailnotify);
+	list_account_register("emailnotify", &account_emailnotify);
 
 	if (module_request("nickserv/main"))
 		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
 }
-
-
 
 void _moddeinit(module_unload_intent_t intent)
 {
 	command_delete(&ns_set_emailnotify, *ns_set_cmdtree);
 
 	list_unregister("emailnotify");
+	list_account_unregister("emailnotify");
 }
 
 /* SET EMAILNOTIFY [ON|OFF] */

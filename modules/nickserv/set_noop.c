@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -33,7 +33,12 @@ static bool has_noop(const mynick_t *mn, const void *arg)
 {
 	myuser_t *mu = mn->owner;
 
-	return ( mu->flags & MU_NOOP ) == MU_NOOP;
+	return (mu->flags & MU_NOOP) == MU_NOOP;
+}
+
+static bool account_has_noop(myuser_t *mu, const void *arg)
+{
+	return (mu->flags & MU_NOOP) == MU_NOOP;
 }
 
 void _modinit(module_t *m)
@@ -51,7 +56,12 @@ void _modinit(module_t *m)
 	noop.opttype = OPT_BOOL;
 	noop.is_match = has_noop;
 
+	static list_param_account_t account_noop;
+	account_noop.opttype = OPT_BOOL;
+	account_noop.is_match = account_has_noop;
+
 	list_register("noop", &noop);
+	list_account_register("noop", &account_noop);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -59,6 +69,7 @@ void _moddeinit(module_unload_intent_t intent)
 	command_delete(&ns_set_noop, *ns_set_cmdtree);
 
 	list_unregister("noop");
+	list_account_unregister("noop");
 }
 
 /* SET NOOP [ON|OFF] */

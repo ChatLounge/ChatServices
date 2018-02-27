@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 Atheme Development Group
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -26,9 +26,15 @@ static void ns_cmd_hold(sourceinfo_t *si, int parc, char *parv[]);
 command_t ns_hold = { "HOLD", N_("Prevents an account from expiring."),
 		      PRIV_HOLD, 2, ns_cmd_hold, { .path = "nickserv/hold" } };
 
-static bool is_held(const mynick_t *mn, const void *arg) {
+static bool is_held(const mynick_t *mn, const void *arg)
+{
 	myuser_t *mu = mn->owner;
 
+	return ( mu->flags & MU_HOLD ) == MU_HOLD;
+}
+
+static bool is_account_held(myuser_t *mu, const void *arg)
+{
 	return ( mu->flags & MU_HOLD ) == MU_HOLD;
 }
 
@@ -42,9 +48,16 @@ void _modinit(module_t *m)
 	hold.opttype = OPT_BOOL;
 	hold.is_match = is_held;
 
+	static list_param_account_t account_hold;
+	account_hold.opttype = OPT_BOOL;
+	account_hold.is_match = is_account_held;
+
 	list_register("hold", &hold);
 	list_register("held", &hold);
 	list_register("noexpire", &hold);
+	list_account_register("hold", &account_hold);
+	list_account_register("held", &account_hold);
+	list_account_register("noexpire", &account_hold);
 
 	if (module_request("nickserv/main"))
 		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
@@ -57,6 +70,9 @@ void _moddeinit(module_unload_intent_t intent)
 	list_unregister("hold");
 	list_unregister("held");
 	list_unregister("noexpire");
+	list_account_unregister("hold");
+	list_account_unregister("held");
+	list_account_unregister("noexpire");
 }
 
 static void ns_cmd_hold(sourceinfo_t *si, int parc, char *parv[])

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2014 Atheme Development Group
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -92,10 +92,37 @@ static bool multimark_match(const mynick_t *mn, const void *arg)
 	return false;
 }
 
+static bool multimark_account_match(myuser_t *mu, const void *arg)
+{
+	const char *markpattern = (const char*)arg;
+
+	mowgli_list_t *l = multimark_list(mu);
+
+	mowgli_node_t *n;
+	multimark_t *mm;
+
+	MOWGLI_ITER_FOREACH(n, l->head)
+	{
+		mm = n->data;
+
+		if (!match(markpattern, mm->mark))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static bool is_marked(const mynick_t *mn, const void *arg)
 {
 	myuser_t *mu = mn->owner;
 
+	return is_user_marked(mu);
+}
+
+static bool is_account_marked(myuser_t *mu, const void *arg)
+{
 	return is_user_marked(mu);
 }
 
@@ -108,8 +135,6 @@ static bool is_user_marked(myuser_t *mu)
 
 void _modinit(module_t *m)
 {
-	static list_param_t mark_check;
-
 	if (!module_find_published("backend/opensex"))
 	{
 		slog(LG_INFO, "Module %s requires use of the OpenSEX database backend, refusing to load.", m->name);
@@ -159,12 +184,23 @@ void _modinit(module_t *m)
 	mark.opttype = OPT_STRING;
 	mark.is_match = multimark_match;
 
-	list_register("mark-reason", &mark);
+	static list_param_account_t mark_account;
+	mark_account.opttype = OPT_STRING;
+	mark_account.is_match = multimark_account_match;
 
+	list_register("mark-reason", &mark);
+	list_account_register("mark-reason", &mark_account);
+
+	static list_param_t mark_check;
 	mark_check.opttype = OPT_BOOL;
 	mark_check.is_match = is_marked;
 
+	static list_param_account_t mark_account_check;
+	mark_account_check.opttype = OPT_BOOL;
+	mark_account_check.is_match = is_account_marked;
+
 	list_register("marked", &mark_check);
+	list_account_register("marked", &mark_account_check);
 }
 
 void _moddeinit(module_unload_intent_t intent)

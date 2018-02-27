@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 William Pitcock
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -25,9 +25,15 @@ static void ns_cmd_restrict(sourceinfo_t *si, int parc, char *parv[]);
 
 command_t ns_restrict = { "RESTRICT", N_("Restrict a user from using certain commands."), PRIV_MARK, 3, ns_cmd_restrict, { .path = "nickserv/restrict" } };
 
-static bool is_restricted(const mynick_t *mn, const void *arg) {
+static bool is_restricted(const mynick_t *mn, const void *arg)
+{
 	myuser_t *mu = mn->owner;
 
+	return !!metadata_find(mu, "private:restrict:setter");
+}
+
+static bool is_account_restricted(myuser_t *mu, const void *arg)
+{
 	return !!metadata_find(mu, "private:restrict:setter");
 }
 
@@ -36,6 +42,18 @@ static bool restricted_match(const mynick_t *mn, const void *arg) {
 	metadata_t *mdrestricted;
 
 	myuser_t *mu = mn->owner;
+
+	mdrestricted = metadata_find(mu, "private:restrict:reason");
+
+	if (mdrestricted != NULL && !match(restrictedpattern, mdrestricted->value))
+		return true;
+
+	return false;
+}
+
+static bool account_restricted_match(myuser_t *mu, const void *arg) {
+	const char *restrictedpattern = (const char*)arg;
+	metadata_t *mdrestricted;
 
 	mdrestricted = metadata_find(mu, "private:restrict:reason");
 
@@ -83,12 +101,22 @@ void _modinit(module_t *m)
 	restricted.opttype = OPT_BOOL;
 	restricted.is_match = is_restricted;
 
+	static list_param_account_t account_restricted;
+	account_restricted.opttype = OPT_BOOL;
+	account_restricted.is_match = is_account_restricted;
+
 	static list_param_t restrict_match;
 	restrict_match.opttype = OPT_STRING;
 	restrict_match.is_match = restricted_match;
 
+	static list_param_account_t restrict_account_match;
+	restrict_account_match.opttype = OPT_STRING;
+	restrict_account_match.is_match = account_restricted_match;
+
 	list_register("restricted", &restricted);
 	list_register("restricted-reason", &restrict_match);
+	list_account_register("restricted", &account_restricted);
+	list_account_register("restricted-reason", &restrict_account_match);
 
 	if (module_request("nickserv/main"))
 		add_history_entry_setting = module_locate_symbol("nickserv/main", "add_history_entry_setting");
@@ -102,6 +130,8 @@ void _moddeinit(module_unload_intent_t intent)
 
 	list_unregister("restricted");
 	list_unregister("restricted-reason");
+	list_account_unregister("restricted");
+	list_account_unregister("restricted-reason");
 }
 
 static void ns_cmd_restrict(sourceinfo_t *si, int parc, char *parv[])

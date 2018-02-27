@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2017 ChatLounge IRC Network Development Team
+/* Copyright (c) 2016-2018 ChatLounge IRC Network Development Team
  *     <http://www.chatlounge.net/>
  *
  *     This files contains the functions to provide the NickServ
@@ -88,11 +88,16 @@ static void ns_cmd_set_strictaccess(sourceinfo_t *si, int parc, char *parv[])
 
 command_t ns_set_strictaccess = { "STRICTACCESS", N_("Prevents identifying to this account from connections that don't match any NickServ ACCESS list entries, if enabled."), AC_NONE, 1, ns_cmd_set_strictaccess, { .path = "nickserv/set_strictaccess" } };
 
-static bool uses_myuser_strictaccess(const mynick_t *mn, const void *arg)
+static bool has_myuser_strictaccess(const mynick_t *mn, const void *arg)
 {
 	myuser_t *mu = mn->owner;
 
-	return ( mu->flags & MU_STRICTACCESS ) == MU_STRICTACCESS;
+	return (mu->flags & MU_STRICTACCESS) == MU_STRICTACCESS;
+}
+
+static bool account_has_myuser_strictaccess(myuser_t *mu, const void *arg)
+{
+	return (mu->flags & MU_STRICTACCESS) == MU_STRICTACCESS;
 }
 
 void _modinit(module_t *m)
@@ -108,12 +113,16 @@ void _modinit(module_t *m)
 
 	use_nslist_main_symbols(m);
 
-	static list_param_t use_myuser_strictaccess;
-	use_myuser_strictaccess.opttype = OPT_BOOL;
-	use_myuser_strictaccess.is_match = uses_myuser_strictaccess;
+	static list_param_t myuser_strictaccess;
+	myuser_strictaccess.opttype = OPT_BOOL;
+	myuser_strictaccess.is_match = has_myuser_strictaccess;
 
-	list_register("use-myuser-strictaccess", &use_myuser_strictaccess);
-	list_register("use_myuser_strictaccess", &use_myuser_strictaccess);
+	static list_param_account_t account_myuser_strictaccess;
+	account_myuser_strictaccess.opttype = OPT_BOOL;
+	account_myuser_strictaccess.is_match = account_has_myuser_strictaccess;
+
+	list_register("strictaccess", &myuser_strictaccess);
+	list_account_register("strictaccess", &account_myuser_strictaccess);
 }
 
 void _moddeinit(module_unload_intent_t intent)
@@ -122,6 +131,6 @@ void _moddeinit(module_unload_intent_t intent)
 
 	use_myuser_strictaccess--;
 
-	list_unregister("use-myuser-strictaccess");
-	list_unregister("use_myuser_strictaccess");
+	list_unregister("strictaccess");
+	list_account_unregister("strictaccess");
 }

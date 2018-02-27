@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2005 William Pitcock <nenolod -at- nenolod.net>
  * Copyright (c) 2007 Jilles Tjoelker
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -29,9 +29,15 @@ static void ns_cmd_set_hidemail(sourceinfo_t *si, int parc, char *parv[]);
 
 command_t ns_set_hidemail = { "HIDEMAIL", N_("Hides your e-mail address."), AC_NONE, 1, ns_cmd_set_hidemail, { .path = "nickserv/set_hidemail" } };
 
-static bool has_hidemail(const mynick_t *mn, const void *arg) {
+static bool has_hidemail(const mynick_t *mn, const void *arg)
+{
 	myuser_t *mu = mn->owner;
 
+	return ( mu->flags & MU_HIDEMAIL ) == MU_HIDEMAIL;
+}
+
+static bool account_has_hidemail(myuser_t *mu, const void *arg)
+{
 	return ( mu->flags & MU_HIDEMAIL ) == MU_HIDEMAIL;
 }
 
@@ -50,7 +56,12 @@ void _modinit(module_t *m)
 	hidemail.opttype = OPT_BOOL;
 	hidemail.is_match = has_hidemail;
 
+	static list_param_account_t account_hidemail;
+	account_hidemail.opttype = OPT_BOOL;
+	account_hidemail.is_match = account_has_hidemail;
+
 	list_register("hidemail", &hidemail);
+	list_account_register("hidemail", &account_hidemail);
 
 }
 
@@ -58,6 +69,7 @@ void _moddeinit(module_unload_intent_t intent)
 {
 	command_delete(&ns_set_hidemail, *ns_set_cmdtree);
 	list_unregister("hidemail");
+	list_account_unregister("hidemail");
 }
 
 /* SET HIDEMAIL [ON|OFF] */

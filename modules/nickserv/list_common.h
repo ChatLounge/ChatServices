@@ -20,4 +20,9 @@ typedef struct {
 	bool (*is_match)(const mynick_t *mn, const void *arg);
 } list_param_t;
 
+typedef struct {
+	list_opttype_t opttype;
+	bool (*is_match)(myuser_t *mu, const void *arg);
+} list_param_account_t;
+
 #endif /* !NSLIST_COMMON_H */
