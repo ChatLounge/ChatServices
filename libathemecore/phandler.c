@@ -1,8 +1,9 @@
 /*
- * atheme-services: A collection of minimalist IRC services
+ * ChatServices: A collection of IRC services.
  * phandler.c: Generic protocol handling routines.
  *
- * Copyright (c) 2005-2007 Atheme Project (http://www.atheme.org)
+ * Copyright (c) 2005-2007 Atheme Project (https://atheme.github.io)
+ * Copyright (c) 2018 ChatLounge IRC Network Development Tean (https://www.chatlounge.net)
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -47,6 +48,7 @@ void (*qline_sts) (const char *server, const char *mask, long duration, const ch
 void (*unqline_sts) (const char *server, const char *mask) = generic_unqline_sts;
 void (*topic_sts) (channel_t *c, user_t *source, const char *setter, time_t ts, time_t prevts, const char *topic) = generic_topic_sts;
 void (*mode_sts) (char *sender, channel_t *target, char *modes) = generic_mode_sts;
+void (*umode_sts) (char *sender, user_t *target, char *modes) = generic_umode_sts;
 void (*ping_sts) (void) = generic_ping_sts;
 void (*quit_sts) (user_t *u, const char *reason) = generic_quit_sts;
 void (*ircd_on_login) (user_t *u, myuser_t *account, const char *wantedhost) = generic_on_login;
@@ -181,42 +183,42 @@ void generic_numeric_sts(server_t *from, int numeric, user_t *target, const char
 
 void generic_kill_id_sts(user_t *killer, const char *id, const char *reason)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_part_sts(channel_t *c, user_t *u)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_kline_sts(const char *server, const char *user, const char *host, long duration, const char *reason)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_unkline_sts(const char *server, const char *user, const char *host)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_xline_sts(const char *server, const char *realname, long duration, const char *reason)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_unxline_sts(const char *server, const char *realname)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_qline_sts(const char *server, const char *mask, long duration, const char *reason)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_unqline_sts(const char *server, const char *mask)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_dline_sts(const char *server, const char *host, long duration, const char *reason)
@@ -231,22 +233,27 @@ void generic_undline_sts(const char *server, const char *host)
 
 void generic_topic_sts(channel_t *c, user_t *source, const char *setter, time_t ts, time_t prevts, const char *topic)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_mode_sts(char *sender, channel_t *target, char *modes)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
+}
+
+void generic_umode_sts(char *sender, channel_t *target, char *modes)
+{
+	/* Can't do anything here, so bail. */
 }
 
 void generic_ping_sts(void)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_quit_sts(user_t *u, const char *reason)
 {
-	/* cant do anything here. bail. */
+	/* Can't do anything here, so bail. */
 }
 
 void generic_on_login(user_t *u, myuser_t *account, const char *wantedhost)

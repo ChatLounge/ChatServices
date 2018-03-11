@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2007 Atheme Development Group
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -49,7 +49,8 @@ ircd_t Charybdis = {
 	IRCD_CIDR_BANS | IRCD_HOLDNICK, /* Flags */
 	true,                           /* Uses quiets */
 	"q",                            /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	""                              /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	"",                             /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	false                           /* True if the IRCd supports changing user modes via S2S. */
 };
 
 struct cmode_ charybdis_mode_list[] = {

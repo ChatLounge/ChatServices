@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005-2006 Atheme Development Group
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are documented in doc/LICENSE.
  *
@@ -47,7 +47,8 @@ ircd_t InspIRCd = {
 	IRCD_CIDR_BANS | IRCD_HOLDNICK, /* Flags */
 	true,					/* Uses quiets */
 	"b",					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	"m:"					/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	"m:",					/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	false                           /* True if the IRCd supports changing user modes via S2S. */
 };
 
 struct cmode_ inspircd_mode_list[] = {

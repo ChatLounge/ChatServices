@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2003-2004 E. Will et al.
  * Copyright (c) 2005-2006 Atheme Development Group
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
+ *
  * Rights to this code are documented in doc/LICENSE.
  *
  * This file contains protocol support for ratbox-based ircd.
@@ -42,7 +44,8 @@ ircd_t Ratbox = {
 	IRCD_CIDR_BANS,                 /* Flags */
 	false,					/* Uses quiets */
 	NULL,					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	""						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	"",						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	false                           /* True if the IRCd supports changing user modes via S2S. */
 };
 
 struct cmode_ ratbox_mode_list[] = {

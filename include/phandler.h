@@ -36,6 +36,7 @@ struct ircd_ {
 	bool uses_quiets;			/* True if IRCd supports quiet functionality, else False. */
 	const char *quiet_mchar;	/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL */
 	const char *quiet_mask;		/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	bool supports_umode_change; /* True if the IRCd supports changing user modes via S2S. */
 };
 
 typedef struct ircd_ ircd_t;
@@ -185,6 +186,9 @@ E void (*topic_sts)(channel_t *c, user_t *source, const char *setter, time_t ts,
 /* set modes on a channel by the given sender; sender must be a client
  * on the services server; sender may or may not be on channel */
 E void (*mode_sts)(char *sender, channel_t *target, char *modes);
+/* Set a user's user modes.  Not all IRCds support this.
+ */
+E void (*umode_sts)(char *sender, user_t *target, char *modes);
 /* ping the uplink
  * first check if me.connected is true and bail if not */
 E void (*ping_sts)(void);
@@ -276,6 +280,7 @@ E void generic_qline_sts(const char *server, const char *mask, long duration, co
 E void generic_unqline_sts(const char *server, const char *mask);
 E void generic_topic_sts(channel_t *c, user_t *source, const char *setter, time_t ts, time_t prevts, const char *topic);
 E void generic_mode_sts(char *sender, channel_t *target, char *modes);
+E void generic_umode_sts(char *sender, channel_t *target, char *modes);
 E void generic_ping_sts(void);
 E void generic_on_login(user_t *u, myuser_t *account, const char *wantedhost);
 E bool generic_on_logout(user_t *u, const char *account);
