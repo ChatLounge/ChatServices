@@ -85,6 +85,7 @@ struct cmode_ asuka_user_mode_list[] = {
   { 'i', UF_INVIS    },
   { 'k', UF_IMMUNE   },
   { 'o', UF_IRCOP    },
+  { 's', UF_SNOMASK  },
   { '\0', 0 }
 };
 

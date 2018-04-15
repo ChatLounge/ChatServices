@@ -85,6 +85,7 @@ struct cmode_ ratbox_user_mode_list[] = {
   { 'o', UF_IRCOP    },
   { 's', UF_SNOMASK  },
   { 'w', UF_WALLOPS  },
+  { 'z', UF_OPERWALL },
   { '\0', 0 }
 };
 
