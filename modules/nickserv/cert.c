@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2006-2010 Atheme Development Group
- * Copyright (c) 2017 ChatLounge IRC Network Development Team
+ * Copyright (c) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -97,7 +97,7 @@ static void ns_cmd_cert(sourceinfo_t *si, int parc, char *parv[])
 			command_success_nodata(si, _("End of \2%s\2 fingerprint list."), entity(mu)->name);
 		}
 		else
-			command_fail(si, fault_nosuch_key, "The fingerprint list for \2%s\2 is empty.");
+			command_fail(si, fault_nosuch_key, "The fingerprint list for \2%s\2 is empty.", entity(mu)->name);
 	}
 	else if (!strcasecmp(parv[0], "ADD"))
 	{
