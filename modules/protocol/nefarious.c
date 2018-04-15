@@ -114,7 +114,6 @@ struct cmode_ nefarious_user_mode_list[] = {
   { 'w', UF_WALLOPS     },
   { 'x', UF_IPCLOAK     },
   { 'z', UF_SSL         },
-  
   { '\0', 0 }
 };
 

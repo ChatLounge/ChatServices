@@ -123,7 +123,6 @@ struct cmode_ unreal_user_mode_list[] = {
   { 'S', UF_SERVICE     },
   { 'T', UF_NOCTCP      },
   { 'W', UF_WHOISNOTIFY },
-
   { 'd', UF_DEAF        },
   { 'i', UF_INVIS       },
   { 'o', UF_IRCOP       },
@@ -135,7 +134,6 @@ struct cmode_ unreal_user_mode_list[] = {
   { 'w', UF_WALLOPS     },
   { 'x', UF_IPCLOAK     },
   { 'z', UF_SSL         },
-  
   { '\0', 0 }
 };
 

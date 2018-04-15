@@ -30,7 +30,7 @@ ircd_t ShadowIRCd = {
 	false,                          /* Whether or not we use P10 */
 	false,                          /* Whether or not we use vHosts. */
 	CMODE_EXLIMIT | CMODE_PERM | CMODE_IMMUNE | CMODE_ADMINONLY | CMODE_OPERONLY, /* Oper-only cmodes */
-	0,                  /* Integer flag for owner channel flag. */
+	0,                              /* Integer flag for owner channel flag. */
 	CSTATUS_PROTECT,                /* Integer flag for protect channel flag. */
 	CSTATUS_HALFOP,                 /* Integer flag for halfops. */
 	"+",                            /* Mode we set for owner. */
@@ -105,7 +105,6 @@ struct cmode_ shadowircd_user_mode_list[] = {
   { 'S', UF_SERVICE    },
   { 'V', UF_NOINVITE   },
   { 'Z', UF_SSL        },
-
   { 'a', UF_ADMIN      },
   { 'g', UF_ACCEPT     },
   { 'i', UF_INVIS      },
@@ -115,7 +114,6 @@ struct cmode_ shadowircd_user_mode_list[] = {
   { 's', UF_SNOMASK    },
   { 'w', UF_WALLOPS    },
   { 'x', UF_IPCLOAK    },
-
   { '\0', 0 }
 };
 

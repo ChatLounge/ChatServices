@@ -18,33 +18,33 @@ DECLARE_MODULE_V1("protocol/hybrid", true, _modinit, NULL, PACKAGE_STRING, VENDO
 /* *INDENT-OFF* */
 
 ircd_t Hybrid = {
-        "Hybrid 7.1.2+",		/* IRCd name */
-        "$$",                           /* TLD Prefix, used by Global. */
-        true,                           /* Whether or not we use IRCNet/TS6 UID */
-        false,                          /* Whether or not we use RCOMMAND */
-        false,                          /* Whether or not we support channel owners. */
-        false,                          /* Whether or not we support channel protection. */
-        false,                          /* Whether or not we support halfops. */
-	false,				/* Whether or not we use P10 */
-	false,				/* Whether or not we use vHosts. */
-	0,				/* Oper-only cmodes */
-        0,                              /* Integer flag for owner channel flag. */
-        0,                              /* Integer flag for protect channel flag. */
-        0,                              /* Integer flag for halfops. */
-        "+",                            /* Mode we set for owner. */
-        "+",                            /* Mode we set for protect. */
-        "+",                            /* Mode we set for halfops. */
-	PROTOCOL_RATBOX,		/* Protocol type */
+	"Hybrid 7.1.2+",                /* IRCd name */
+	"$$",                           /* TLD Prefix, used by Global. */
+	true,                           /* Whether or not we use IRCNet/TS6 UID */
+	false,                          /* Whether or not we use RCOMMAND */
+	false,                          /* Whether or not we support channel owners. */
+	false,                          /* Whether or not we support channel protection. */
+	false,                          /* Whether or not we support halfops. */
+	false,                          /* Whether or not we use P10 */
+	false,                          /* Whether or not we use vHosts. */
+	0,                              /* Oper-only cmodes */
+	0,                              /* Integer flag for owner channel flag. */
+	0,                              /* Integer flag for protect channel flag. */
+	0,                              /* Integer flag for halfops. */
+	"+",                            /* Mode we set for owner. */
+	"+",                            /* Mode we set for protect. */
+	"+",                            /* Mode we set for halfops. */
+	PROTOCOL_RATBOX,                /* Protocol type */
 	0,                              /* Permanent cmodes */
 	0,                              /* Oper-immune cmode */
 	"beI",                          /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
 	IRCD_CIDR_BANS,                 /* Flags */
-	false,					/* Uses quiets */
-	NULL,					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	"",						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
-	false					/* True if the IRCd supports changing user modes via S2S. */
+	false,                          /* Uses quiets */
+	NULL,                           /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	"",                             /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	false                           /* True if the IRCd supports changing user modes via S2S. */
 };
 
 struct cmode_ hybrid_mode_list[] = {

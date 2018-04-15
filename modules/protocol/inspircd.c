@@ -45,9 +45,9 @@ ircd_t InspIRCd = {
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
 	IRCD_CIDR_BANS | IRCD_HOLDNICK, /* Flags */
-	true,					/* Uses quiets */
-	"b",					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	"m:",					/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	true,                           /* Uses quiets */
+	"b",                            /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	"m:",                           /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 	false                           /* True if the IRCd supports changing user modes via S2S. */
 };
 
@@ -140,7 +140,6 @@ struct cmode_ inspircd_user_mode_list[] = {
   { 'w', UF_WALLOPS     },
   { 'x', UF_IPCLOAK     },
   { 'z', UF_NOSSLMSG    },
-
   { '\0', 0 }
 };
 

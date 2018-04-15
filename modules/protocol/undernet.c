@@ -20,32 +20,32 @@ DECLARE_MODULE_V1("protocol/undernet", true, _modinit, NULL, PACKAGE_STRING, VEN
 /* *INDENT-OFF* */
 
 ircd_t Undernet = {
-        "ircu 2.10.11.07 or later",     /* IRCd name */
-        "$",                            /* TLD Prefix, used by Global. */
-        true,                           /* Whether or not we use IRCNet/TS6 UID */
-        false,                          /* Whether or not we use RCOMMAND */
-        false,                          /* Whether or not we support channel owners. */
-        false,                          /* Whether or not we support channel protection. */
-        false,                          /* Whether or not we support halfops. */
-	true,				/* Whether or not we use P10 */
-	false,				/* Whether or not we use vHosts. */
-	0,				/* Oper-only cmodes */
-        0,                              /* Integer flag for owner channel flag. */
-        0,                              /* Integer flag for protect channel flag. */
-        0,                              /* Integer flag for halfops. */
-        "+",                            /* Mode we set for owner. */
-        "+",                            /* Mode we set for protect. */
-        "+",                            /* Mode we set for halfops. */
-	PROTOCOL_UNDERNET,		/* Protocol type */
+	"ircu 2.10.11.07 or later",     /* IRCd name */
+	"$",                            /* TLD Prefix, used by Global. */
+	true,                           /* Whether or not we use IRCNet/TS6 UID */
+	false,                          /* Whether or not we use RCOMMAND */
+	false,                          /* Whether or not we support channel owners. */
+	false,                          /* Whether or not we support channel protection. */
+	false,                          /* Whether or not we support halfops. */
+	true,                           /* Whether or not we use P10 */
+	false,                          /* Whether or not we use vHosts. */
+	0,                              /* Oper-only cmodes */
+	0,                              /* Integer flag for owner channel flag. */
+	0,                              /* Integer flag for protect channel flag. */
+	0,                              /* Integer flag for halfops. */
+	"+",                            /* Mode we set for owner. */
+	"+",                            /* Mode we set for protect. */
+	"+",                            /* Mode we set for halfops. */
+	PROTOCOL_UNDERNET,              /* Protocol type */
 	0,                              /* Permanent cmodes */
 	0,                              /* Oper-immune cmode */
 	"b",                            /* Ban-like cmodes */
 	0,                              /* Except mchar */
 	0,                              /* Invex mchar */
 	IRCD_CIDR_BANS,                 /* Flags */
-	false,					/* Uses quiets */
-	NULL,					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	"",						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	false,                          /* Uses quiets */
+	NULL,                           /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	"",                             /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 	false                           /* True if the IRCd supports changing user modes via S2S. */
 };
 
@@ -84,7 +84,6 @@ struct cmode_ undernet_user_mode_list[] = {
   { 's', UF_SNOMASK  },
   { 'w', UF_WALLOPS  },
   { 'x', UF_IPCLOAK  },
-
   { '\0', 0 }
 };
 

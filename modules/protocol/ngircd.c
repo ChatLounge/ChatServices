@@ -17,32 +17,32 @@ DECLARE_MODULE_V1("protocol/ngircd", true, _modinit, NULL, PACKAGE_STRING, VENDO
 /* *INDENT-OFF* */
 
 ircd_t ngIRCd = {
-        "ngIRCd",			/* IRCd name */
-        "$",                            /* TLD Prefix, used by Global. */
-        false,                          /* Whether or not we use IRCNet/TS6 UID */
-        false,                          /* Whether or not we use RCOMMAND */
-        true,                           /* Whether or not we support channel owners. */
-        true,                           /* Whether or not we support channel protection. */
-        true,                           /* Whether or not we support halfops. */
-	false,				/* Whether or not we use P10 */
-	true,				/* Whether or not we use vHosts. */
-	CMODE_OPERONLY | CMODE_PERM,	/* Oper-only cmodes */
-        CSTATUS_OWNER,                  /* Integer flag for owner channel flag. */
-        CSTATUS_PROTECT,                /* Integer flag for protect channel flag. */
-        CSTATUS_HALFOP,                 /* Integer flag for halfops. */
-        "+q",                           /* Mode we set for owner. */
-        "+a",                           /* Mode we set for protect. */
-        "+h",                           /* Mode we set for halfops. */
-	PROTOCOL_NGIRCD,		/* Protocol type */
+	"ngIRCd",                       /* IRCd name */
+	"$",                            /* TLD Prefix, used by Global. */
+	false,                          /* Whether or not we use IRCNet/TS6 UID */
+	false,                          /* Whether or not we use RCOMMAND */
+	true,                           /* Whether or not we support channel owners. */
+	true,                           /* Whether or not we support channel protection. */
+	true,                           /* Whether or not we support halfops. */
+	false,                          /* Whether or not we use P10 */
+	true,                           /* Whether or not we use vHosts. */
+	CMODE_OPERONLY | CMODE_PERM,    /* Oper-only cmodes */
+	CSTATUS_OWNER,                  /* Integer flag for owner channel flag. */
+	CSTATUS_PROTECT,                /* Integer flag for protect channel flag. */
+	CSTATUS_HALFOP,                 /* Integer flag for halfops. */
+	"+q",                           /* Mode we set for owner. */
+	"+a",                           /* Mode we set for protect. */
+	"+h",                           /* Mode we set for halfops. */
+	PROTOCOL_NGIRCD,                /* Protocol type */
 	CMODE_PERM,                     /* Permanent cmodes */
 	0,                              /* Oper-immune cmode */
 	"beI",                          /* Ban-like cmodes */
 	'e',                            /* Except mchar */
 	'I',                            /* Invex mchar */
 	0,                              /* Flags */
-	false,					/* Uses quiets */
-	NULL,					/* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
-	"",						/* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
+	false,                          /* Uses quiets */
+	NULL,                           /* Mode for quiets, if supported. (e.g. "q" on ChatIRCd)  Otherwise, NULL. */
+	"",                             /* Acting extban, if needed (e.g. "m:" on InspIRCd).  "" otherwise. */
 	false                           /* True if the IRCd supports changing user modes via S2S. */
 };
 
@@ -89,7 +89,6 @@ struct cmode_ ngircd_user_mode_list[] = {
   { 'F', UF_FLOOD      },
   { 'I', UF_HIDECHANL  },
   { 'R', UF_REG        },
-
   { 'a', UF_AWAY       },
   { 'b', UF_DEAFPRIV   },
   { 'c', UF_LOCCONN    },
