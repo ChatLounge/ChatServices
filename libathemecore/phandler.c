@@ -241,7 +241,7 @@ void generic_mode_sts(char *sender, channel_t *target, char *modes)
 	/* Can't do anything here, so bail. */
 }
 
-void generic_umode_sts(char *sender, channel_t *target, char *modes)
+void generic_umode_sts(char *sender, user_t *target, char *modes)
 {
 	/* Can't do anything here, so bail. */
 }

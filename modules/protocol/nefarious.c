@@ -93,11 +93,28 @@ struct cmode_ nefarious_prefix_mode_list[] = {
 };
 
 struct cmode_ nefarious_user_mode_list[] = {
-  { 'a', UF_ADMIN    },
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
-  { 'd', UF_DEAF     },
-  { 'k', UF_IMMUNE   },
+  { 'B', UF_BOT         },
+  { 'D', UF_DEAFPRIV    },
+  { 'H', UF_HIDEOPER    },
+  { 'I', UF_HIDEIDLE    },
+  { 'L', UF_NOFWD       },
+  { 'R', UF_NOUNREGMSG  },
+  { 'W', UF_WHOISNOTIFY },
+  { 'X', UF_OVERRIDE    },
+  { 'a', UF_ADMIN       },
+  { 'd', UF_DEAF        },
+  { 'f', UF_VHOST       },
+  { 'i', UF_INVIS       },
+  { 'k', UF_IMMUNE      },
+  { 'n', UF_HIDECHANL   },
+  { 'o', UF_IRCOP       },
+  { 'q', UF_COMMONCHAN  },
+  { 'r', UF_REG         },
+  { 's', UF_SNOMASK     },
+  { 'w', UF_WALLOPS     },
+  { 'x', UF_IPCLOAK     },
+  { 'z', UF_SSL         },
+  
   { '\0', 0 }
 };
 

@@ -96,11 +96,26 @@ struct cmode_ shadowircd_prefix_mode_list[] = {
 };
 
 struct cmode_ shadowircd_user_mode_list[] = {
-  { 'a', UF_ADMIN    },
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
-  { 'D', UF_DEAF     },
-  { 'S', UF_SERVICE  },
+  { 'B', UF_BOT        },
+  { 'C', UF_NOCTCP     },
+  { 'D', UF_DEAF       },
+  { 'G', UF_COMMONCHAN },
+  { 'Q', UF_NOFWD      },
+  { 'R', UF_NOUNREGMSG },
+  { 'S', UF_SERVICE    },
+  { 'V', UF_NOINVITE   },
+  { 'Z', UF_SSL        },
+
+  { 'a', UF_ADMIN      },
+  { 'g', UF_ACCEPT     },
+  { 'i', UF_INVIS      },
+  { 'l', UF_LOCOPS     },
+  { 'o', UF_IRCOP      },
+  { 'p', UF_OVERRIDE   },
+  { 's', UF_SNOMASK    },
+  { 'w', UF_WALLOPS    },
+  { 'x', UF_IPCLOAK    },
+
   { '\0', 0 }
 };
 

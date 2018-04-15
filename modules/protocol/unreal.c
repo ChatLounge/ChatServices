@@ -115,10 +115,34 @@ struct cmode_ unreal_prefix_mode_list[] = {
 };
 
 struct cmode_ unreal_user_mode_list[] = {
-  { 'A', UF_ADMIN    },
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
-  { 'd', UF_DEAF     },
+  { 'A', UF_ADMIN       },
+  { 'B', UF_BOT         },
+  { 'G', UF_CENSOR      },
+  { 'H', UF_HIDEOPER    },
+  { 'I', UF_HIDEIDLE    },
+  { 'N', UF_NETADMIN    },
+  { 'O', UF_LOCIRCOP    },
+  { 'R', UF_NOUNREGMSG  },
+  { 'S', UF_SERVICE     },
+  { 'T', UF_NOCTCP      },
+  { 'V', UF_WEBTV       },
+  { 'W', UF_WHOISNOTIFY },
+  
+  { 'a', UF_SERVADMIN   },
+  { 'd', UF_DEAF        },
+  { 'g', UF_LOCOPS      },
+  { 'h', UF_HELPOP      },
+  { 'i', UF_INVIS       },
+  { 'o', UF_IRCOP       },
+  { 'p', UF_HIDECHANL   },
+  { 'q', UF_IMMUNE      },
+  { 'r', UF_REG         },
+  { 's', UF_SNOMASK     },
+  { 't', UF_VHOST       },
+  { 'w', UF_WALLOPS     },
+  { 'x', UF_IPCLOAK     },
+  { 'z', UF_SSL         },
+  
   { '\0', 0 }
 };
 

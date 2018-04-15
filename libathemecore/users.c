@@ -689,24 +689,45 @@ void user_show_all_logins(myuser_t *mu, user_t *source, user_t *target)
 	MOWGLI_ITER_FOREACH(n, mu->logins.head)
 	{
 		user_t *ul = (user_t *)(n->data);
+		unsigned short iter;
+
+		char umodedisplay[64];
+
+		mowgli_strlcpy(umodedisplay, "+", sizeof umodedisplay);
+
+		for (iter = 0; user_mode_list[iter].mode != '\0'; iter++)
+		{
+			if (ul->flags & user_mode_list[iter].value)
+			{
+				char mode[2];
+				mode[0] = user_mode_list[iter].mode;
+				mode[1] = '\0';
+
+				mowgli_strlcat(umodedisplay, mode, sizeof umodedisplay);
+				
+				//umodedisplay[iter + 1] = user_mode_list[iter].mode;
+				//umodedisplay[iter + 2] = '\0';
+			}
+				//mowgli_strlcat(umodedisplay, (const char *)user_mode_list[iter].mode, sizeof umodedisplay);
+		}
 
 		if (ul->flags & UF_USEDCERT)
 		{
 			if (ul->ip == NULL)
-				notice(source->nick, target->nick, "  %s (%s@%s) (fingerprint: %s)",
-					ul->nick, ul->user, ul->host, ul->certfp);
+				notice(source->nick, target->nick, "  %s (%s@%s) (modes: %s) (fingerprint: %s)",
+					ul->nick, ul->user, ul->host, umodedisplay, ul->certfp);
 			else
-				notice(source->nick, target->nick, "  %s (%s@%s) [%s] (fingerprint: %s)",
-					ul->nick, ul->user, ul->host, ul->ip, ul->certfp);
+				notice(source->nick, target->nick, "  %s (%s@%s) [%s] (modes: %s) (fingerprint: %s)",
+					ul->nick, ul->user, ul->host, ul->ip, umodedisplay, ul->certfp);
 		}
 		else
 		{
 			if (ul->ip == NULL)
-				notice(source->nick, target->nick, "  %s (%s@%s)",
-					ul->nick, ul->user, ul->host);
+				notice(source->nick, target->nick, "  %s (%s@%s) (modes: %s)",
+					ul->nick, ul->user, ul->host, umodedisplay);
 			else
-				notice(source->nick, target->nick, "  %s (%s@%s) [%s]",
-					ul->nick, ul->user, ul->host, ul->ip);
+				notice(source->nick, target->nick, "  %s (%s@%s) [%s] (modes: %s)",
+					ul->nick, ul->user, ul->host, ul->ip, umodedisplay);
 		}
 	}
 

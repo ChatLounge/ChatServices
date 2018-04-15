@@ -280,7 +280,7 @@ E void generic_qline_sts(const char *server, const char *mask, long duration, co
 E void generic_unqline_sts(const char *server, const char *mask);
 E void generic_topic_sts(channel_t *c, user_t *source, const char *setter, time_t ts, time_t prevts, const char *topic);
 E void generic_mode_sts(char *sender, channel_t *target, char *modes);
-E void generic_umode_sts(char *sender, channel_t *target, char *modes);
+E void generic_umode_sts(char *sender, user_t *target, char *modes);
 E void generic_ping_sts(void);
 E void generic_on_login(user_t *u, myuser_t *account, const char *wantedhost);
 E bool generic_on_logout(user_t *u, const char *account);

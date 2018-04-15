@@ -75,11 +75,18 @@ struct cmode_ ratbox_prefix_mode_list[] = {
 };
 
 struct cmode_ ratbox_user_mode_list[] = {
-  { 'a', UF_ADMIN    },
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
   { 'D', UF_DEAF     },
   { 'S', UF_SERVICE  },
+
+  { 'a', UF_ADMIN    },
+  { 'c', UF_LOCCONN  },
+  { 'g', UF_ACCEPT   },
+  { 'i', UF_INVIS    },
+  { 'l', UF_LOCOPS   },
+  { 'o', UF_IRCOP    },
+  { 's', UF_SNOMASK  },
+  { 'w', UF_WALLOPS  },
+
   { '\0', 0 }
 };
 

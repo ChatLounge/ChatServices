@@ -76,8 +76,13 @@ struct cmode_ ircnet_prefix_mode_list[] = {
 };
 
 struct cmode_ ircnet_user_mode_list[] = {
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
+  { 'O', UF_LOCIRCOP   },
+  { 'a', UF_AWAY       },
+  { 'i', UF_INVIS      },
+  { 'o', UF_IRCOP      },
+  { 'r', UF_RESTRICTED },
+  { 's', UF_SNOMASK    },
+  { 'w', UF_WALLOPS    },
   { '\0', 0 }
 };
 

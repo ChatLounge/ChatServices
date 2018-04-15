@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 William Pitcock, et al.
- * Copyright (C) 2017 ChatLounge IRC Network Development Team
+ * Copyright (C) 2017-2018 ChatLounge IRC Network Development Team
  *
  * Rights to this code are as documented in doc/LICENSE.
  *
@@ -94,7 +94,7 @@ struct chanban_
 struct cmode_
 {
         char mode;
-        unsigned int value;
+        unsigned long long int value;
 };
 
 struct extmode

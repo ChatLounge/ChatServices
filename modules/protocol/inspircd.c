@@ -120,10 +120,27 @@ struct cmode_ inspircd_prefix_mode_list[] = {
 };
 
 struct cmode_ inspircd_user_mode_list[] = {
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
-  { 'd', UF_DEAF     },
-  { 'k', UF_IMMUNE   },
+  { 'B', UF_BOT         },
+  { 'G', UF_CENSOR      },
+  { 'H', UF_HIDEOPER    },
+  { 'I', UF_HIDECHANL   },
+  { 'L', UF_NOFWD       },
+  { 'R', UF_NOUNREGMSG  },
+  { 'S', UF_STRIPMSG    },
+  { 'W', UF_WHOISNOTIFY },
+  { 'c', UF_COMMONCHAN  },
+  { 'd', UF_DEAF        },
+  { 'g', UF_ACCEPT      },
+  { 'h', UF_HELPOP      },
+  { 'i', UF_INVIS       },
+  { 'k', UF_IMMUNE      },
+  { 'o', UF_IRCOP       },
+  { 'r', UF_REG         },
+  { 's', UF_SNOMASK     },
+  { 'w', UF_WALLOPS     },
+  { 'x', UF_IPCLOAK     },
+  { 'z', UF_NOSSLMSG    },
+
   { '\0', 0 }
 };
 

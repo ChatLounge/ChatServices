@@ -84,10 +84,22 @@ struct cmode_ ngircd_prefix_mode_list[] = {
 };
 
 struct cmode_ ngircd_user_mode_list[] = {
-  { 'a', UF_AWAY     },
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
-  { 'q', UF_IMMUNE   },
+  { 'B', UF_BOT        },
+  { 'C', UF_COMMONCHAN },
+  { 'F', UF_FLOOD      },
+  { 'I', UF_HIDECHANL  },
+  { 'R', UF_REG        },
+
+  { 'a', UF_AWAY       },
+  { 'b', UF_DEAFPRIV   },
+  { 'c', UF_LOCCONN    },
+  { 'i', UF_INVIS      },
+  { 'o', UF_IRCOP      },
+  { 'q', UF_IMMUNE     },
+  { 'r', UF_RESTRICTED },
+  { 's', UF_SNOMASK    },
+  { 'w', UF_WALLOPS    },
+  { 'x', UF_IPCLOAK    },
   { '\0', 0 }
 };
 

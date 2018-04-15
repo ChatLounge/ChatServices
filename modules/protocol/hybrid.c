@@ -74,10 +74,23 @@ struct cmode_ hybrid_prefix_mode_list[] = {
 };
 
 struct cmode_ hybrid_user_mode_list[] = {
-  { 'a', UF_ADMIN    },
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
-  { 'D', UF_DEAF     },
+  { 'D', UF_DEAF       },
+  { 'F', UF_FARCONN    },
+  { 'G', UF_COMMONCHAN },
+  { 'H', UF_HIDEOPER   },
+  { 'R', UF_NOUNREGMSG },
+  { 'S', UF_SSL        },
+  { 'W', UF_WEBCHAT    },
+  { 'a', UF_ADMIN      },
+  { 'c', UF_LOCCONN    },
+  { 'g', UF_ACCEPT     },
+  { 'i', UF_INVIS      },
+  { 'l', UF_LOCOPS     },
+  { 'o', UF_IRCOP      },
+  { 'p', UF_HIDECHANL  },
+  { 'q', UF_HIDEIDLE   },
+  { 'r', UF_REG        },
+  { 'w', UF_WALLOPS    },
   { '\0', 0 }
 };
 

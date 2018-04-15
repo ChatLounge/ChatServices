@@ -77,10 +77,14 @@ struct cmode_ undernet_prefix_mode_list[] = {
 };
 
 struct cmode_ undernet_user_mode_list[] = {
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
   { 'd', UF_DEAF     },
+  { 'i', UF_INVIS    },
   { 'k', UF_IMMUNE   },
+  { 'o', UF_IRCOP    },
+  { 's', UF_SNOMASK  },
+  { 'w', UF_WALLOPS  },
+  { 'x', UF_IPCLOAK  },
+
   { '\0', 0 }
 };
 

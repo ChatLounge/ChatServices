@@ -88,9 +88,21 @@ struct cmode_ bahamut_prefix_mode_list[] = {
 };
 
 struct cmode_ bahamut_user_mode_list[] = {
-  { 'A', UF_ADMIN    },
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
+  { 'A', UF_ADMIN      },
+  { 'C', UF_COMMONCHAN },
+  { 'I', UF_HIDESERVI  },
+  { 'O', UF_LOCIRCOP   },
+  { 'R', UF_NOUNREGMSG },
+  { 'S', UF_SSL        },
+  { 'X', UF_SHUN       },
+  { 'a', UF_SERVADMIN  },
+  { 'c', UF_LOCCONN    },
+  { 'g', UF_OPERWALL   },
+  { 'h', UF_HELPOP     },
+  { 'i', UF_INVIS      },
+  { 'o', UF_IRCOP      },
+  { 's', UF_SNOMASK    },
+  { 'x', UF_SHUNVERB   },  
   { '\0', 0 }
 };
 

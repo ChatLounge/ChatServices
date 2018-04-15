@@ -108,12 +108,24 @@ struct cmode_ chatircd_prefix_mode_list[] = {
 };
 
 struct cmode_ chatircd_user_mode_list[] = {
-  { 'p', UF_IMMUNE   },
-  { 'a', UF_ADMIN    },
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
-  { 'D', UF_DEAF     },
-  { 'S', UF_SERVICE  },
+  { 'B', UF_BOT       },
+  { 'D', UF_DEAF      },
+  { 'Q', UF_NOFWD     },
+  { 'R', UF_NOUNIDMSG },
+  { 'S', UF_SERVICE   },
+  { 'Z', UF_SSL       },
+  { 'a', UF_ADMIN     },
+  { 'g', UF_ACCEPT    },
+  { 'i', UF_INVIS     },
+  { 'l', UF_LOCOPS    },
+  { 'n', UF_NETADMIN  },
+  { 'o', UF_IRCOP     },
+  { 'p', UF_IMMUNE    },
+  { 's', UF_SNOMASK   },
+  { 't', UF_NOSSLMSG  },
+  { 'w', UF_WALLOPS   },
+  { 'x', UF_IPCLOAK   },
+  { 'z', UF_OPERWALL  },
   { '\0', 0 }
 };
 

@@ -103,12 +103,21 @@ struct cmode_ charybdis_prefix_mode_list[] = {
 };
 
 struct cmode_ charybdis_user_mode_list[] = {
-  { 'p', UF_IMMUNE   },
-  { 'a', UF_ADMIN    },
-  { 'i', UF_INVIS    },
-  { 'o', UF_IRCOP    },
-  { 'D', UF_DEAF     },
-  { 'S', UF_SERVICE  },
+  { 'D', UF_DEAF      },
+  { 'Q', UF_NOFWD     },
+  { 'R', UF_NOUNIDMSG },
+  { 'S', UF_SERVICE   },
+  { 'Z', UF_SSL       },
+  { 'a', UF_ADMIN     },
+  { 'g', UF_ACCEPT    },
+  { 'i', UF_INVIS     },
+  { 'l', UF_LOCOPS    },
+  { 'o', UF_IRCOP     },
+  { 'p', UF_IMMUNE    },
+  { 's', UF_SNOMASK   },
+  { 'w', UF_WALLOPS   },
+  { 'x', UF_IPCLOAK   },
+  { 'z', UF_OPERWALL  },
   { '\0', 0 }
 };
 
